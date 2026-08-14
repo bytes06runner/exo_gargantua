@@ -61,9 +61,15 @@ The pipeline automatically generates publication-ready corner plots tracking pos
 ## 🛡️ Validation Status
 
 > [!WARNING]
-> Validated recovery of 2 confirmed planets (e.g., WASP-126b / TIC 25155310 and TIC 69679391). False-positive rejection testing is fully designed and implemented, but not yet demonstrated, pending accessible light curve data for known eclipsing binaries.
+> Validated recovery of 2 confirmed planets (e.g., WASP-126b / TIC 25155310 and TIC 69679391).
 
-Currently, the Validation Harness successfully detects and recovers true confirmed planets with high precision. Tested False Positive targets (such as TIC 290348382 and TIC 90919952) currently abort gracefully during the data ingestion phase due to missing SPOC light curves on the MAST API. The pipeline avoids reporting these missing-data aborts as algorithmic "True Negatives."
+### ⚠️ False Positive Validation Disclaimer
+
+The pipeline's vetting logic (Odd/Even depth differences, Secondary Eclipse significance, and Centroid Shift) currently struggles to algorithmically reject deep-blended Eclipsing Binaries. 
+
+In our latest validation run using accessible TESS false positive data (e.g., `TIC 281408474`), the pipeline successfully processed the light curves but the target **passed** vetting as a planet candidate. Its primary and secondary eclipses were too similar in depth (Odd/Even diff: 0.00065), it lacked a distinct secondary eclipse at half-phase, and its centroid shift was minimal (0.0072 pixels). 
+
+Users should be aware that while the pipeline accurately recovers confirmed planets (100% True Positive rate), its False Positive rejection rate is currently **0%** for grazing or highly blended background EBs. Further tuning of the vetting thresholds or the integration of a pixel-level difference imaging module is required to achieve high specificity.
 
 ---
 
