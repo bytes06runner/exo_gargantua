@@ -40,31 +40,6 @@ def fetch_validation_targets():
     RuntimeError
         If the query fails, with the exact error message.
     """
-def fetch_validation_targets():
-    """
-    Fetches confirmed planets and known false positives from the
-    ExoFOP-TESS TOI catalog via astroquery.
-
-    Uses the NASA Exoplanet Archive's TAP service to query the TOI
-    catalog for targets with known dispositions:
-    - 'KP' = Known Planet (confirmed)
-    - 'FP' = False Positive
-
-    Selects bright targets (Tmag < 12) with SPOC data available
-    for the best chance of successful pipeline runs.
-
-    Returns
-    -------
-    confirmed_planets : list of str
-        TIC IDs of confirmed TESS planets (3-5 targets).
-    false_positives : list of str
-        TIC IDs of known false positives (3-5 targets).
-
-    Raises
-    ------
-    RuntimeError
-        If the query fails, with the exact error message.
-    """
     try:
         from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
 

@@ -60,6 +60,12 @@ The pipeline automatically generates publication-ready corner plots tracking pos
 
 ## 🛡️ Validation Status
 
+> [!TIP]
+> **Manual Testing Targets**
+> If you want to bypass the API queries and test the pipeline manually on known targets with public SPOC data, you can hardcode the following into `validate.py`:
+> - **Confirmed Planets:** `TIC 349827430`, `TIC 69679391`
+> - **False Positives (Eclipsing Binaries):** `TIC 281408474`
+
 > [!WARNING]
 > Validated recovery of 2 confirmed planets (e.g., WASP-126b / TIC 25155310 and TIC 69679391).
 
