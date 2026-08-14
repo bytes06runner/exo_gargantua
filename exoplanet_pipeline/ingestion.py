@@ -74,7 +74,7 @@ def preprocess_tess_data(target_star_id):
                 except Exception as read_err:
                     print(f"    Failed to read {f}: {read_err}")
             if lcs:
-                lc_collection = lk.LightCurveCollection(lcs[:2])
+                lc_collection = lk.LightCurveCollection(lcs)
 
     if lc_collection is None or len(lc_collection) == 0:
         print(f"Failed to find or download light curves for {target_star_id}.")
