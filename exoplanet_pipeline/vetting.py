@@ -349,8 +349,14 @@ def run_centroid_vetting(target_star_id, period, t0, duration):
         half_dur_phase = (dur_val / 2.0) / period_val
         in_transit = np.abs(phase) < half_dur_phase
 
-        # Use SPOC pipeline aperture mask if available to constrain to target star PSF
-        mask = tpf.pipeline_mask if (tpf.pipeline_mask is not None and np.sum(tpf.pipeline_mask) > 0) else np.ones((n_rows, n_cols), dtype=bool)
+        # Use dilated SPOC aperture mask + local background subtraction
+        # Dilating the aperture ensures near-edge blended contaminants and PSF wings are included.
+        raw_mask = tpf.pipeline_mask if (tpf.pipeline_mask is not None and np.sum(tpf.pipeline_mask) > 0) else np.ones((n_rows, n_cols), dtype=bool)
+        try:
+            from scipy.ndimage import binary_dilation
+            mask = binary_dilation(raw_mask, iterations=1)
+        except Exception:
+            mask = raw_mask
 
         col_in_list, row_in_list = [], []
         col_out_list, row_out_list = [], []
@@ -359,14 +365,15 @@ def run_centroid_vetting(target_star_id, period, t0, duration):
             frame = tpf.flux.value[i]
             if np.all(np.isnan(frame)):
                 continue
-            masked_frame = frame * mask
-            total_flux = np.nansum(masked_frame)
+            bg = np.nanmedian(frame)
+            bg_sub = np.maximum(frame - bg, 0) * mask
+            total_flux = np.nansum(bg_sub)
             if total_flux <= 0 or not np.isfinite(total_flux):
                 continue
 
             # Flux-weighted centroid for this cadence
-            col_c = np.nansum(masked_frame * col_grid) / total_flux
-            row_c = np.nansum(masked_frame * row_grid) / total_flux
+            col_c = np.nansum(bg_sub * col_grid) / total_flux
+            row_c = np.nansum(bg_sub * row_grid) / total_flux
 
             if np.isfinite(col_c) and np.isfinite(row_c):
                 if in_transit[i]:
