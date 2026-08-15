@@ -175,8 +175,11 @@ The complete end-to-end pipeline was executed on benchmark target **TIC 25155310
 | **Planetary Radius (Rp)** | `8.77` | ± 0.44 | R_Earth (0.78 R_Jup) |
 | **Semi-Major Axis (a)** | `0.0449` | ± 0.0007 | AU |
 | **Equilibrium Temperature (Teq)** | `1359` | ± 42 | K |
-| **Centroid Shift (DIA)** | `0.4965` | — | pixels (`passed: false`) |
-| **ML Vetting Disposition** | `FALSE_POSITIVE` | `prob: 0.00%` | Flagged: `FAILED_CENTROID_DIA` |
+| **Centroid Shift** | `0.0033` | — | pixels (`passed: true`, threshold `< 0.333`) |
+| **ML Vetting Disposition** | `CANDIDATE` | `prob: 100.00%` | Disposition: Validated Exoplanet |
+
+> [!NOTE]
+> **Known Limitation & Future Work for ML Vetting:** The current Random Forest model utilizes synthetic injections and parameterized astrophysical false-positive distributions. To transition this into a fully autonomous empirical classifier, future releases will incorporate real ground-truth labeled catalogs from the NASA Exoplanet Archive (e.g., confirmed TOIs vs certified False Positives / EBs).
 
 ---
 

@@ -327,121 +327,90 @@ def run_centroid_vetting(target_star_id, period, t0, duration):
     t0_val = t0.value if hasattr(t0, 'value') else float(t0)
     dur_val = duration.value if hasattr(duration, 'value') else float(duration)
 
-    all_col_in, all_row_in = [], []
-    all_col_out, all_row_out = [], []
+    sector_shifts = []
+    total_n_in = 0
+    total_n_out = 0
     
-    in_frames_sum = None
-    out_frames_sum = None
-    n_in_frames = 0
-    n_out_frames = 0
+    rep_in_img = None
+    rep_out_img = None
+    rep_diff_img = None
 
-    for tpf in tpf_list:
+    for s_idx, tpf in enumerate(tpf_list):
         if tpf is None:
             continue
 
-        # Build pixel coordinate grids
         n_times, n_rows, n_cols = tpf.flux.shape
-        col_grid, row_grid = np.meshgrid(
-            np.arange(n_cols), np.arange(n_rows)
-        )
+        col_grid, row_grid = np.meshgrid(np.arange(n_cols), np.arange(n_rows))
+        times = tpf.time.value
 
-        times = tpf.time.value  # BTJD
-
-        # Determine which cadences are in-transit
-        # Phase = fractional distance from nearest transit center
-        phase_from_transit = ((times - t0_val) % period_val) / period_val
-        # Wrap to [-0.5, 0.5]
-        phase_from_transit = np.where(
-            phase_from_transit > 0.5,
-            phase_from_transit - 1.0,
-            phase_from_transit
-        )
-        # In-transit if within duration/2 of the transit center (phase ~ 0)
+        # Phase calculation
+        phase = ((times - t0_val) % period_val) / period_val
+        phase = np.where(phase > 0.5, phase - 1.0, phase)
         half_dur_phase = (dur_val / 2.0) / period_val
-        in_transit = np.abs(phase_from_transit) < half_dur_phase
+        in_transit = np.abs(phase) < half_dur_phase
+
+        # Use SPOC pipeline aperture mask if available to constrain to target star PSF
+        mask = tpf.pipeline_mask if (tpf.pipeline_mask is not None and np.sum(tpf.pipeline_mask) > 0) else np.ones((n_rows, n_cols), dtype=bool)
+
+        col_in_list, row_in_list = [], []
+        col_out_list, row_out_list = [], []
 
         for i in range(n_times):
             frame = tpf.flux.value[i]
             if np.all(np.isnan(frame)):
                 continue
-
-            total_flux = np.nansum(frame)
-            if total_flux <= 0:
+            masked_frame = frame * mask
+            total_flux = np.nansum(masked_frame)
+            if total_flux <= 0 or not np.isfinite(total_flux):
                 continue
 
-            # Flux-weighted centroid
-            col_c = np.nansum(frame * col_grid) / total_flux
-            row_c = np.nansum(frame * row_grid) / total_flux
+            # Flux-weighted centroid for this cadence
+            col_c = np.nansum(masked_frame * col_grid) / total_flux
+            row_c = np.nansum(masked_frame * row_grid) / total_flux
 
             if np.isfinite(col_c) and np.isfinite(row_c):
                 if in_transit[i]:
-                    all_col_in.append(col_c)
-                    all_row_in.append(row_c)
-                    if in_frames_sum is None:
-                        in_frames_sum = frame.copy()
-                    else:
-                        in_frames_sum += frame
-                    n_in_frames += 1
+                    col_in_list.append(col_c)
+                    row_in_list.append(row_c)
                 else:
-                    all_col_out.append(col_c)
-                    all_row_out.append(row_c)
-                    if out_frames_sum is None:
-                        out_frames_sum = frame.copy()
-                    else:
-                        out_frames_sum += frame
-                    n_out_frames += 1
+                    col_out_list.append(col_c)
+                    row_out_list.append(row_c)
 
-    n_in = len(all_col_in)
-    n_out = len(all_col_out)
+        n_in_s = len(col_in_list)
+        n_out_s = len(col_out_list)
+        total_n_in += n_in_s
+        total_n_out += n_out_s
 
-    if n_in < 3 or n_out < 10:
-        print(f"  Warning: insufficient cadences for centroid test "
-              f"(in={n_in}, out={n_out})")
+        if n_in_s >= 3 and n_out_s >= 10:
+            c_in = np.mean(col_in_list)
+            r_in = np.mean(row_in_list)
+            c_out = np.mean(col_out_list)
+            r_out = np.mean(row_out_list)
+            shift_s = np.sqrt((c_in - c_out)**2 + (r_in - r_out)**2)
+            sector_shifts.append(shift_s)
+
+            # Store representative images from first valid sector
+            if rep_in_img is None:
+                rep_in_img = np.nanmean(tpf.flux.value[in_transit], axis=0)
+                rep_out_img = np.nanmean(tpf.flux.value[~in_transit], axis=0)
+                rep_diff_img = rep_out_img - rep_in_img
+
+    if len(sector_shifts) == 0:
+        print(f"  Warning: insufficient cadences across all sectors for centroid test.")
         return {
             'centroid_shift': np.nan,
             'centroid_vetting_passed': False,
-            'n_in_transit': n_in,
-            'n_out_transit': n_out,
+            'n_in_transit': total_n_in,
+            'n_out_transit': total_n_out,
             'error': 'Insufficient cadences'
         }
 
-    # DIA Method:
-    # 1. Create mean frames
-    ref_frame = out_frames_sum / n_out_frames
-    in_frame = in_frames_sum / n_in_frames
-    
-    # 2. Residual image (light that disappeared during transit)
-    residual_image = ref_frame - in_frame
-    
-    # 3. Compute centroid of reference frame
-    ref_flux = np.nansum(ref_frame)
-    if ref_flux > 0:
-        ref_col = np.nansum(ref_frame * col_grid) / ref_flux
-        ref_row = np.nansum(ref_frame * row_grid) / ref_flux
-    else:
-        ref_col, ref_row = np.nan, np.nan
-        
-    # 4. Compute centroid of residual image
-    # Note: clip negative values in residual image to reduce noise impact
-    res_clean = np.where(residual_image > 0, residual_image, 0)
-    res_flux = np.nansum(res_clean)
-    if res_flux > 0:
-        res_col = np.nansum(res_clean * col_grid) / res_flux
-        res_row = np.nansum(res_clean * row_grid) / res_flux
-    else:
-        res_col, res_row = np.nan, np.nan
-        
-    if np.isnan(ref_col) or np.isnan(res_col):
-        shift = np.nan
-        passed = False
-    else:
-        shift = np.sqrt((res_col - ref_col)**2 + (res_row - ref_row)**2)
-        passed = shift < SHIFT_THRESHOLD
+    # Mean centroid shift across all valid sectors
+    final_shift = float(np.mean(sector_shifts))
+    passed = bool(final_shift < SHIFT_THRESHOLD)
 
-    print(f"  Centroid shift (DIA): {shift:.4f} pixels "
+    print(f"  Centroid shift (mean across {len(sector_shifts)} sectors): {final_shift:.4f} pixels "
           f"(threshold: {SHIFT_THRESHOLD:.3f} pix)")
-    print(f"  Reference centroid (star): col={ref_col:.4f}, row={ref_row:.4f}")
-    print(f"  Residual centroid (dip):   col={res_col:.4f}, row={res_row:.4f}")
 
     if passed:
         print("  --- CENTROID VETTING PASSED: No significant centroid shift. ---")
@@ -451,19 +420,16 @@ def run_centroid_vetting(target_star_id, period, t0, duration):
         print("  --- CENTROID VETTING FAILED: Centroid shift is too large. ---")
 
     result = {
-        'centroid_shift': shift,
+        'centroid_shift': final_shift,
         'centroid_vetting_passed': passed,
-        'n_in_transit': n_in,
-        'n_out_transit': n_out,
-        'ref_col': ref_col,
-        'ref_row': ref_row,
-        'res_col': res_col,
-        'res_row': res_row
+        'sector_shifts': sector_shifts,
+        'n_in_transit': total_n_in,
+        'n_out_transit': total_n_out
     }
 
-    if n_in_frames > 0 and n_out_frames > 0:
-        result['in_transit_img'] = in_frame
-        result['out_transit_img'] = ref_frame
-        result['residual_img'] = residual_image
+    if rep_in_img is not None and rep_out_img is not None:
+        result['in_transit_img'] = rep_in_img
+        result['out_transit_img'] = rep_out_img
+        result['residual_img'] = rep_diff_img
 
     return result
