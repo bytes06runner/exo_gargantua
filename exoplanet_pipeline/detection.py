@@ -44,7 +44,11 @@ def run_bls_search(lc, min_period=0.5, max_period=20):
         lc_bls = lc[::step]
         print(f"  Decimated to {len(lc_bls)} cadences")
     
-    periods = np.linspace(min_period, max_period, 5000)
+    # Use frequency-uniform grid with 15,000 steps for optimal resolution
+    # across long multi-sector baselines (prevents coarse sampling alias locks)
+    freqs = np.linspace(1.0 / max_period, 1.0 / min_period, 15000)
+    periods = 1.0 / freqs
+    
     # frequency_factor=5000 bypasses a Lightkurve bug where it validates the
     # default grid size and crashes even if an explicit period array is passed.
     periodogram = lc_bls.to_periodogram(
@@ -59,53 +63,77 @@ def run_bls_search(lc, min_period=0.5, max_period=20):
     best_duration = periodogram.duration_at_max_power
     best_snr = periodogram.max_power
 
-    # Harmonic resolution: check if the true period is P/2
-    # When BLS finds a harmonic (2×P_true), folding at P/2 will show
-    # transits at BOTH phase 0 and phase 0.5, and the depth should be
-    # similar or deeper. This is the signature of a harmonic lock.
-    half_period = best_period / 2
+    # Bidirectional Harmonic Resolution:
+    # 1. Sub-harmonic check (test 2× P): When BLS locks onto P/2, every other epoch is empty,
+    #    so doubling the period will almost double the measured transit depth (depth_2x >= 1.35 * depth).
+    double_period = best_period * 2.0
+    if double_period.value <= max_period:
+        try:
+            narrow_2x = np.linspace(double_period.value * 0.98, double_period.value * 1.02, 2000)
+            pg_2x = lc_bls.to_periodogram(
+                method='bls',
+                period=narrow_2x,
+                frequency_factor=5000
+            )
+            p_2x_cand = pg_2x.period_at_max_power
+            depth_2x = pg_2x.depth_at_max_power
+            power_2x = pg_2x.max_power
+            
+            if depth_2x.value >= 1.35 * best_depth.value or (power_2x.value > best_snr.value and depth_2x.value > 1.15 * best_depth.value):
+                print(f"  Sub-harmonic resolved: P={best_period.value:.4f}d was half-period. Adopting fundamental P={p_2x_cand.value:.4f}d (depth {best_depth.value:.5f} -> {depth_2x.value:.5f})")
+                best_period = p_2x_cand
+                best_t0 = pg_2x.transit_time_at_max_power
+                best_depth = pg_2x.depth_at_max_power
+                best_duration = pg_2x.duration_at_max_power
+                best_snr = pg_2x.max_power
+                periodogram = pg_2x
+        except Exception as e:
+            print(f"  Sub-harmonic check failed: {e}")
+
+    # 2. Harmonic check (test 0.5× P): When BLS locks onto 2× P, transits exist at both phase 0.0 and 0.5,
+    #    so folding at P/2 preserves the full transit depth (depth_half >= 0.85 * depth).
+    half_period = best_period / 2.0
     if half_period.value >= min_period:
         try:
-            # Fold at P/2 and check for transit at phase 0.5
+            narrow_periods = np.linspace(half_period.value * 0.98, half_period.value * 1.02, 2000)
+            pg_half = lc_bls.to_periodogram(
+                method='bls',
+                period=narrow_periods,
+                frequency_factor=5000
+            )
+            p_half_cand = pg_half.period_at_max_power
+            depth_half = pg_half.depth_at_max_power
+            power_half = pg_half.max_power
+            
             folded = lc.fold(period=best_period, epoch_time=best_t0)
             phase = (folded.time.value / best_period.value) % 1.0
             flux = folded.flux.value
             
-            # Check for a dip near phase 0.5 (which would be a second
-            # transit if the true period is P/2)
-            sec_mask = (phase >= 0.45) & (phase <= 0.55)
-            baseline_mask = ((phase >= 0.15) & (phase <= 0.35)) | \
-                            ((phase >= 0.65) & (phase <= 0.85))
+            bins = np.linspace(0.0, 1.0, 101)
+            bin_c = 0.5 * (bins[:-1] + bins[1:])
+            binned_f = []
+            for k in range(100):
+                in_b = (phase >= bins[k]) & (phase < bins[k+1])
+                binned_f.append(np.nanmedian(flux[in_b]) if np.sum(in_b) > 5 else 1.0)
+            binned_f = np.array(binned_f)
             
-            if np.sum(sec_mask) > 10 and np.sum(baseline_mask) > 10:
-                sec_depth = np.nanmean(flux[baseline_mask]) - np.nanmean(flux[sec_mask])
-                pri_mask = (phase >= 0.0) & (phase <= 0.05) | (phase >= 0.95)
-                pri_depth = np.nanmean(flux[baseline_mask]) - np.nanmean(flux[pri_mask]) if np.sum(pri_mask) > 5 else 0
-                
-                # If the depth at phase 0.5 is at least 30% of the primary
-                # depth, the true period is likely P/2
-                if sec_depth > 0 and pri_depth > 0 and sec_depth > 0.3 * pri_depth:
-                    print(f"  Harmonic detected: P={best_period.value:.4f}d has transit at phase 0.5")
-                    print(f"    Primary depth: {pri_depth:.6f}, Secondary depth: {sec_depth:.6f}")
-                    print(f"    Adopting true period P/2 = {half_period.value:.4f}d")
-                    
-                    # Re-run BLS in a narrow window around P/2 for precise value
-                    narrow_periods = np.linspace(
-                        half_period.value * 0.98,
-                        half_period.value * 1.02,
-                        1000
-                    )
-                    pg2 = lc_bls.to_periodogram(
-                        method='bls',
-                        period=narrow_periods,
-                        frequency_factor=5000
-                    )
-                    best_period = pg2.period_at_max_power
-                    best_t0 = pg2.transit_time_at_max_power
-                    best_depth = pg2.depth_at_max_power
-                    best_duration = pg2.duration_at_max_power
-                    best_snr = pg2.max_power
-                    print(f"    Refined: P={best_period.value:.6f}d, depth={best_depth.value:.6f}")
+            pri_dip = 1.0 - np.nanmin(binned_f[(bin_c < 0.06) | (bin_c > 0.94)])
+            sec_dip = 1.0 - np.nanmin(binned_f[(bin_c > 0.44) & (bin_c < 0.56)])
+            
+            is_harmonic = False
+            if (pri_dip > 0 and sec_dip > 0.35 * pri_dip) and (depth_half.value > 0.80 * best_depth.value):
+                is_harmonic = True
+            elif (power_half.value > 0.85 * best_snr.value and depth_half.value > 0.85 * best_depth.value):
+                is_harmonic = True
+
+            if is_harmonic:
+                print(f"  Harmonic resolved: P={best_period.value:.4f}d was 2x harmonic. Adopting fundamental P={p_half_cand.value:.4f}d")
+                best_period = p_half_cand
+                best_t0 = pg_half.transit_time_at_max_power
+                best_depth = pg_half.depth_at_max_power
+                best_duration = pg_half.duration_at_max_power
+                best_snr = pg_half.max_power
+                periodogram = pg_half
         except Exception as e:
             print(f"  Harmonic check failed: {e}")
 

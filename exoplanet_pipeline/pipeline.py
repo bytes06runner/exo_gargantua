@@ -184,6 +184,9 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
     # Fix 6 (Phase 3): ML Vetting Classifier
     print(f"\n  --- ML Vetting ---")
     ml_results = {}
+    stellar_params = fetch_stellar_parameters(target_star_id, lc=stitched_lc)
+    results['stellar_params'] = stellar_params
+
     try:
         from exoplanet_pipeline.ml_vetting import MLVetter
         import os
@@ -191,12 +194,15 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
         model_path = 'ml_vetter.joblib'
         if os.path.exists(model_path):
             vetter = MLVetter.load(model_path)
+            approx_rp = np.sqrt(max(float(bls_results['depth'].value), 1e-6)) * stellar_params['Rs'] * 109.28
             features = {
                 'bls_power': float(bls_results['snr'].value),
                 'depth_diff': float(vetting_results.get('depth_diff', 0)),
                 'secondary_eclipse_sigma': float(vetting_results.get('secondary_eclipse_sigma', 0)),
                 'centroid_shift': float(centroid_results.get('centroid_shift', 0) if not np.isnan(centroid_results.get('centroid_shift', 0)) else 0),
-                'snr': float(tsnr)
+                'snr': float(tsnr),
+                'depth': float(bls_results['depth'].value),
+                'rp_earth': float(approx_rp)
             }
             ml_pred = vetter.predict(features)
             ml_results = ml_pred
@@ -220,7 +226,7 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
         print(f"{'='*60}")
 
         try:
-            stellar_params = fetch_stellar_parameters(target_star_id)
+            stellar_params = fetch_stellar_parameters(target_star_id, lc=stitched_lc)
             results['stellar_params'] = stellar_params
             
             posteriors, sampler = run_mcmc_estimation(
@@ -242,7 +248,7 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
     # PHASE 4b: Physical Parameters
     # ========================================
     if 'stellar_params' not in results:
-        stellar_params = fetch_stellar_parameters(target_star_id)
+        stellar_params = fetch_stellar_parameters(target_star_id, lc=stitched_lc)
         results['stellar_params'] = stellar_params
     else:
         stellar_params = results['stellar_params']
@@ -252,6 +258,23 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
         try:
             derived_params = derive_physical_parameters(posteriors, stellar_params)
             results['derived_physical_parameters'] = derived_params
+            
+            # Post-MCMC astrophysical consistency check:
+            # Physical planetary radius ceiling (Guillot 2005): Planets cannot exceed ~2.0-2.5 R_Jup (25 R_earth).
+            # Objects with Rp > 25 R_earth are low-mass stellar/brown dwarf eclipsing binaries.
+            rp_earth_val = float(derived_params['Rp_earth'][0])
+            if rp_earth_val > 25.0:
+                if 'flags' not in ml_results:
+                    ml_results['flags'] = []
+                flag_str = f"FAILED_PLANETARY_RADIUS_CEILING (Rp={rp_earth_val:.1f} R_earth > 25.0 R_earth, Eclipsing Binary Companion)"
+                if flag_str not in ml_results['flags']:
+                    ml_results['flags'].append(flag_str)
+                ml_results['planet_probability'] = 0.0
+                ml_results['disposition'] = "FALSE_POSITIVE"
+                results['ml_vetting'] = ml_results
+                results['ml_vetting_score'] = 0.0
+                print(f"\n  [VETTING VETO] Derived physical radius Rp = {rp_earth_val:.1f} R_earth exceeds planetary limit (25 R_earth).")
+                print(f"  -> Reclassified disposition: FALSE_POSITIVE (Eclipsing Binary / Stellar Companion)")
         except Exception as e:
             print(f"  Error deriving physical params: {e}")
 

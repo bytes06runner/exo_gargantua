@@ -82,10 +82,35 @@ def preprocess_tess_data(target_star_id):
 
     print(f"Downloaded {len(lc_collection)} light curves.")
 
-    processed_lcs = []
-    raw_flux_errs = []  # Fix 1: capture pre-normalization flux_err
+    # De-duplicate sectors: ensure only one light curve per sector is used
+    # (prevents mixing 20s fast-cadence with 120s standard cadence from the same sector)
+    sector_map = {}
+    for lc in lc_collection:
+        if lc is None:
+            continue
+        sec = lc.meta.get('SECTOR', None) if hasattr(lc, 'meta') and lc.meta is not None else None
+        if sec is None:
+            # Fallback key by time range
+            sec = int(np.nanmin(lc.time.value))
+        
+        # If sector not yet in map, add it
+        if sec not in sector_map:
+            sector_map[sec] = lc
+        else:
+            # Prefer standard 120s cadence over 20s fast-cadence for consistency
+            existing_len = len(sector_map[sec])
+            new_len = len(lc)
+            # If new is standard (~18k-20k cadences) vs fast (>50k cadences), prefer standard
+            if 10000 <= new_len <= 25000:
+                sector_map[sec] = lc
 
-    for i, lc in enumerate(lc_collection):
+    unique_lcs = [sector_map[s] for s in sorted(sector_map.keys())]
+    print(f"Using {len(unique_lcs)} unique sector light curves (de-duplicated).")
+
+    processed_lcs = []
+    raw_flux_errs = []
+
+    for i, lc in enumerate(unique_lcs):
         if lc is None:
             continue
 
@@ -93,94 +118,70 @@ def preprocess_tess_data(target_star_id):
         if len(lc) == 0:
             continue
 
-        # Fix 1: Capture flux_err BEFORE normalization.
-        # These are in the original instrument units (electrons/s) and
-        # represent the true photon + read noise per cadence.
         if hasattr(lc, 'flux_err') and lc.flux_err is not None:
             sector_flux_err = lc.flux_err.value.copy()
         else:
-            # Fallback: estimate from sqrt(|flux|) in raw counts
             sector_flux_err = np.sqrt(np.abs(lc.flux.value))
 
-        # Extract original median flux to properly scale the flux errors
         raw_median_flux = np.nanmedian(lc.flux.value)
+        if raw_median_flux == 0 or np.isnan(raw_median_flux):
+            continue
 
-        # Crowding/dilution correction via CROWDSAP
-        # CROWDSAP = fraction of flux in the aperture from the target star.
-        # If CROWDSAP < 1.0, the transit is diluted: observed_depth = true_depth * CROWDSAP.
-        # We correct by dividing the flux deviation from 1.0 by CROWDSAP.
+        # CROWDSAP = fraction of flux in aperture from target star
         crowdsap = 1.0
         if hasattr(lc, 'meta') and lc.meta is not None:
             crowdsap = lc.meta.get('CROWDSAP', 1.0)
             if crowdsap is None or not np.isfinite(crowdsap) or crowdsap <= 0:
                 crowdsap = 1.0
-        if crowdsap < 1.0:
-            print(f"  Sector {i}: Applying crowding correction (CROWDSAP={crowdsap:.4f})")
 
-        # Normalize by median flux
-        if raw_median_flux != 0 and not np.isnan(raw_median_flux):
-            lc = lc / raw_median_flux
-            sector_flux_err = sector_flux_err / raw_median_flux
+        # Mathematically exact undilution: F_undiluted = (F_obs / F_med - 1.0) / CROWDSAP + 1.0
+        raw_flux_val = np.asarray(lc.flux.value if hasattr(lc.flux, 'value') else lc.flux, dtype=float)
+        norm_flux = (raw_flux_val / raw_median_flux - 1.0) / crowdsap + 1.0
+        norm_err = np.asarray(sector_flux_err / raw_median_flux / crowdsap, dtype=float)
 
-        # Convert to plain ndarray to avoid astropy Quantity/masked-array
-        # compatibility issues with sigma_clip in astropy 6.x
-        flux_for_clip = np.array(lc.flux.value, dtype=float)
-        clipped_flux = sigma_clip(
-            flux_for_clip,
-            sigma_upper=5, sigma_lower=np.inf, masked=True
-        )
-        mask = ~clipped_flux.mask
-        
-        # Apply mask to LC
-        lc = lc[mask]
-        sector_flux_err = sector_flux_err[mask]
+        # Sigma clip extreme upward outliers (flares / cosmic rays) on plain float array
+        norm_flux_plain = np.array(norm_flux, dtype=float)
+        clipped = sigma_clip(norm_flux_plain, sigma_upper=5, sigma_lower=np.inf, masked=True)
+        valid_mask = ~np.asarray(clipped.mask, dtype=bool)
 
-        if len(lc) == 0:
+        norm_flux = norm_flux[valid_mask]
+        norm_err = norm_err[valid_mask]
+        time_sub = lc.time[valid_mask]
+
+        if len(norm_flux) == 0:
             continue
 
-        # Apply crowding correction: undilute the transit depth
-        # flux_corrected = 1.0 + (flux_observed - 1.0) / CROWDSAP
-        if crowdsap < 1.0:
-            flux_vals = lc.flux.value if hasattr(lc.flux, 'value') else np.asarray(lc.flux)
-            correction_factor = 1.0 + (flux_vals - 1.0) / crowdsap
-            # Apply correction
-            lc = lc * (correction_factor / flux_vals)
-            # Re-normalize just in case
-            flux_vals = lc.flux.value if hasattr(lc.flux, 'value') else np.asarray(lc.flux)
-            median_flux = np.nanmedian(flux_vals)
-            if median_flux != 0:
-                lc = lc / median_flux
-
-        processed_lcs.append(lc)
-        raw_flux_errs.append(sector_flux_err)
+        new_lc = lk.LightCurve(time=time_sub, flux=norm_flux, flux_err=norm_err)
+        processed_lcs.append(new_lc)
+        raw_flux_errs.append(norm_err)
 
     if not processed_lcs:
         return None, None, None
 
     stitched_lc = lk.LightCurveCollection(processed_lcs).stitch()
-
-    # Fix 1: stitch flux_err arrays in the same cadence order
     raw_flux_err = np.concatenate(raw_flux_errs)
 
-    print("Data ingestion, cleaning, and stitching complete.")
+    print(f"Data ingestion, cleaning, and stitching complete ({len(stitched_lc)} cadences across {len(processed_lcs)} sectors).")
     return stitched_lc, lc_collection, raw_flux_err
 
 
-def fetch_stellar_parameters(tic_id):
+def fetch_stellar_parameters(tic_id, lc=None):
     """
-    Fetches stellar parameters from the MAST TIC Catalog.
+    Fetches stellar parameters from the MAST TIC Catalog, NASA Exoplanet Archive,
+    or directly from the TESS FITS file primary header metadata.
 
     Parameters
     ----------
     tic_id : str or int
         The TIC ID (e.g., "TIC 25155310").
+    lc : lightkurve.LightCurve or None
+        Optional light curve object to extract FITS header metadata.
 
     Returns
     -------
     dict
-        Dictionary containing Rs, Ms, Teff, and their errors.
+        Dictionary containing Rs, Ms, Teff, logg, MH and their errors.
     """
-    # Clean string if it starts with "TIC"
     if isinstance(tic_id, str):
         clean_id = tic_id.replace("TIC", "").strip()
     else:
@@ -188,7 +189,6 @@ def fetch_stellar_parameters(tic_id):
 
     print(f"  Fetching stellar parameters for TIC {clean_id}...")
     
-    # Default fallback values
     stellar_params = {
         'Rs': 1.0, 'Rs_err': 0.1,
         'Ms': 1.0, 'Ms_err': 0.1,
@@ -198,111 +198,119 @@ def fetch_stellar_parameters(tic_id):
         'fallback_used': True
     }
 
+    # Step 1: Check if lc object or cached FITS file has stellar metadata in header
+    fits_meta = {}
+    if lc is not None and hasattr(lc, 'meta') and lc.meta is not None:
+        fits_meta = lc.meta
+    else:
+        # Check cached FITS files
+        import glob
+        cache_dir = os.path.expanduser("~/.lightkurve/cache/mastDownload/TESS")
+        pattern = os.path.join(cache_dir, f"**/*{clean_id}*lc.fits")
+        files = glob.glob(pattern, recursive=True)
+        if files:
+            try:
+                temp_lc = lk.read(files[0])
+                fits_meta = temp_lc.meta
+            except Exception:
+                pass
+
+    if fits_meta:
+        rad = fits_meta.get('RADIUS')
+        teff = fits_meta.get('TEFF')
+        logg = fits_meta.get('LOGG')
+        mh = fits_meta.get('MH')
+        mass = fits_meta.get('MASS')
+
+        if rad is not None and np.isfinite(rad) and rad > 0:
+            stellar_params['Rs'] = float(rad)
+            stellar_params['Rs_err'] = float(rad) * 0.05
+            stellar_params['fallback_used'] = False
+        if teff is not None and np.isfinite(teff) and teff > 0:
+            stellar_params['Teff'] = float(teff)
+            stellar_params['Teff_err'] = 100.0
+        if logg is not None and np.isfinite(logg) and logg > 0:
+            stellar_params['logg'] = float(logg)
+            stellar_params['logg_err'] = 0.05
+        if mh is not None and np.isfinite(mh):
+            stellar_params['MH'] = float(mh)
+            stellar_params['MH_err'] = 0.05
+        if mass is not None and np.isfinite(mass) and mass > 0:
+            stellar_params['Ms'] = float(mass)
+            stellar_params['Ms_err'] = float(mass) * 0.05
+        elif stellar_params['Rs'] > 0 and stellar_params['logg'] > 0:
+            # Estimate mass from logg and Rs: M = 10^(logg - 4.438) * Rs^2
+            calc_mass = 10.0**(stellar_params['logg'] - 4.438) * (stellar_params['Rs']**2)
+            if np.isfinite(calc_mass) and calc_mass > 0:
+                stellar_params['Ms'] = float(calc_mass)
+                stellar_params['Ms_err'] = float(calc_mass) * 0.05
+
+        if not stellar_params['fallback_used']:
+            print(f"  Loaded stellar properties from FITS metadata: Rs={stellar_params['Rs']:.3f} R_sun, Ms={stellar_params['Ms']:.3f} M_sun, Teff={stellar_params['Teff']:.0f} K, logg={stellar_params['logg']:.3f}")
+
+    # Step 2: Query MAST & NASA Exoplanet Archive for precise spectroscopic properties
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            # Query the TIC catalog
             catalog_data = Catalogs.query_criteria(catalog="Tic", ID=clean_id)
 
         if len(catalog_data) > 0:
             row = catalog_data[0]
-            
-            # Extract Radius from TIC
             if not np.ma.is_masked(row['rad']) and not np.isnan(row['rad']):
                 stellar_params['Rs'] = float(row['rad'])
                 stellar_params['fallback_used'] = False
-                err = float(row['e_rad']) if not np.ma.is_masked(row['e_rad']) else stellar_params['Rs'] * 0.1
-                stellar_params['Rs_err'] = abs(err) if not np.isnan(err) else stellar_params['Rs'] * 0.1
-            else:
-                print("  Warning: Stellar radius missing in TIC catalog. Using fallback 1.0 R_sun.")
-
-            # Extract Mass from TIC
+                err = float(row['e_rad']) if not np.ma.is_masked(row['e_rad']) else stellar_params['Rs'] * 0.05
+                stellar_params['Rs_err'] = abs(err) if not np.isnan(err) else stellar_params['Rs'] * 0.05
             if not np.ma.is_masked(row['mass']) and not np.isnan(row['mass']):
                 stellar_params['Ms'] = float(row['mass'])
-                err = float(row['e_mass']) if not np.ma.is_masked(row['e_mass']) else stellar_params['Ms'] * 0.1
-                stellar_params['Ms_err'] = abs(err) if not np.isnan(err) else stellar_params['Ms'] * 0.1
-            else:
-                print("  Warning: Stellar mass missing in TIC catalog. Using fallback 1.0 M_sun.")
-
-            # Extract Teff from TIC
+                err = float(row['e_mass']) if not np.ma.is_masked(row['e_mass']) else stellar_params['Ms'] * 0.05
+                stellar_params['Ms_err'] = abs(err) if not np.isnan(err) else stellar_params['Ms'] * 0.05
             if not np.ma.is_masked(row['Teff']) and not np.isnan(row['Teff']):
                 stellar_params['Teff'] = float(row['Teff'])
-                err = float(row['e_Teff']) if not np.ma.is_masked(row['e_Teff']) else 100.0
-                stellar_params['Teff_err'] = abs(err) if not np.isnan(err) else 100.0
-            else:
-                print("  Warning: Teff missing in TIC catalog. Using fallback 5778 K.")
-                
-            # Extract logg from TIC
             if 'logg' in row.colnames and not np.ma.is_masked(row['logg']) and not np.isnan(row['logg']):
                 stellar_params['logg'] = float(row['logg'])
-                err = float(row['e_logg']) if 'e_logg' in row.colnames and not np.ma.is_masked(row['e_logg']) else 0.1
-                stellar_params['logg_err'] = abs(err) if not np.isnan(err) else 0.1
-            else:
-                print("  Warning: logg missing in TIC catalog. Using fallback 4.438.")
-                
-            # Extract MH (metallicity) from TIC
             if 'MH' in row.colnames and not np.ma.is_masked(row['MH']) and not np.isnan(row['MH']):
                 stellar_params['MH'] = float(row['MH'])
-                err = float(row['e_MH']) if 'e_MH' in row.colnames and not np.ma.is_masked(row['e_MH']) else 0.1
-                stellar_params['MH_err'] = abs(err) if not np.isnan(err) else 0.1
-            else:
-                print("  Warning: MH (metallicity) missing in TIC catalog. Using fallback 0.0.")
-                
-            # Check for anomalous radius (e.g., > 2.0 for a dwarf) or specific target and cross-query NASA Archive
-            if stellar_params['Rs'] > 2.0 or clean_id == "25155310":
-                print(f"  Warning: Anomalous radius {stellar_params['Rs']} R_sun detected in TIC. Cross-querying NASA Exoplanet Archive...")
-                try:
-                    archive_table = NasaExoplanetArchive.query_criteria(
-                        table="pscomppars",
-                        select="st_rad,st_raderr1,st_mass,st_masserr1,st_teff,st_tefferr1,st_logg,st_loggerr1,st_met,st_meterr1",
-                        where=f"tic_id='TIC {clean_id}'"
-                    )
-                    if archive_table is not None and len(archive_table) > 0:
-                        tr = archive_table[0]
-                        def _to_float(v, default=np.nan):
-                            if v is None or np.ma.is_masked(v):
-                                return default
-                            val = getattr(v, 'value', v)
-                            return float(val) if not np.isnan(val) else default
-
-                        rad_val = _to_float(tr['st_rad'])
-                        if not np.isnan(rad_val):
-                            stellar_params['Rs'] = rad_val
-                            err_val = _to_float(tr['st_raderr1'])
-                            stellar_params['Rs_err'] = abs(err_val) if not np.isnan(err_val) else rad_val * 0.05
-
-                        mass_val = _to_float(tr['st_mass'])
-                        if not np.isnan(mass_val):
-                            stellar_params['Ms'] = mass_val
-                            err_val = _to_float(tr['st_masserr1'])
-                            stellar_params['Ms_err'] = abs(err_val) if not np.isnan(err_val) else mass_val * 0.05
-
-                        teff_val = _to_float(tr['st_teff'])
-                        if not np.isnan(teff_val):
-                            stellar_params['Teff'] = teff_val
-                            err_val = _to_float(tr['st_tefferr1'])
-                            stellar_params['Teff_err'] = abs(err_val) if not np.isnan(err_val) else 100.0
-
-                        if 'st_logg' in tr.colnames:
-                            logg_val = _to_float(tr['st_logg'])
-                            if not np.isnan(logg_val):
-                                stellar_params['logg'] = logg_val
-                                err_val = _to_float(tr['st_loggerr1'])
-                                stellar_params['logg_err'] = abs(err_val) if not np.isnan(err_val) else 0.1
-
-                        if 'st_met' in tr.colnames:
-                            mh_val = _to_float(tr['st_met'])
-                            if not np.isnan(mh_val):
-                                stellar_params['MH'] = mh_val
-                                err_val = _to_float(tr['st_meterr1'])
-                                stellar_params['MH_err'] = abs(err_val) if not np.isnan(err_val) else 0.1
-
-                        print(f"  Successfully updated stellar parameters from NASA Archive: Rs={stellar_params['Rs']} R_sun, Ms={stellar_params['Ms']} M_sun, Teff={stellar_params['Teff']} K, logg={stellar_params['logg']}, MH={stellar_params['MH']}")
-                except Exception as tap_err:
-                    print(f"  Warning: Archive cross-query failed ({tap_err}). Proceeding with TIC parameters.")
-        else:
-            print(f"  Warning: Target TIC {clean_id} not found in MAST catalogs. Using solar fallback.")
     except Exception as e:
-        print(f"  Error fetching stellar params: {e}. Using solar fallback.")
+        if stellar_params['fallback_used']:
+            print(f"  Warning: MAST catalog query failed ({e}). Using fallback.")
+
+    # Cross-query NASA Archive for confirmed systems or WASP targets
+    try:
+        archive_table = NasaExoplanetArchive.query_criteria(
+            table="pscomppars",
+            select="st_rad,st_raderr1,st_mass,st_masserr1,st_teff,st_tefferr1,st_logg,st_loggerr1,st_met,st_meterr1",
+            where=f"tic_id='TIC {clean_id}'"
+        )
+        if archive_table is not None and len(archive_table) > 0:
+            tr = archive_table[0]
+            def _to_float(v, default=np.nan):
+                if v is None or np.ma.is_masked(v): return default
+                val = getattr(v, 'value', v)
+                return float(val) if not np.isnan(val) else default
+
+            rad_val = _to_float(tr['st_rad'])
+            if not np.isnan(rad_val):
+                stellar_params['Rs'] = rad_val
+                stellar_params['fallback_used'] = False
+                err_val = _to_float(tr['st_raderr1'])
+                stellar_params['Rs_err'] = abs(err_val) if not np.isnan(err_val) else rad_val * 0.05
+            mass_val = _to_float(tr['st_mass'])
+            if not np.isnan(mass_val):
+                stellar_params['Ms'] = mass_val
+                err_val = _to_float(tr['st_masserr1'])
+                stellar_params['Ms_err'] = abs(err_val) if not np.isnan(err_val) else mass_val * 0.05
+            teff_val = _to_float(tr['st_teff'])
+            if not np.isnan(teff_val):
+                stellar_params['Teff'] = teff_val
+            if 'st_logg' in tr.colnames:
+                logg_val = _to_float(tr['st_logg'])
+                if not np.isnan(logg_val): stellar_params['logg'] = logg_val
+            if 'st_met' in tr.colnames:
+                mh_val = _to_float(tr['st_met'])
+                if not np.isnan(mh_val): stellar_params['MH'] = mh_val
+            print(f"  Loaded NASA Archive parameters: Rs={stellar_params['Rs']:.3f} R_sun, Ms={stellar_params['Ms']:.3f} M_sun, Teff={stellar_params['Teff']:.0f} K")
+    except Exception:
+        pass
 
     return stellar_params

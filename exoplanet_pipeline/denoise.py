@@ -86,7 +86,8 @@ def decompose_and_filter(lc, raw_flux_err=None, window_length=101):
     
     print(f"  Running fast BLS for transit-masked detrending ({len(time_bls)} binned points)...")
     model = BoxLeastSquares(time_bls, flux_bls)
-    period_grid = np.linspace(0.5, 30.0, 10000)
+    freq_grid = np.linspace(1.0 / 25.0, 1.0 / 0.5, 25000)
+    period_grid = 1.0 / freq_grid
     durations = np.array([0.05, 0.1, 0.15, 0.2])
     results = model.power(period_grid, durations)
     
@@ -103,39 +104,57 @@ def decompose_and_filter(lc, raw_flux_err=None, window_length=101):
     n_masked = np.sum(transit_mask)
     print(f"  Transit mask: {n_masked} cadences masked ({100*n_masked/n_cadences:.1f}%)")
 
-    # ---- Step 3: Fit baseline to out-of-transit data using scipy savgol ----
-    # This is MUCH faster than lightkurve's .flatten() because we use
-    # scipy.signal.savgol_filter directly, and we only need to handle
-    # the interpolation across masked transit windows ourselves.
-    print("  Fitting transit-masked baseline with Savitzky-Golay filter...")
+    # ---- Step 3: Segment-aware transit-masked baseline detrending ----
+    # Split light curve into contiguous segments across data gaps (gap > 0.5 days)
+    # This prevents savgol_filter from distorting the continuum across multi-week/year sector breaks.
+    print("  Fitting transit-masked baseline per contiguous sector segment...")
     
-    # Make the window length adapt to the cadence count
-    wl = min(301, n_cadences // 10)
-    if wl % 2 == 0:
-        wl += 1
-    wl = max(wl, 5)
+    dt = np.diff(time_orig)
+    gap_indices = np.where(dt > 0.5)[0] + 1
+    segment_splits = np.split(np.arange(n_cadences), gap_indices)
     
-    # Copy flux, replace transit cadences with NaN for the baseline fit
-    flux_for_baseline = flux_orig.copy()
-    flux_for_baseline[transit_mask] = np.nan
+    baseline = np.ones(n_cadences, dtype=float)
     
-    # Interpolate NaN gaps so savgol_filter can run without NaN issues
-    nan_mask = np.isnan(flux_for_baseline)
-    if np.any(nan_mask) and not np.all(nan_mask):
-        flux_for_baseline[nan_mask] = np.interp(
-            time_orig[nan_mask], time_orig[~nan_mask], flux_for_baseline[~nan_mask]
-        )
+    for seg_idx in segment_splits:
+        if len(seg_idx) < 10:
+            baseline[seg_idx] = np.nanmedian(flux_orig[seg_idx])
+            continue
+            
+        t_seg = time_orig[seg_idx]
+        f_seg = flux_orig[seg_idx].copy()
+        m_seg = transit_mask[seg_idx]
+        
+        # Mask transits in this segment
+        f_seg[m_seg] = np.nan
+        nan_m = np.isnan(f_seg)
+        
+        if np.all(nan_m):
+            baseline[seg_idx] = np.nanmedian(flux_orig[seg_idx])
+            continue
+            
+        if np.any(nan_m):
+            f_seg[nan_m] = np.interp(t_seg[nan_m], t_seg[~nan_m], f_seg[~nan_m])
+            
+        # Determine appropriate window length for this segment
+        wl_seg = min(301, len(seg_idx) // 2)
+        if wl_seg % 2 == 0:
+            wl_seg += 1
+        wl_seg = max(wl_seg, 7)
+        
+        if len(seg_idx) > wl_seg:
+            seg_base = savgol_filter(f_seg, window_length=wl_seg, polyorder=2)
+        else:
+            seg_base = np.full(len(seg_idx), np.nanmedian(f_seg))
+            
+        baseline[seg_idx] = seg_base
     
-    # Apply savgol filter to get the smooth baseline trend
-    baseline = savgol_filter(flux_for_baseline, window_length=wl, polyorder=2)
-    
-    # Divide out the baseline to get the detrended light curve
+    # Avoid divide-by-zero
+    baseline[baseline <= 0] = 1.0
     detrended_flux = flux_orig / baseline
     
     # Build a new LightCurve with the detrended flux
     import lightkurve as lk_mod
     filtered_lc = lk_mod.LightCurve(time=lc.time, flux=detrended_flux, flux_err=lc.flux_err)
-    
     residual_flux = detrended_flux - 1.0
 
     noise_stats = {

@@ -126,6 +126,13 @@ class MLVetter:
         if depth_diff > 0.005:
             flags.append(f"FAILED_ODD_EVEN_DEPTH (diff={depth_diff:.5f} > 0.005)")
             
+        rp_earth = float(features_dict.get('rp_earth', 0.0))
+        depth_val = float(features_dict.get('depth', 0.0))
+        if rp_earth > 25.0:
+            flags.append(f"FAILED_STELLAR_RADIUS (Rp={rp_earth:.1f} R_earth > 25.0 R_earth / Eclipsing Binary)")
+        elif depth_val > 0.03:
+            flags.append(f"FAILED_STELLAR_DEPTH (depth={depth_val:.4f} > 3.0% / Eclipsing Binary)")
+            
         # Hard Physical Veto / Calibration:
         # Spatial centroid shift is a definitive physical veto indicating a blended false positive
         if centroid_shift >= self.centroid_threshold:
