@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "exo_gargantua"
+version = "0.2.0"
+description = "A pipeline for exoplanet transit detection and validation"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+  { name = "Your Name", email = "you@example.com" }
+]
+dependencies = [
+    "lightkurve",
+    "batman-package",
+    "emcee",
+    "scikit-learn",
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "astropy",
+    "astroquery"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.setuptools]
+packages = ["exoplanet_pipeline"]

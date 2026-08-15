@@ -123,6 +123,7 @@ def run_validation(pipeline_func=None):
         'false_negatives': 0,
         'true_negatives': 0,
         'false_positives_detected': 0,
+        'errors': 0,
     }
 
     # Test confirmed planets (should PASS vetting)
@@ -210,9 +211,9 @@ def run_validation(pipeline_func=None):
 
         except Exception as e:
             print(f"  ERROR processing {tic_id}: {e}")
-            results['false_negatives'] += 1
+            results['errors'] += 1
             results['confirmed_results'].append({
-                'target': tic_id, 'passed': False, 'reason': str(e)
+                'target': tic_id, 'passed': False, 'reason': f"ERROR: {str(e)}"
             })
 
     # Test false positives (should FAIL vetting)
@@ -268,19 +269,18 @@ def run_validation(pipeline_func=None):
 
         except Exception as e:
             print(f"  ERROR processing {tic_id}: {e}")
-            # If pipeline crashes on an FP, count it as "detected"
-            # (it didn't pass as a planet)
-            results['true_negatives'] += 1
+            # Do not count as TN or FP, just register as an error
+            results['errors'] += 1
             results['fp_results'].append({
-                'target': tic_id, 'correctly_flagged': True,
-                'reason': f'Pipeline error: {e}'
+                'target': tic_id, 'correctly_flagged': False,
+                'reason': f'ERROR: {e}'
             })
 
-    # Print confusion matrix summary
     tp = results['true_positives']
     fn = results['false_negatives']
     tn = results['true_negatives']
     fp = results['false_positives_detected']
+    errs = results.get('errors', 0)
 
     print("\n" + "=" * 60)
     print("CONFUSION MATRIX SUMMARY")
@@ -293,7 +293,8 @@ def run_validation(pipeline_func=None):
 
     Sensitivity (TPR):  {tp / max(tp + fn, 1):.2f}
     Specificity (TNR):  {tn / max(tn + fp, 1):.2f}
-    Total targets tested: {tp + fn + tn + fp}
+    Total targets tested (end-to-end): {tp + fn + tn + fp}
+    Errors / Crashes: {errs}
     """)
 
     return results
