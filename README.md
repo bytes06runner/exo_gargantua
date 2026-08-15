@@ -2,10 +2,11 @@
 
 <div align="center">
 
+[![PyPI version](https://badge.fury.io/py/exo-gargantua.svg)](https://pypi.org/project/exo-gargantua/)
 [![Python Tests](https://github.com/bytes06runner/exo_gargantua/actions/workflows/test.yml/badge.svg)](https://github.com/bytes06runner/exo_gargantua/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11-blue.svg)](https://www.python.org/)
-[![Status](https://img.shields.io/badge/Status-v2.0%20Production-success.svg)]()
+[![Status](https://img.shields.io/badge/Status-v0.1.0%20Production-success.svg)]()
 
 **An end-to-end Machine Learning and Bayesian astrophysical framework for automated detection, pixel-level Difference Image Analysis (DIA) vetting, and MCMC parameter estimation of transiting exoplanets from TESS observations.**
 
@@ -176,7 +177,12 @@ The complete end-to-end pipeline was executed on benchmark target **TIC 25155310
 - Python $\ge 3.9, \le 3.11$
 - Git
 
-### Installation via `pyproject.toml`
+### Quick Install via PyPI
+```bash
+pip install exo-gargantua
+```
+
+### Development Installation from Source
 ```bash
 # 1. Clone the repository
 git clone https://github.com/bytes06runner/exo_gargantua.git
