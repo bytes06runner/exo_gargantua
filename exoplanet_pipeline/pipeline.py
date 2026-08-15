@@ -177,8 +177,34 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
         )
         results['centroid_results'] = centroid_results
     else:
-        results['centroid_results'] = {'centroid_vetting_passed': True,
-                                        'skipped': True}
+        centroid_results = {'centroid_vetting_passed': True,
+                            'skipped': True}
+        results['centroid_results'] = centroid_results
+
+    # Fix 6 (Phase 3): ML Vetting Classifier
+    print(f"\n  --- ML Vetting ---")
+    try:
+        from exoplanet_pipeline.ml_vetting import MLVetter
+        import os
+        
+        # We need a trained model. If not present, we can just skip or warn.
+        model_path = 'ml_vetter.joblib'
+        if os.path.exists(model_path):
+            vetter = MLVetter.load(model_path)
+            features = {
+                'bls_power': float(bls_results['snr'].value),
+                'depth_diff': float(vetting_results.get('depth_diff', 0)),
+                'secondary_eclipse_sigma': float(vetting_results.get('secondary_eclipse_sigma', 0)),
+                'centroid_shift': float(centroid_results.get('centroid_shift', 0) if not np.isnan(centroid_results.get('centroid_shift', 0)) else 0),
+                'snr': float(tsnr)
+            }
+            prob = vetter.predict(features)
+            results['ml_vetting_score'] = prob
+            print(f"  ML Vetting Probability (Planet): {prob:.2%}")
+        else:
+            print("  ml_vetter.joblib not found. Run ml_vetting.py to train it.")
+    except Exception as e:
+        print(f"  Failed to run ML vetting: {e}")
 
     # ========================================
     # PHASE 4: MCMC Parameter Estimation
@@ -265,8 +291,11 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
     
     if run_centroid and 'centroid_shift' in centroid_results:
         shift = centroid_results['centroid_shift']
-        passed = centroid_results['centroid_vetting_passed']
+        passed = centroid_results.get('centroid_vetting_passed', False)
         print(f"  Centroid shift: {shift:.4f} pix (passed: {passed})")
+
+    if 'ml_vetting_score' in results:
+        print(f"  ML Score (Probability of Planet): {results['ml_vetting_score']:.2%}")
 
     if posteriors:
         print(f"  MCMC posteriors available for: {list(posteriors.keys())}")
