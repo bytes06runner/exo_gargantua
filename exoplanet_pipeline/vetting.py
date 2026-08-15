@@ -219,24 +219,19 @@ def run_centroid_vetting(target_star_id, period, t0, duration):
     """
     Fix 3: Pixel-level centroid vetting to detect blended false positives.
 
-    Downloads target pixel files (TPFs) from TESS SPOC, computes
-    flux-weighted centroid positions per cadence, and compares the
-    mean centroid during in-transit cadences vs out-of-transit cadences.
-
-    A significant centroid shift during transit indicates the dimming
-    source is offset from the target star — a hallmark of a background
-    eclipsing binary blended in the photometric aperture.
+    Downloads target pixel files (TPF). Creates an out-of-transit reference
+    frame (median/mean of out-of-transit cadences). Subtracts it from the 
+    in-transit frames (or their mean). Measures the flux center of the 
+    residual image. If the residual flux centroid is offset from the target 
+    star's coordinates, it flags it as a background eclipsing binary.
 
     Method
     ------
-    For each cadence, the flux-weighted centroid is:
-        col_centroid = Σ(flux * col_index) / Σ(flux)
-        row_centroid = Σ(flux * row_index) / Σ(flux)
-    where the sum is over all pixels in the TPF aperture.
-
-    In-transit cadences are those within duration/2 of any predicted
-    transit time (given period and t0). The shift is the Euclidean
-    distance between the mean in-transit and out-of-transit centroids.
+    1. Average all out-of-transit cadences to form the `reference_frame`.
+    2. Average all in-transit cadences to form the `in_transit_frame`.
+    3. Calculate `residual_image = reference_frame - in_transit_frame`.
+    4. Find the flux-weighted centroid of the `residual_image`.
+    5. Compare this position to the centroid of the `reference_frame`.
 
     Parameters
     ----------
@@ -410,22 +405,43 @@ def run_centroid_vetting(target_star_id, period, t0, duration):
             'error': 'Insufficient cadences'
         }
 
-    mean_col_in = np.nanmean(all_col_in)
-    mean_row_in = np.nanmean(all_row_in)
-    mean_col_out = np.nanmean(all_col_out)
-    mean_row_out = np.nanmean(all_row_out)
+    # DIA Method:
+    # 1. Create mean frames
+    ref_frame = out_frames_sum / n_out_frames
+    in_frame = in_frames_sum / n_in_frames
+    
+    # 2. Residual image (light that disappeared during transit)
+    residual_image = ref_frame - in_frame
+    
+    # 3. Compute centroid of reference frame
+    ref_flux = np.nansum(ref_frame)
+    if ref_flux > 0:
+        ref_col = np.nansum(ref_frame * col_grid) / ref_flux
+        ref_row = np.nansum(ref_frame * row_grid) / ref_flux
+    else:
+        ref_col, ref_row = np.nan, np.nan
+        
+    # 4. Compute centroid of residual image
+    # Note: clip negative values in residual image to reduce noise impact
+    res_clean = np.where(residual_image > 0, residual_image, 0)
+    res_flux = np.nansum(res_clean)
+    if res_flux > 0:
+        res_col = np.nansum(res_clean * col_grid) / res_flux
+        res_row = np.nansum(res_clean * row_grid) / res_flux
+    else:
+        res_col, res_row = np.nan, np.nan
+        
+    if np.isnan(ref_col) or np.isnan(res_col):
+        shift = np.nan
+        passed = False
+    else:
+        shift = np.sqrt((res_col - ref_col)**2 + (res_row - ref_row)**2)
+        passed = shift < SHIFT_THRESHOLD
 
-    shift = np.sqrt(
-        (mean_col_in - mean_col_out)**2 + (mean_row_in - mean_row_out)**2
-    )
-    passed = shift < SHIFT_THRESHOLD
-
-    print(f"  Centroid shift: {shift:.4f} pixels "
+    print(f"  Centroid shift (DIA): {shift:.4f} pixels "
           f"(threshold: {SHIFT_THRESHOLD:.3f} pix)")
-    print(f"  In-transit centroid:  col={mean_col_in:.4f}, row={mean_row_in:.4f} "
-          f"({n_in} cadences)")
-    print(f"  Out-of-transit centroid: col={mean_col_out:.4f}, row={mean_row_out:.4f} "
-          f"({n_out} cadences)")
+    print(f"  Reference centroid (star): col={ref_col:.4f}, row={ref_row:.4f}")
+    print(f"  Residual centroid (dip):   col={res_col:.4f}, row={res_row:.4f}")
 
     if passed:
         print("  --- CENTROID VETTING PASSED: No significant centroid shift. ---")
@@ -439,14 +455,15 @@ def run_centroid_vetting(target_star_id, period, t0, duration):
         'centroid_vetting_passed': passed,
         'n_in_transit': n_in,
         'n_out_transit': n_out,
-        'mean_col_in': mean_col_in,
-        'mean_row_in': mean_row_in,
-        'mean_col_out': mean_col_out,
-        'mean_row_out': mean_row_out
+        'ref_col': ref_col,
+        'ref_row': ref_row,
+        'res_col': res_col,
+        'res_row': res_row
     }
 
     if n_in_frames > 0 and n_out_frames > 0:
-        result['in_transit_img'] = in_frames_sum / n_in_frames
-        result['out_transit_img'] = out_frames_sum / n_out_frames
+        result['in_transit_img'] = in_frame
+        result['out_transit_img'] = ref_frame
+        result['residual_img'] = residual_image
 
     return result

@@ -189,9 +189,12 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
         print(f"{'='*60}")
 
         try:
+            stellar_params = fetch_stellar_parameters(target_star_id)
+            results['stellar_params'] = stellar_params
+            
             posteriors, sampler = run_mcmc_estimation(
-                filtered_lc, bls_results, raw_flux_err=raw_flux_err,
-                n_steps=n_mcmc_steps
+                filtered_lc, bls_results, stellar_params=stellar_params,
+                raw_flux_err=raw_flux_err, n_steps=n_mcmc_steps
             )
             results['posteriors'] = posteriors
             results['sampler'] = sampler
@@ -209,8 +212,12 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
     # ========================================
     # PHASE 4b: Physical Parameters
     # ========================================
-    stellar_params = fetch_stellar_parameters(target_star_id)
-    results['stellar_params'] = stellar_params
+    # stellar_params already fetched if run_mcmc was True
+    if 'stellar_params' not in results:
+        stellar_params = fetch_stellar_parameters(target_star_id)
+        results['stellar_params'] = stellar_params
+    else:
+        stellar_params = results['stellar_params']
 
     derived_params = None
     if posteriors is not None:

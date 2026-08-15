@@ -19,7 +19,7 @@ import batman
 import emcee
 
 
-def _batman_model(time, period, t0, rp_rs, a_rs, inc, baseline=1.0):
+def _batman_model(time, period, t0, rp_rs, a_rs, inc, ld_coeffs, baseline=1.0):
     """
     Compute a batman transit model light curve.
 
@@ -37,6 +37,8 @@ def _batman_model(time, period, t0, rp_rs, a_rs, inc, baseline=1.0):
         Semi-major axis to stellar radius ratio a/Rs.
     inc : float
         Orbital inclination in degrees.
+    ld_coeffs : list
+        Quadratic limb darkening coefficients [u1, u2].
     baseline : float
         Out-of-transit flux level (default 1.0 for normalized data).
 
@@ -53,7 +55,7 @@ def _batman_model(time, period, t0, rp_rs, a_rs, inc, baseline=1.0):
     params.inc = inc
     params.ecc = 0.0
     params.w = 90.0
-    params.u = [0.3, 0.1]  # quadratic limb darkening (typical for TESS band)
+    params.u = ld_coeffs
     params.limb_dark = "quadratic"
 
     m = batman.TransitModel(params, time)
@@ -61,10 +63,10 @@ def _batman_model(time, period, t0, rp_rs, a_rs, inc, baseline=1.0):
     return flux
 
 
-def _log_likelihood(theta, time, flux, flux_err):
+def _log_likelihood(theta, time, flux, flux_err, ld_coeffs):
     """Gaussian log-likelihood for transit model fit."""
     period, t0, rp_rs, a_rs, inc = theta
-    model = _batman_model(time, period, t0, rp_rs, a_rs, inc)
+    model = _batman_model(time, period, t0, rp_rs, a_rs, inc, ld_coeffs)
     residuals = flux - model
     chi2 = np.sum((residuals / flux_err) ** 2)
     log_norm = -0.5 * np.sum(np.log(2 * np.pi * flux_err ** 2))
@@ -105,18 +107,18 @@ def _log_prior(theta, period_init, t0_init):
     return 0.0
 
 
-def _log_probability(theta, time, flux, flux_err, period_init, t0_init):
+def _log_probability(theta, time, flux, flux_err, period_init, t0_init, ld_coeffs):
     """Log-posterior = log-prior + log-likelihood."""
     lp = _log_prior(theta, period_init, t0_init)
     if not np.isfinite(lp):
         return -np.inf
-    ll = _log_likelihood(theta, time, flux, flux_err)
+    ll = _log_likelihood(theta, time, flux, flux_err, ld_coeffs)
     if not np.isfinite(ll):
         return -np.inf
     return lp + ll
 
 
-def run_mcmc_estimation(lc, bls_results, raw_flux_err=None,
+def run_mcmc_estimation(lc, bls_results, raw_flux_err=None, stellar_params=None,
                         n_walkers=32, n_steps=2000, burn_in=500):
     """
     Runs MCMC parameter estimation on transit parameters using batman
@@ -152,6 +154,30 @@ def run_mcmc_estimation(lc, bls_results, raw_flux_err=None,
         The sampler object (for diagnostics, corner plots, etc.).
     """
     print("  Starting MCMC parameter estimation...")
+
+    # Fix 2: Dynamically compute limb darkening
+    ld_coeffs = [0.3, 0.1] # Fallback
+    if stellar_params is not None and not stellar_params.get('fallback_used', False):
+        try:
+            from ldtk import LDPSetCreator, BoxcarFilter
+            import warnings
+            with warnings.catch_warnings():
+                warnings.simplefilter('ignore')
+                tess_filter = BoxcarFilter('TESS', 600, 1000)
+                sc = LDPSetCreator(
+                    teff=(stellar_params.get('Teff', 5778.0), stellar_params.get('Teff_err', 100.0)), 
+                    logg=(stellar_params.get('logg', 4.438), stellar_params.get('logg_err', 0.1)), 
+                    z=(stellar_params.get('MH', 0.0), stellar_params.get('MH_err', 0.1)), 
+                    filters=[tess_filter]
+                )
+                ps = sc.create_profiles()
+                qc, _ = ps.coeffs_qd(do_mc=True)
+                ld_coeffs = [float(qc[0][0]), float(qc[0][1])]
+            print(f"  Dynamically computed limb darkening coefficients (ldtk): u1={ld_coeffs[0]:.4f}, u2={ld_coeffs[1]:.4f}")
+        except ImportError:
+            print("  Warning: ldtk not installed. Using fallback limb darkening [0.3, 0.1].")
+        except Exception as e:
+            print(f"  Warning: failed to compute dynamic limb darkening with ldtk: {e}. Using fallback.")
 
     # Extract BLS seed values
     period_init = float(bls_results['period'].value)
@@ -234,7 +260,7 @@ def run_mcmc_estimation(lc, bls_results, raw_flux_err=None,
     # Run MCMC
     sampler = emcee.EnsembleSampler(
         n_walkers, n_dim, _log_probability,
-        args=(time_fit, flux_fit, flux_err_fit, period_init, t0_init)
+        args=(time_fit, flux_fit, flux_err_fit, period_init, t0_init, ld_coeffs)
     )
 
     print(f"  Running {n_steps} MCMC steps with {n_walkers} walkers...")

@@ -193,6 +193,8 @@ def fetch_stellar_parameters(tic_id):
         'Rs': 1.0, 'Rs_err': 0.1,
         'Ms': 1.0, 'Ms_err': 0.1,
         'Teff': 5778.0, 'Teff_err': 100.0,
+        'logg': 4.438, 'logg_err': 0.1,
+        'MH': 0.0, 'MH_err': 0.1,
         'fallback_used': True
     }
 
@@ -230,13 +232,29 @@ def fetch_stellar_parameters(tic_id):
             else:
                 print("  Warning: Teff missing in TIC catalog. Using fallback 5778 K.")
                 
+            # Extract logg from TIC
+            if 'logg' in row.colnames and not np.ma.is_masked(row['logg']) and not np.isnan(row['logg']):
+                stellar_params['logg'] = float(row['logg'])
+                err = float(row['e_logg']) if 'e_logg' in row.colnames and not np.ma.is_masked(row['e_logg']) else 0.1
+                stellar_params['logg_err'] = abs(err) if not np.isnan(err) else 0.1
+            else:
+                print("  Warning: logg missing in TIC catalog. Using fallback 4.438.")
+                
+            # Extract MH (metallicity) from TIC
+            if 'MH' in row.colnames and not np.ma.is_masked(row['MH']) and not np.isnan(row['MH']):
+                stellar_params['MH'] = float(row['MH'])
+                err = float(row['e_MH']) if 'e_MH' in row.colnames and not np.ma.is_masked(row['e_MH']) else 0.1
+                stellar_params['MH_err'] = abs(err) if not np.isnan(err) else 0.1
+            else:
+                print("  Warning: MH (metallicity) missing in TIC catalog. Using fallback 0.0.")
+                
             # Check for anomalous radius (e.g., > 2.0 for a dwarf) or specific target and cross-query NASA Archive
             if stellar_params['Rs'] > 2.0 or clean_id == "25155310":
                 print(f"  Warning: Anomalous radius {stellar_params['Rs']} R_sun detected in TIC. Cross-querying NASA Exoplanet Archive...")
                 try:
                     archive_table = NasaExoplanetArchive.query_criteria(
                         table="pscomppars",
-                        select="st_rad,st_raderr1,st_mass,st_masserr1,st_teff,st_tefferr1",
+                        select="st_rad,st_raderr1,st_mass,st_masserr1,st_teff,st_tefferr1,st_logg,st_loggerr1,st_met,st_meterr1",
                         where=f"tic_id='TIC {clean_id}'"
                     )
                     if archive_table is not None and len(archive_table) > 0:
@@ -265,7 +283,21 @@ def fetch_stellar_parameters(tic_id):
                             err_val = _to_float(tr['st_tefferr1'])
                             stellar_params['Teff_err'] = abs(err_val) if not np.isnan(err_val) else 100.0
 
-                        print(f"  Successfully updated stellar parameters from NASA Archive: Rs={stellar_params['Rs']} R_sun, Ms={stellar_params['Ms']} M_sun, Teff={stellar_params['Teff']} K")
+                        if 'st_logg' in tr.colnames:
+                            logg_val = _to_float(tr['st_logg'])
+                            if not np.isnan(logg_val):
+                                stellar_params['logg'] = logg_val
+                                err_val = _to_float(tr['st_loggerr1'])
+                                stellar_params['logg_err'] = abs(err_val) if not np.isnan(err_val) else 0.1
+
+                        if 'st_met' in tr.colnames:
+                            mh_val = _to_float(tr['st_met'])
+                            if not np.isnan(mh_val):
+                                stellar_params['MH'] = mh_val
+                                err_val = _to_float(tr['st_meterr1'])
+                                stellar_params['MH_err'] = abs(err_val) if not np.isnan(err_val) else 0.1
+
+                        print(f"  Successfully updated stellar parameters from NASA Archive: Rs={stellar_params['Rs']} R_sun, Ms={stellar_params['Ms']} M_sun, Teff={stellar_params['Teff']} K, logg={stellar_params['logg']}, MH={stellar_params['MH']}")
                 except Exception as tap_err:
                     print(f"  Warning: Archive cross-query failed ({tap_err}). Proceeding with TIC parameters.")
         else:
