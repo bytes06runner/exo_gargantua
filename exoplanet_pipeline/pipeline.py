@@ -183,11 +183,11 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
 
     # Fix 6 (Phase 3): ML Vetting Classifier
     print(f"\n  --- ML Vetting ---")
+    ml_results = {}
     try:
         from exoplanet_pipeline.ml_vetting import MLVetter
         import os
         
-        # We need a trained model. If not present, we can just skip or warn.
         model_path = 'ml_vetter.joblib'
         if os.path.exists(model_path):
             vetter = MLVetter.load(model_path)
@@ -198,9 +198,14 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
                 'centroid_shift': float(centroid_results.get('centroid_shift', 0) if not np.isnan(centroid_results.get('centroid_shift', 0)) else 0),
                 'snr': float(tsnr)
             }
-            prob = vetter.predict(features)
-            results['ml_vetting_score'] = prob
-            print(f"  ML Vetting Probability (Planet): {prob:.2%}")
+            ml_pred = vetter.predict(features)
+            ml_results = ml_pred
+            results['ml_vetting'] = ml_pred
+            results['ml_vetting_score'] = ml_pred['planet_probability']
+            print(f"  ML Vetting Probability (Planet): {ml_pred['planet_probability']:.2%} ({ml_pred['disposition']})")
+            if ml_pred['flags']:
+                for flag in ml_pred['flags']:
+                    print(f"    -> Flag: {flag}")
         else:
             print("  ml_vetter.joblib not found. Run ml_vetting.py to train it.")
     except Exception as e:
@@ -228,8 +233,6 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
             print(f"  MCMC failed: {e}")
             results['posteriors'] = None
             results['mcmc_error'] = str(e)
-            
-            # Use dummy posteriors for reporting if MCMC fails
             posteriors = None
     else:
         posteriors = None
@@ -238,7 +241,6 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
     # ========================================
     # PHASE 4b: Physical Parameters
     # ========================================
-    # stellar_params already fetched if run_mcmc was True
     if 'stellar_params' not in results:
         stellar_params = fetch_stellar_parameters(target_star_id)
         results['stellar_params'] = stellar_params
@@ -267,7 +269,8 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
             vetting_results, 
             centroid_results if run_centroid else {}, 
             posteriors, 
-            derived_params
+            derived_params,
+            ml_results=ml_results
         )
         
         generate_publication_figure(
@@ -284,7 +287,7 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
     
     print(f"  TSNR:       {tsnr:.2f}")
     if confidence_final is not None:
-        print(f"  Confidence: {confidence_final:.4f}")
+        print(f"  Detection Confidence (FAP): {confidence_final:.4f}")
     print(f"  Depth:      {depth:.6f}")
     print(f"  Odd/Even diff: {vetting_results.get('depth_diff', 0):.5f}")
     print(f"  Secondary eclipse: {vetting_results.get('secondary_eclipse_sigma', 0):.2f}σ")
@@ -294,8 +297,10 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
         passed = centroid_results.get('centroid_vetting_passed', False)
         print(f"  Centroid shift: {shift:.4f} pix (passed: {passed})")
 
-    if 'ml_vetting_score' in results:
-        print(f"  ML Score (Probability of Planet): {results['ml_vetting_score']:.2%}")
+    if 'ml_vetting' in results and results['ml_vetting']:
+        ml_p = results['ml_vetting']['planet_probability']
+        disp = results['ml_vetting']['disposition']
+        print(f"  ML Vetting Score (Planet Probability): {ml_p:.2%} -> Disposition: {disp}")
 
     if posteriors:
         print(f"  MCMC posteriors available for: {list(posteriors.keys())}")

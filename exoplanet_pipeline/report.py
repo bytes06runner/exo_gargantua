@@ -19,7 +19,7 @@ class NumpyEncoder(json.JSONEncoder):
             return float(obj) if not np.ma.is_masked(obj) else None
         return super().default(obj)
 
-def generate_summary_report(tic_id, bls_results, vetting_results, centroid_results, mcmc_posteriors, derived_params, output_dir="output"):
+def generate_summary_report(tic_id, bls_results, vetting_results, centroid_results, mcmc_posteriors, derived_params, ml_results=None, output_dir="output"):
     """
     Exports a JSON summary of all pipeline outputs.
     """
@@ -43,6 +43,7 @@ def generate_summary_report(tic_id, bls_results, vetting_results, centroid_resul
             'shift_pixels': centroid_results.get('centroid_shift'),
             'passed': centroid_results.get('centroid_vetting_passed')
         },
+        'ml_vetting': ml_results if ml_results is not None else {},
         'mcmc_posteriors': mcmc_posteriors,
         'derived_physical_parameters': derived_params
     }
