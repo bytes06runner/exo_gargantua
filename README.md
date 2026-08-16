@@ -6,7 +6,7 @@
 [![Python Tests](https://github.com/bytes06runner/exo_gargantua/actions/workflows/test.yml/badge.svg)](https://github.com/bytes06runner/exo_gargantua/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11-blue.svg)](https://www.python.org/)
-[![Status](https://img.shields.io/badge/Status-v0.1.3%20Production-success.svg)]()
+[![Status](https://img.shields.io/badge/Status-v0.1.4%20Production-success.svg)]()
 
 **An end-to-end Machine Learning and Bayesian astrophysical framework for automated detection, pixel-level Difference Image Analysis (DIA) vetting, and MCMC parameter estimation of transiting exoplanets from TESS observations.**
 
@@ -195,6 +195,19 @@ To demonstrate rigorous rejection of astrophysical false positives, the pipeline
   -> Reclassified disposition: FALSE_POSITIVE (Eclipsing Binary / Stellar Companion)
   ```
 - **Final Disposition**: **`FALSE_POSITIVE`** (`0.00%` planet probability) | Summary: [`output/TIC_279999655_summary.json`](output/TIC_279999655_summary.json)
+
+---
+
+### 3. Multi-Target Validation Suite
+
+| Target ID | Object Name / Status | Orbital Period ($P$) | Impact Param ($b$) | BLS Depth | MCMC Depth | Ratio | Fitted $R_p$ ($R_\oplus$) | Vetting Disposition |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **TIC 25155310** | WASP-126 b (Confirmed Planet) | `3.28879 d` | `0.07` | `0.557%` | `0.596%` | `1.07x` | **`10.70 ± 0.53`** | **`CANDIDATE`** ($100\%$) |
+| **TIC 281408474** | TOI-628 b (Confirmed Planet) | `3.40945 d` | `0.34` | `0.572%` | `0.571%` | `1.00x` | **`11.42 ± 0.55`** | **`CANDIDATE`** ($100\%$) |
+| **TIC 229536616** | TOI-1297.01 (Planet Candidate) | `3.93056 d` | `0.32` | `0.528%` | `0.533%` | `1.01x` | **`10.94 ± 0.57`** | **`CANDIDATE`** ($100\%$) |
+| **TIC 367099243** | TOI-1365.01 (TFOP `FP` / Grazing EB) | `1.82842 d` | `0.92` | `0.362%` | `0.537%` | `1.50x` | **`9.85 ± 0.41`** | **`AMBIGUOUS`** ($50\%$) |
+| **TIC 41330864** | TOI-1168.01 (TFOP `FP` / Grazing EB) | `2.13581 d` | `0.96` | `0.918%` | `2.145%` | `2.34x` | **`23.86 ± 4.80`** | **`AMBIGUOUS`** ($50\%$) |
+| **TIC 279999655** | TOI-959.01 (TFOP `FP` / EB Companion)| `1.54097 d` | `1.10` | `0.654%` | `4.954%` | `7.57x` | **`59.58 ± 7.29`** | **`FALSE_POSITIVE`** ($0\%$) |
 
 > [!NOTE]
 > **Known Vetting Limitations & Astrophysical Caveats:**
