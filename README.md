@@ -6,7 +6,7 @@
 [![Python Tests](https://github.com/bytes06runner/exo_gargantua/actions/workflows/test.yml/badge.svg)](https://github.com/bytes06runner/exo_gargantua/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11-blue.svg)](https://www.python.org/)
-[![Status](https://img.shields.io/badge/Status-v0.1.2%20Production-success.svg)]()
+[![Status](https://img.shields.io/badge/Status-v0.1.3%20Production-success.svg)]()
 
 **An end-to-end Machine Learning and Bayesian astrophysical framework for automated detection, pixel-level Difference Image Analysis (DIA) vetting, and MCMC parameter estimation of transiting exoplanets from TESS observations.**
 
