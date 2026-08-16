@@ -259,22 +259,60 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
             derived_params = derive_physical_parameters(posteriors, stellar_params)
             results['derived_physical_parameters'] = derived_params
             
-            # Post-MCMC astrophysical consistency check:
-            # Physical planetary radius ceiling (Guillot 2005): Planets cannot exceed ~2.0-2.5 R_Jup (25 R_earth).
-            # Objects with Rp > 25 R_earth are low-mass stellar/brown dwarf eclipsing binaries.
-            rp_earth_val = float(derived_params['Rp_earth'][0])
-            if rp_earth_val > 25.0:
-                if 'flags' not in ml_results:
-                    ml_results['flags'] = []
-                flag_str = f"FAILED_PLANETARY_RADIUS_CEILING (Rp={rp_earth_val:.1f} R_earth > 25.0 R_earth, Eclipsing Binary Companion)"
+            if 'flags' not in ml_results:
+                ml_results['flags'] = []
+
+            # 1. Uncertainty-Aware Planetary Radius Veto (Guillot 2005):
+            # Maximum physical radius of hydrogen-helium exoplanets is ~2.0-2.5 R_Jup (25.0 R_earth).
+            rp_med = float(derived_params['Rp_earth'][0])
+            rp_neg = float(derived_params['Rp_earth'][1])
+            rp_pos = float(derived_params['Rp_earth'][2])
+            rp_16 = rp_med - rp_neg
+            rp_84 = rp_med + rp_pos
+
+            if rp_16 > 25.0:
+                flag_str = f"FAILED_PLANETARY_RADIUS_CEILING (Rp={rp_med:.1f} [-{rp_neg:.1f}/+{rp_pos:.1f}] R_earth > 25.0 R_earth, Eclipsing Binary Companion)"
                 if flag_str not in ml_results['flags']:
                     ml_results['flags'].append(flag_str)
                 ml_results['planet_probability'] = 0.0
                 ml_results['disposition'] = "FALSE_POSITIVE"
-                results['ml_vetting'] = ml_results
                 results['ml_vetting_score'] = 0.0
-                print(f"\n  [VETTING VETO] Derived physical radius Rp = {rp_earth_val:.1f} R_earth exceeds planetary limit (25 R_earth).")
+                print(f"\n  [VETTING VETO] Physical radius Rp = {rp_med:.1f} [-{rp_neg:.1f}/+{rp_pos:.1f}] R_earth confidently exceeds planetary limit (25.0 R_earth).")
                 print(f"  -> Reclassified disposition: FALSE_POSITIVE (Eclipsing Binary / Stellar Companion)")
+            elif rp_16 <= 25.0 <= rp_84:
+                flag_str = f"AMBIGUOUS_PLANETARY_RADIUS (Rp={rp_med:.1f} [-{rp_neg:.1f}/+{rp_pos:.1f}] R_earth spans 25.0 R_earth ceiling, boundary unresolved)"
+                if flag_str not in ml_results['flags']:
+                    ml_results['flags'].append(flag_str)
+                if ml_results.get('disposition') == "CANDIDATE":
+                    ml_results['disposition'] = "AMBIGUOUS"
+                    ml_results['planet_probability'] = min(ml_results.get('planet_probability', 1.0), 0.50)
+                    results['ml_vetting_score'] = ml_results['planet_probability']
+                print(f"\n  [VETTING WARNING] Physical radius Rp = {rp_med:.1f} [-{rp_neg:.1f}/+{rp_pos:.1f}] R_earth spans planetary ceiling (25.0 R_earth).")
+                print(f"  -> Reclassified disposition: AMBIGUOUS (Needs High-Resolution Spectroscopy / Follow-up)")
+
+            # 2. BLS vs MCMC Depth Consistency Diagnostic:
+            bls_depth = float(bls_results['depth'].value) if hasattr(bls_results['depth'], 'value') else float(bls_results['depth'])
+            mcmc_depth = float(posteriors['depth'][0]) if 'depth' in posteriors else bls_depth
+            depth_ratio = max(mcmc_depth / max(bls_depth, 1e-6), bls_depth / max(mcmc_depth, 1e-6))
+            if depth_ratio >= 1.5:
+                flag_mismatch = f"BLS_MCMC_DEPTH_MISMATCH (BLS={bls_depth*100:.2f}%, MCMC={mcmc_depth*100:.2f}%, ratio={depth_ratio:.2f}x >= 1.5x)"
+                if flag_mismatch not in ml_results['flags']:
+                    ml_results['flags'].append(flag_mismatch)
+                print(f"  [DIAGNOSTIC FLAG] {flag_mismatch}")
+
+            # 3. Grazing Transit Geometry Diagnostic:
+            if 'a_rs' in posteriors and 'inc' in posteriors and 'rp_rs' in posteriors:
+                a_rs_val = float(posteriors['a_rs'][0])
+                inc_rad = np.radians(float(posteriors['inc'][0]))
+                rp_rs_val = float(posteriors['rp_rs'][0])
+                b_impact = a_rs_val * np.cos(inc_rad)
+                if b_impact + rp_rs_val >= 0.95:
+                    flag_grazing = f"NEAR_GRAZING_GEOMETRY (b={b_impact:.2f}, Rp/Rs={rp_rs_val:.3f}, b+Rp/Rs={b_impact+rp_rs_val:.2f})"
+                    if flag_grazing not in ml_results['flags']:
+                        ml_results['flags'].append(flag_grazing)
+                    print(f"  [DIAGNOSTIC FLAG] {flag_grazing}")
+
+            results['ml_vetting'] = ml_results
         except Exception as e:
             print(f"  Error deriving physical params: {e}")
 

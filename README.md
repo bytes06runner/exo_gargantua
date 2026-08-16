@@ -196,6 +196,11 @@ To demonstrate rigorous rejection of astrophysical false positives, the pipeline
   ```
 - **Final Disposition**: **`FALSE_POSITIVE`** (`0.00%` planet probability) | Summary: [`output/TIC_279999655_summary.json`](output/TIC_279999655_summary.json)
 
+> [!NOTE]
+> **Known Vetting Limitations & Astrophysical Caveats:**
+> - **Cool / Low-Mass Grazing Companions**: Single-bandpass photometric vetting cannot detect cool/low-mass grazing companions via odd-even or secondary eclipse when the correct period is found; radius ceiling is the only test sensitive to this failure mode.
+> - **Unconstrained Grazing Geometries**: Candidates with near-grazing impact parameters ($b \gtrsim 0.95$) or BLS/MCMC depth disagreements exceeding $1.5\times$ where the $1\sigma$ posterior spans the $25.0\,R_\oplus$ boundary are explicitly classified as **`AMBIGUOUS`** requiring high-resolution spectroscopic follow-up.
+
 ---
 
 ## 💻 Installation & Environment Setup
