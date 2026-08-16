@@ -294,8 +294,8 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
             bls_depth = float(bls_results['depth'].value) if hasattr(bls_results['depth'], 'value') else float(bls_results['depth'])
             mcmc_depth = float(posteriors['depth'][0]) if 'depth' in posteriors else bls_depth
             depth_ratio = max(mcmc_depth / max(bls_depth, 1e-6), bls_depth / max(mcmc_depth, 1e-6))
-            if depth_ratio >= 1.4:
-                flag_mismatch = f"BLS_MCMC_DEPTH_MISMATCH (BLS={bls_depth*100:.2f}%, MCMC={mcmc_depth*100:.2f}%, ratio={depth_ratio:.2f}x >= 1.4x)"
+            if depth_ratio >= 1.5:
+                flag_mismatch = f"BLS_MCMC_DEPTH_MISMATCH (BLS={bls_depth*100:.2f}%, MCMC={mcmc_depth*100:.2f}%, ratio={depth_ratio:.2f}x >= 1.5x)"
                 if flag_mismatch not in ml_results['flags']:
                     ml_results['flags'].append(flag_mismatch)
                 print(f"  [DIAGNOSTIC FLAG] {flag_mismatch}")
@@ -312,12 +312,12 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
                         ml_results['flags'].append(flag_grazing)
                     print(f"  [DIAGNOSTIC FLAG] {flag_grazing}")
                     
-                    # Grazing geometries with substantial BLS/MCMC depth mismatch cannot constrain Rp
-                    if depth_ratio >= 1.4 and ml_results.get('disposition') == "CANDIDATE":
+                    # Near-grazing orbits have an intrinsic (Rp/Rs, b) mathematical degeneracy in 1D photometry
+                    if ml_results.get('disposition') == "CANDIDATE":
                         ml_results['disposition'] = "AMBIGUOUS"
                         ml_results['planet_probability'] = min(ml_results.get('planet_probability', 1.0), 0.50)
                         results['ml_vetting_score'] = ml_results['planet_probability']
-                        print(f"  -> Reclassified disposition: AMBIGUOUS (Grazing geometry with depth mismatch; companion radius degenerate with b)")
+                        print(f"  -> Reclassified disposition: AMBIGUOUS (Near-grazing geometry; true radius degenerate with impact parameter)")
 
             results['ml_vetting'] = ml_results
         except Exception as e:
