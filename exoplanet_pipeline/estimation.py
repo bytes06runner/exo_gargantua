@@ -79,29 +79,27 @@ def _log_prior(theta, period_init, t0_init):
     """
     period, t0, rp_rs, a_rs, inc = theta
 
-    # Rp/Rs: 0.01 to 0.25
-    if not (0.01 <= rp_rs <= 0.25):
+    # Rp/Rs: 0.001 to 0.60 (covers Earth-sized planets up to deep eclipsing binaries)
+    if not (0.001 <= rp_rs <= 0.60):
         return -np.inf
 
-    # a/Rs: 1.5 to 30.0
-    if not (1.5 <= a_rs <= 30.0):
+    # a/Rs: 1.2 to 200.0 (covers ultra-short period up to 20+ day orbits)
+    if not (1.2 <= a_rs <= 200.0):
         return -np.inf
 
-    # Inclination: 69.5 to 90 degrees (cos i from 0.0 to 0.35)
-    if not (69.5 <= inc <= 90.0):
+    # Inclination: 50.0 to 90.0 degrees (cos i from 0.0 to 0.64)
+    if not (50.0 <= inc <= 90.0):
         return -np.inf
 
-    # Uniform priors but with wide bounds on P and t0
-    # P in [P_bls - 0.05, P_bls + 0.05]
-    if not (period_init - 0.05 <= period <= period_init + 0.05):
+    # Uniform priors with reasonable bounds on P and t0 around BLS seed
+    if not (max(0.05, period_init - 0.5) <= period <= period_init + 0.5):
         return -np.inf
-    # t0 in [t0_bls - 0.1, t0_bls + 0.1]
-    if not (t0_init - 0.1 <= t0 <= t0_init + 0.1):
+    if not (t0_init - 0.5 <= t0 <= t0_init + 0.5):
         return -np.inf
 
-    # Impact parameter constraint: must transit the star
+    # Impact parameter constraint: allow transiting and near-grazing orbits
     b = a_rs * np.cos(np.radians(inc))
-    if b > 1.0 + rp_rs:
+    if b > 1.2 + rp_rs:
         return -np.inf
 
     return 0.0
@@ -254,8 +252,12 @@ def run_mcmc_estimation(lc, bls_results, raw_flux_err=None, stellar_params=None,
 
     # Ensure all initial positions satisfy priors
     for i in range(n_walkers):
-        while not np.isfinite(_log_prior(pos[i], period_init, t0_init)):
+        tries = 0
+        while not np.isfinite(_log_prior(pos[i], period_init, t0_init)) and tries < 100:
             pos[i] = theta_init + perturbation * np.random.randn(n_dim)
+            tries += 1
+        if not np.isfinite(_log_prior(pos[i], period_init, t0_init)):
+            pos[i] = theta_init.copy()
 
     # Run MCMC
     sampler = emcee.EnsembleSampler(

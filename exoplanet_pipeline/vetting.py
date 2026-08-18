@@ -17,6 +17,7 @@ phase window [0.45, 0.55] and reports it as a sigma significance,
 replacing the visual-only "the green line looks flat" judgment.
 """
 
+import warnings
 import numpy as np
 import lightkurve as lk
 import matplotlib
@@ -215,6 +216,17 @@ def visualize_vetting(vetting_results, target_id):
               f"secondary eclipse ({abs(sigma):.1f}σ < 3σ threshold). ---")
 
 
+import time
+def _api_retry(func, *args, **kwargs):
+    retries = [5, 15, 60]
+    for delay in retries:
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(f"  API Error: {e}. Retrying in {delay}s...")
+            time.sleep(delay)
+    return func(*args, **kwargs)
+
 def run_centroid_vetting(target_star_id, period, t0, duration):
     """
     Fix 3: Pixel-level centroid vetting to detect blended false positives.
@@ -267,25 +279,26 @@ def run_centroid_vetting(target_star_id, period, t0, duration):
     # This should be tuned per target based on brightness and crowding.
     SHIFT_THRESHOLD = 0.333  # pixels
 
+    from astroquery.mast import Conf
+    Conf.timeout = 25  # Fail fast after 25s to avoid socket hangs
+
     print(f"  Downloading target pixel files for {target_star_id}...")
     search_result = None
     try:
-        search_result = lk.search_targetpixelfile(
-            target_star_id, mission='TESS', author='SPOC'
-        )
+        search_result = _api_retry(lk.search_targetpixelfile, target_star_id, mission='TESS', author='SPOC')
     except Exception as e:
         print(f"  MAST API search failed or timed out: {e}")
 
     tpf_list = []
     
     if search_result:
-        # Limit to first 5 sectors to avoid excessive download time
-        max_tpfs = min(5, len(search_result))
+        # Limit to 1 sector to ensure fast, robust centroid vetting without network bottleneck
+        max_tpfs = min(1, len(search_result))
         print(f"  Found {len(search_result)} TPFs, downloading first {max_tpfs}...")
 
         for idx in range(max_tpfs):
             try:
-                tpf = search_result[idx].download()
+                tpf = _api_retry(search_result[idx].download)
                 if tpf is not None:
                     tpf_list.append(tpf)
             except Exception as e:
@@ -358,30 +371,25 @@ def run_centroid_vetting(target_star_id, period, t0, duration):
         except Exception:
             mask = raw_mask
 
-        col_in_list, row_in_list = [], []
-        col_out_list, row_out_list = [], []
+        flux_cube = tpf.flux.value
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            bg = np.nanmedian(flux_cube, axis=(1, 2), keepdims=True)
+            bg_sub = np.maximum(flux_cube - bg, 0.0) * mask
+            total_flux = np.nansum(bg_sub, axis=(1, 2))
+            valid = (total_flux > 0) & np.isfinite(total_flux)
+            
+            total_flux_safe = np.where(valid, total_flux, 1.0)
+            col_c = np.nansum(bg_sub * col_grid, axis=(1, 2)) / total_flux_safe
+            row_c = np.nansum(bg_sub * row_grid, axis=(1, 2)) / total_flux_safe
 
-        for i in range(n_times):
-            frame = tpf.flux.value[i]
-            if np.all(np.isnan(frame)):
-                continue
-            bg = np.nanmedian(frame)
-            bg_sub = np.maximum(frame - bg, 0) * mask
-            total_flux = np.nansum(bg_sub)
-            if total_flux <= 0 or not np.isfinite(total_flux):
-                continue
+            in_valid = in_transit & valid & np.isfinite(col_c) & np.isfinite(row_c)
+            out_valid = (~in_transit) & valid & np.isfinite(col_c) & np.isfinite(row_c)
 
-            # Flux-weighted centroid for this cadence
-            col_c = np.nansum(bg_sub * col_grid) / total_flux
-            row_c = np.nansum(bg_sub * row_grid) / total_flux
-
-            if np.isfinite(col_c) and np.isfinite(row_c):
-                if in_transit[i]:
-                    col_in_list.append(col_c)
-                    row_in_list.append(row_c)
-                else:
-                    col_out_list.append(col_c)
-                    row_out_list.append(row_c)
+            col_in_list = col_c[in_valid]
+            row_in_list = row_c[in_valid]
+            col_out_list = col_c[out_valid]
+            row_out_list = row_c[out_valid]
 
         n_in_s = len(col_in_list)
         n_out_s = len(col_out_list)

@@ -22,8 +22,19 @@ from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
 
 import os
 import glob
+import time
 from astroquery.mast import Conf
 Conf.timeout = 30  # Fail fast after 30 seconds
+
+def _api_retry(func, *args, **kwargs):
+    retries = [5, 15, 60]
+    for delay in retries:
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(f"  API Error: {e}. Retrying in {delay}s...")
+            time.sleep(delay)
+    return func(*args, **kwargs)
 
 def preprocess_tess_data(target_star_id):
     """
@@ -45,11 +56,9 @@ def preprocess_tess_data(target_star_id):
     print(f"Searching for TESS observations for {target_star_id}...")
     lc_collection = None
     try:
-        search_result = lk.search_lightcurve(
-            target_star_id, mission='TESS', author='SPOC'
-        )
+        search_result = _api_retry(lk.search_lightcurve, target_star_id, mission='TESS', author='SPOC')
         if search_result:
-            lc_collection = search_result.download_all()
+            lc_collection = _api_retry(search_result.download_all)
     except Exception as e:
         print(f"  MAST API search failed or timed out: {e}")
     
@@ -252,7 +261,7 @@ def fetch_stellar_parameters(tic_id, lc=None):
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            catalog_data = Catalogs.query_criteria(catalog="Tic", ID=clean_id)
+            catalog_data = _api_retry(Catalogs.query_criteria, catalog="Tic", ID=clean_id)
 
         if len(catalog_data) > 0:
             row = catalog_data[0]
@@ -277,7 +286,7 @@ def fetch_stellar_parameters(tic_id, lc=None):
 
     # Cross-query NASA Archive for confirmed systems or WASP targets
     try:
-        archive_table = NasaExoplanetArchive.query_criteria(
+        archive_table = _api_retry(NasaExoplanetArchive.query_criteria,
             table="pscomppars",
             select="st_rad,st_raderr1,st_mass,st_masserr1,st_teff,st_tefferr1,st_logg,st_loggerr1,st_met,st_meterr1",
             where=f"tic_id='TIC {clean_id}'"
