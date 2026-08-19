@@ -366,9 +366,12 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
         print(f"  Centroid shift: {shift:.4f} pix (passed: {passed})")
 
     if 'ml_vetting' in results and results['ml_vetting']:
-        ml_p = results['ml_vetting']['planet_probability']
-        disp = results['ml_vetting']['disposition']
-        print(f"  ML Vetting Score (Planet Probability): {ml_p:.2%} -> Disposition: {disp}")
+        ml_p = results['ml_vetting'].get('planet_probability')
+        disp = results['ml_vetting'].get('disposition', 'ERROR')
+        if ml_p is not None:
+            print(f"  ML Vetting Score (Planet Probability): {ml_p:.2%} -> Disposition: {disp}")
+        else:
+            print(f"  ML Vetting failed or missing probability -> Disposition: {disp}")
 
     if posteriors:
         print(f"  MCMC posteriors available for: {list(posteriors.keys())}")
