@@ -117,16 +117,29 @@ def resolve_fundamental_period(lc_bls, p_max, max_period, min_period):
         
     D_max = max(c.depth for c in evaluated_candidates)
     
+    # ── TESS Perigee Veto ────────────────────────────────────────────
+    # TESS orbits Earth every ~13.7 days. At perigee it pauses for data
+    # downlink, creating thermal settling dips and momentum dump artefacts.
+    # These are deep, periodic, and perfectly mimic transits to BLS.
+    #
+    # Danger zones (period ranges dominated by spacecraft systematics):
+    #   Primary perigee gap:  12.5 – 15.5 d
+    #   Half-orbit dump:       6.5 –  7.5 d
+    # ─────────────────────────────────────────────────────────────────
+    PERIGEE_ZONES = [(10.0, 17.0), (6.5, 7.5)]
+    PENALTY_FACTOR = 0.01
+
+    for c in evaluated_candidates:
+        in_danger = any(lo <= c.period <= hi for lo, hi in PERIGEE_ZONES)
+        if in_danger:
+            c.snr = c.snr * PENALTY_FACTOR
+            print(f"  TESS Perigee Veto: P={c.period:.4f}d is in systematic danger zone, SNR penalised ×{PENALTY_FACTOR}")
+
     print("\n--- DEBUG: Harmonic Validator Candidates ---")
     for c in evaluated_candidates:
         print(f"P={c.period:.4f}d (m={c.multiplier:.2f}): depth={c.depth:.6f}, snr={c.snr:.1f} (thresh={0.95*D_max:.6f})")
     
-    # Strictly enforce this mathematical order:
-    # We remove the depth threshold because single massive outliers inflate D_max,
-    # falsely vetoing the true shallow fundamental.
-    # By scaling empirical SNR by sqrt(N_transits) rather than N_cadences,
-    # the true fundamental (which possesses the most distinct transits) 
-    # perfectly breaks the tie natively.
+    # Final selection: highest (possibly penalised) raw BLS SNR wins.
     best_period_obj = max(evaluated_candidates, key=lambda x: x.snr)
     
     return best_period_obj.pg, best_period_obj.multiplier
@@ -209,10 +222,15 @@ def run_bls_search(lc, min_period=0.5, max_period=20):
     best_duration = None
     best_snr = None
     
+    PERIGEE_ZONES = [(10.0, 17.0), (6.5, 7.5)]
+    PENALTY_FACTOR = 0.01
+    
+    valid_peaks = []
     for pk in sorted_peaks:
         P = periodogram.period.value[pk]
         t0 = periodogram.transit_time.value[pk]
         dur = periodogram.duration.value[pk]
+        snr = periodogram.power.value[pk]
         
         # Calculate epoch for each cadence
         E = np.round((time_val - t0) / P)
@@ -223,12 +241,27 @@ def run_bls_search(lc, min_period=0.5, max_period=20):
         unique_epochs = len(np.unique(E[in_transit]))
         
         if unique_epochs >= 3:
-            best_period = periodogram.period[pk]
-            best_t0 = periodogram.transit_time[pk]
-            best_depth = periodogram.depth[pk]
-            best_duration = periodogram.duration[pk]
-            best_snr = periodogram.power[pk]
-            break
+            in_danger = any(lo <= P <= hi for lo, hi in PERIGEE_ZONES)
+            if in_danger:
+                snr = snr * PENALTY_FACTOR
+                print(f"  TESS Perigee Veto (BLS init): P={P:.4f}d in danger zone, SNR penalised ×{PENALTY_FACTOR}")
+            
+            valid_peaks.append({
+                'pk': pk,
+                'period': periodogram.period[pk],
+                't0': periodogram.transit_time[pk],
+                'depth': periodogram.depth[pk],
+                'duration': periodogram.duration[pk],
+                'snr': snr
+            })
+            
+    if valid_peaks:
+        best_peak = max(valid_peaks, key=lambda x: x['snr'])
+        best_period = best_peak['period']
+        best_t0 = best_peak['t0']
+        best_depth = best_peak['depth']
+        best_duration = best_peak['duration']
+        best_snr = best_peak['snr']
             
     # Fallback if no peaks pass the strict gate
     if best_period is None:
@@ -239,10 +272,7 @@ def run_bls_search(lc, min_period=0.5, max_period=20):
         # Reject by setting power to 0
         best_snr = periodogram.max_power * 0.0
 
-    # Systematic Veto: TESS momentum dump alias
-    if 13.2 < best_period.value < 14.2 and best_snr.value < 15.0:
-        print(f"  Systematic Veto: P={best_period.value:.4f}d near 13.7d TESS systematic with SNR {best_snr.value:.1f}. Rejecting.")
-        best_snr = 0.0 * best_snr
+    # Removed old Systematic Veto check that was just 13.2-14.2
 
     # Harmonic Validator Check
     p_val = best_period.value if hasattr(best_period, 'value') else best_period

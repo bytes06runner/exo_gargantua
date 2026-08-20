@@ -4,82 +4,69 @@ denoise.py — Noise Decomposition and Edge-Preserving Filtering
 
 Decomposes the light curve into systematic drift and residual components,
 applies Savitzky-Golay filtering, and computes noise statistics.
-
-Fix 1 (completed here): Uses the raw_flux_err from ingestion.py to compute
-real photon noise, instead of sqrt(normalized_flux) ≈ sqrt(1) ≈ 1.
 """
 
 import numpy as np
 from scipy.signal import savgol_filter
-
+import lightkurve as lk_mod
+from astropy.timeseries import BoxLeastSquares
 
 def decompose_and_filter(lc, raw_flux_err=None, window_length=101):
     """
     Decomposes noise components and applies edge-preserving filtering.
-
-    The photon noise estimate uses the actual measurement uncertainties
-    (flux_err) from the instrument, captured before normalization. This
-    gives a physically meaningful noise floor rather than sqrt(~1).
-
-    Parameters
-    ----------
-    lc : lightkurve.LightCurve
-        The cleaned, normalized, stitched light curve.
-    raw_flux_err : np.ndarray or None
-        Per-cadence flux errors from the pre-normalization light curves,
-        normalized by the same median divisor. If None, falls back to
-        the light curve's own flux_err attribute.
-    window_length : int
-        Window length for the Savitzky-Golay filter (must be odd).
-
-    Returns
-    -------
-    filtered_lc : lightkurve.LightCurve
-        The filtered light curve.
-    residual_flux : np.ndarray
-        Flux minus the systematic drift component.
-    noise_stats : dict
-        Dictionary with 'photon_noise_avg', 'systematic_std',
-        'residual_std'. photon_noise_avg is now a real measurement
-        uncertainty, typically ~1e-4 to 1e-3 for TESS data, not ~1.0.
     """
-    # Fix 1: Use real flux_err for photon noise, not sqrt(normalized_flux).
-    #
-    # Before this fix, photon_noise was computed as:
-    #     np.sqrt(np.abs(lc.flux.value))
-    # But since lc.flux is normalized to ~1.0, this just gives ~1.0,
-    # which is meaningless. The correct approach is to use the actual
-    # per-cadence measurement uncertainty from the instrument.
+    # Fix 1: Use real flux_err for photon noise
     if raw_flux_err is not None and len(raw_flux_err) == len(lc):
         photon_noise = raw_flux_err
     elif hasattr(lc, 'flux_err') and lc.flux_err is not None:
         photon_noise = lc.flux_err.value
     else:
-        # Last resort fallback (should not normally be reached)
         photon_noise = np.sqrt(np.abs(lc.flux.value))
         print("WARNING: Using sqrt(flux) fallback for photon noise — "
               "this is unreliable on normalized data.")
-
-    from astropy.timeseries import BoxLeastSquares
 
     time_orig = lc.time.value
     flux_orig = lc.flux.value
     n_cadences = len(lc)
     print(f"  Total cadences: {n_cadences}")
 
+
+    # ---- Step 0: Rigid 2.5-Day Thermal Crop ----
+    valid_mask = np.ones(n_cadences, dtype=bool)
+    dt = np.diff(time_orig)
+    gap_indices = np.where(dt > 0.5)[0] + 1
+    segment_splits = np.split(np.arange(n_cadences), gap_indices)
+    
+    for seg_idx in segment_splits:
+        if len(seg_idx) == 0: continue
+        t_start = time_orig[seg_idx[0]]
+        invalid = (time_orig[seg_idx] - t_start) < 2.5
+        valid_mask[seg_idx[invalid]] = False
+        
+    n_cropped = np.sum(~valid_mask)
+    if n_cropped > 0:
+        print(f"  Rigid Thermal Crop: Masked {n_cropped} cadences from the first 2.5 days of sectors.")
+        lc = lc[valid_mask]
+        
+    if raw_flux_err is not None and len(raw_flux_err) == len(valid_mask):
+        raw_flux_err = raw_flux_err[valid_mask]
+        
+    # Re-evaluate arrays post-crop
+    time_orig = lc.time.value
+    flux_orig = lc.flux.value
+    n_cadences = len(lc)
+    
     # ---- Step 1: Fast BLS on heavily decimated data to find transits ----
-    # Decimate heavily to ~20k points. Lightkurve's .bin() is too slow on 2M+ points.
     print("  Decimating light curve for fast BLS...")
     step = max(1, n_cadences // 20000)
     decimated_for_bls = lc[::step]
     
-    # Quick flatten on the decimated data (fast: only ~20k points)
+    # Quick flatten on the decimated data
     flat_binned = decimated_for_bls.flatten(window_length=101, break_tolerance=5)
     
     time_bls = flat_binned.time.value
     flux_bls = flat_binned.flux.value
     
-    # Remove NaNs
     good = np.isfinite(flux_bls) & np.isfinite(time_bls)
     time_bls = time_bls[good]
     flux_bls = flux_bls[good]
@@ -105,8 +92,6 @@ def decompose_and_filter(lc, raw_flux_err=None, window_length=101):
     print(f"  Transit mask: {n_masked} cadences masked ({100*n_masked/n_cadences:.1f}%)")
 
     # ---- Step 3: Segment-aware transit-masked baseline detrending ----
-    # Split light curve into contiguous segments across data gaps (gap > 0.5 days)
-    # This prevents savgol_filter from distorting the continuum across multi-week/year sector breaks.
     print("  Fitting transit-masked baseline per contiguous sector segment...")
     
     dt = np.diff(time_orig)
@@ -135,19 +120,26 @@ def decompose_and_filter(lc, raw_flux_err=None, window_length=101):
         if np.any(nan_m):
             f_seg[nan_m] = np.interp(t_seg[nan_m], t_seg[~nan_m], f_seg[~nan_m])
             
-        # Determine appropriate window length for this segment
-        wl_seg = min(501, len(seg_idx) // 2)
+        # Determine appropriate window length for this segment (approx 2 days)
+        if len(t_seg) > 1:
+            cadences_per_day = 1.0 / np.nanmedian(np.diff(t_seg))
+        else:
+            cadences_per_day = 48
+            
+        wl_seg = int(2.0 * cadences_per_day)
         if wl_seg % 2 == 0:
             wl_seg += 1
         wl_seg = max(wl_seg, 11)
+        wl_seg = min(wl_seg, len(seg_idx))
+        if wl_seg % 2 == 0:
+            wl_seg -= 1
         
-        if len(seg_idx) > wl_seg:
-            from scipy.ndimage import median_filter
-            # Apply a median filter first to reject edge discontinuities
-            f_med = median_filter(f_seg, size=min(11, len(seg_idx)))
-            seg_base = savgol_filter(f_med, window_length=wl_seg, polyorder=2)
+        if len(seg_idx) >= wl_seg and wl_seg >= 3:
+            # Use Savitzky-Golay for gentle stellar variability (CBVs handled the steep edges)
+            seg_base = savgol_filter(f_seg, window_length=wl_seg, polyorder=2)
             
             # EDGE MARGIN MASKING: mask first and last 5 cadences of the segment
+            # to avoid any residual SG edge divergence
             if len(seg_base) > 10:
                 seg_base[:5] = np.nan
                 seg_base[-5:] = np.nan
@@ -155,13 +147,10 @@ def decompose_and_filter(lc, raw_flux_err=None, window_length=101):
             seg_base = np.full(len(seg_idx), np.nanmedian(f_seg))
             
         baseline[seg_idx] = seg_base
-    
-    # Avoid divide-by-zero
+        
     baseline[baseline <= 0] = 1.0
     detrended_flux = flux_orig / baseline
     
-    # Build a new LightCurve with the detrended flux
-    import lightkurve as lk_mod
     filtered_lc = lk_mod.LightCurve(time=lc.time, flux=detrended_flux, flux_err=lc.flux_err).remove_nans()
     residual_flux = detrended_flux - 1.0
 
