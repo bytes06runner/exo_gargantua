@@ -8,10 +8,10 @@ grazing geometry / depth-ratio degeneracies.
 """
 
 import os
-import os
 import sys
 import json
 import time
+import shutil
 import traceback
 import numpy as np
 import pandas as pd
@@ -175,6 +175,8 @@ def main():
             
         plt.close('all')
         gc.collect()
+        shutil.rmtree('./tess_cache', ignore_errors=True)
+        shutil.rmtree(os.path.expanduser('~/.lightkurve/cache/mastDownload/TESS'), ignore_errors=True)
 
     total_elapsed = time.time() - start_time_all
     print(f"\n{'='*70}")

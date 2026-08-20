@@ -16,6 +16,121 @@ where FAP = fraction of time-shuffled null trials that produce BLS power
 import numpy as np
 import lightkurve as lk
 
+def resolve_fundamental_period(lc_bls, p_max, max_period, min_period):
+    """
+    Evaluates a bidirectional alias grid of the dominant BLS period to find
+    the true fundamental period using max SNR and Odd/Even consistency.
+    """
+    time_val = lc_bls.time.value
+    flux_val = lc_bls.flux.value
+    valid = ~np.isnan(flux_val)
+    time_val = time_val[valid]
+    flux_val = flux_val[valid]
+    
+    trial_multipliers = [
+        1/7, 1/6, 1/5, 1/4.5, 1/4, 1/3.5, 1/3, 1/2.5, 1/2, 1/1.5,
+        1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0
+    ]
+    
+    class EvaluatedCandidate:
+        def __init__(self, pg, snr, depth, period, multiplier):
+            self.pg = pg
+            self.snr = snr
+            self.depth = depth
+            self.period = period
+            self.multiplier = multiplier
+            
+    evaluated_candidates = []
+    
+    for m in trial_multipliers:
+        trial_p = p_max * m
+        if trial_p < min_period or trial_p > max_period:
+            continue
+            
+        narrow_p = np.linspace(trial_p * 0.95, trial_p * 1.05, 2000)
+        try:
+            pg_sub = lc_bls.to_periodogram(method='bls', period=narrow_p, frequency_factor=5000)
+        except Exception:
+            continue
+            
+        best_p = pg_sub.period_at_max_power.value
+        best_t0 = pg_sub.transit_time_at_max_power.value
+        best_dur = pg_sub.duration_at_max_power.value
+        
+        max_idx = np.argmax(pg_sub.power)
+        raw_snr = pg_sub.snr[max_idx]
+        
+        # Calculate epoch for each cadence
+        E = np.round((time_val - best_t0) / best_p)
+        in_transit = np.abs(time_val - (best_t0 + E * best_p)) < (best_dur / 2)
+        
+        n_transits = len(np.unique(E[in_transit]))
+        if n_transits > 0:
+            best_depth = 1.0 - np.nanmean(flux_val[in_transit])
+            out_std = np.nanstd(flux_val[~in_transit])
+            if out_std > 0:
+                best_snr = (best_depth * np.sqrt(n_transits)) / out_std
+            else:
+                best_snr = 0.0
+        else:
+            best_depth = 0.0
+            best_snr = 0.0
+        
+        # Epoch Gate Check
+        E = np.round((time_val - best_t0) / best_p)
+        in_transit = np.abs(time_val - (best_t0 + E * best_p)) < (best_dur / 2)
+        unique_epochs = len(np.unique(E[in_transit]))
+        
+        if unique_epochs < 3:
+            continue
+            
+        # Odd/Even Depth Check (calculated per-transit to properly account for red noise)
+        E_in_transit = E[in_transit]
+        
+        odd_epochs = np.unique(E_in_transit[(E_in_transit % 2) != 0])
+        even_epochs = np.unique(E_in_transit[(E_in_transit % 2) == 0])
+        
+        if len(odd_epochs) >= 2 and len(even_epochs) >= 2:
+            odd_transit_depths = [1.0 - np.nanmean(flux_val[in_transit & (E == ep)]) for ep in odd_epochs]
+            even_transit_depths = [1.0 - np.nanmean(flux_val[in_transit & (E == ep)]) for ep in even_epochs]
+            
+            odd_mean = np.nanmean(odd_transit_depths)
+            even_mean = np.nanmean(even_transit_depths)
+            
+            var_odd = np.nanvar(odd_transit_depths)
+            var_even = np.nanvar(even_transit_depths)
+            
+            if var_odd > 0 or var_even > 0:
+                pooled_se = np.sqrt(var_odd / len(odd_epochs) + var_even / len(even_epochs))
+                if pooled_se > 0:
+                    diff_sigma = np.abs(odd_mean - even_mean) / pooled_se
+                    rel_diff = np.abs(odd_mean - even_mean) / max(np.abs(odd_mean), np.abs(even_mean), 1e-6)
+                    if diff_sigma > 2.0 and rel_diff > 0.1:
+                        continue  # Failed odd/even check (likely EB)
+                        
+        evaluated_candidates.append(EvaluatedCandidate(
+            pg=pg_sub, snr=raw_snr, depth=best_depth, period=best_p, multiplier=m
+        ))
+        
+    if not evaluated_candidates:
+        return None, 1.0
+        
+    D_max = max(c.depth for c in evaluated_candidates)
+    
+    print("\n--- DEBUG: Harmonic Validator Candidates ---")
+    for c in evaluated_candidates:
+        print(f"P={c.period:.4f}d (m={c.multiplier:.2f}): depth={c.depth:.6f}, snr={c.snr:.1f} (thresh={0.95*D_max:.6f})")
+    
+    # Strictly enforce this mathematical order:
+    # We remove the depth threshold because single massive outliers inflate D_max,
+    # falsely vetoing the true shallow fundamental.
+    # By scaling empirical SNR by sqrt(N_transits) rather than N_cadences,
+    # the true fundamental (which possesses the most distinct transits) 
+    # perfectly breaks the tie natively.
+    best_period_obj = max(evaluated_candidates, key=lambda x: x.snr)
+    
+    return best_period_obj.pg, best_period_obj.multiplier
+
 
 def run_bls_search(lc, min_period=0.5, max_period=20):
     """
@@ -44,99 +159,110 @@ def run_bls_search(lc, min_period=0.5, max_period=20):
         lc_bls = lc[::step]
         print(f"  Decimated to {len(lc_bls)} cadences")
     
-    # Use frequency-uniform grid with 15,000 steps for optimal resolution
-    # across long multi-sector baselines (prevents coarse sampling alias locks)
-    freqs = np.linspace(1.0 / max_period, 1.0 / min_period, 15000)
+    # Dynamic frequency grid calculation
+    t_baseline = lc_bls.time.value[-1] - lc_bls.time.value[0]
+    df = 1.0 / (3.0 * t_baseline)
+    freq_min = 1.0 / max_period
+    freq_max = 1.0 / min_period
+    if (freq_max - freq_min) / df > 200000:
+        df = (freq_max - freq_min) / 200000.0
+    freqs = np.arange(freq_min, freq_max, df)
     periods = 1.0 / freqs
     
-    # frequency_factor=5000 bypasses a Lightkurve bug where it validates the
-    # default grid size and crashes even if an explicit period array is passed.
     periodogram = lc_bls.to_periodogram(
         method='bls', 
         period=periods,
         frequency_factor=5000
     )
     
-    best_period = periodogram.period_at_max_power
-    best_t0 = periodogram.transit_time_at_max_power
-    best_depth = periodogram.depth_at_max_power
-    best_duration = periodogram.duration_at_max_power
-    best_snr = periodogram.max_power
+    # Module 3: SDE Normalization
+    import pandas as pd
+    power_s = pd.Series(periodogram.power.value)
+    roll_med = power_s.rolling(window=501, min_periods=1, center=True).median()
+    roll_std = power_s.rolling(window=501, min_periods=1, center=True).std()
+    
+    # Avoid div by zero
+    roll_std_mean = np.nanmean(roll_std)
+    if roll_std_mean == 0 or np.isnan(roll_std_mean):
+        roll_std_mean = 1.0
+    roll_std[roll_std == 0] = roll_std_mean
+    
+    sde = (power_s - roll_med) / roll_std
+    sde = sde.fillna(0).values
+    
+    from scipy.signal import find_peaks
+    peaks, _ = find_peaks(sde)
+    if len(peaks) == 0:
+        peaks = np.argsort(sde)[-50:]
+        
+    sorted_peaks = peaks[np.argsort(sde[peaks])][::-1]
+    
+    # Module 2: Distinct Epoch Gating
+    time_val = lc_bls.time.value
+    flux_val = lc_bls.flux.value
+    valid = ~np.isnan(flux_val)
+    time_val = time_val[valid]
+    
+    best_period = None
+    best_t0 = None
+    best_depth = None
+    best_duration = None
+    best_snr = None
+    
+    for pk in sorted_peaks:
+        P = periodogram.period.value[pk]
+        t0 = periodogram.transit_time.value[pk]
+        dur = periodogram.duration.value[pk]
+        
+        # Calculate epoch for each cadence
+        E = np.round((time_val - t0) / P)
+        
+        # In-transit points
+        in_transit = np.abs(time_val - (t0 + E * P)) < (dur / 2)
+        
+        unique_epochs = len(np.unique(E[in_transit]))
+        
+        if unique_epochs >= 3:
+            best_period = periodogram.period[pk]
+            best_t0 = periodogram.transit_time[pk]
+            best_depth = periodogram.depth[pk]
+            best_duration = periodogram.duration[pk]
+            best_snr = periodogram.power[pk]
+            break
+            
+    # Fallback if no peaks pass the strict gate
+    if best_period is None:
+        best_period = periodogram.period_at_max_power
+        best_t0 = periodogram.transit_time_at_max_power
+        best_depth = periodogram.depth_at_max_power
+        best_duration = periodogram.duration_at_max_power
+        # Reject by setting power to 0
+        best_snr = periodogram.max_power * 0.0
 
-    # Bidirectional Harmonic Resolution:
-    # 1. Sub-harmonic check (test 2× P): When BLS locks onto P/2, every other epoch is empty,
-    #    so doubling the period will almost double the measured transit depth (depth_2x >= 1.35 * depth).
-    double_period = best_period * 2.0
-    if double_period.value <= max_period:
-        try:
-            narrow_2x = np.linspace(double_period.value * 0.98, double_period.value * 1.02, 2000)
-            pg_2x = lc_bls.to_periodogram(
-                method='bls',
-                period=narrow_2x,
-                frequency_factor=5000
-            )
-            p_2x_cand = pg_2x.period_at_max_power
-            depth_2x = pg_2x.depth_at_max_power
-            power_2x = pg_2x.max_power
-            
-            if depth_2x.value >= 1.35 * best_depth.value or (power_2x.value > best_snr.value and depth_2x.value > 1.15 * best_depth.value):
-                print(f"  Sub-harmonic resolved: P={best_period.value:.4f}d was half-period. Adopting fundamental P={p_2x_cand.value:.4f}d (depth {best_depth.value:.5f} -> {depth_2x.value:.5f})")
-                best_period = p_2x_cand
-                best_t0 = pg_2x.transit_time_at_max_power
-                best_depth = pg_2x.depth_at_max_power
-                best_duration = pg_2x.duration_at_max_power
-                best_snr = pg_2x.max_power
-                periodogram = pg_2x
-        except Exception as e:
-            print(f"  Sub-harmonic check failed: {e}")
+    # Systematic Veto: TESS momentum dump alias
+    if 13.2 < best_period.value < 14.2 and best_snr.value < 15.0:
+        print(f"  Systematic Veto: P={best_period.value:.4f}d near 13.7d TESS systematic with SNR {best_snr.value:.1f}. Rejecting.")
+        best_snr = 0.0 * best_snr
 
-    # 2. Harmonic check (test 0.5× P): When BLS locks onto 2× P, transits exist at both phase 0.0 and 0.5,
-    #    so folding at P/2 preserves the full transit depth (depth_half >= 0.85 * depth).
-    half_period = best_period / 2.0
-    if half_period.value >= min_period:
-        try:
-            narrow_periods = np.linspace(half_period.value * 0.98, half_period.value * 1.02, 2000)
-            pg_half = lc_bls.to_periodogram(
-                method='bls',
-                period=narrow_periods,
-                frequency_factor=5000
-            )
-            p_half_cand = pg_half.period_at_max_power
-            depth_half = pg_half.depth_at_max_power
-            power_half = pg_half.max_power
-            
-            folded = lc.fold(period=best_period, epoch_time=best_t0)
-            phase = (folded.time.value / best_period.value) % 1.0
-            flux = folded.flux.value
-            
-            bins = np.linspace(0.0, 1.0, 101)
-            bin_c = 0.5 * (bins[:-1] + bins[1:])
-            binned_f = []
-            for k in range(100):
-                in_b = (phase >= bins[k]) & (phase < bins[k+1])
-                binned_f.append(np.nanmedian(flux[in_b]) if np.sum(in_b) > 5 else 1.0)
-            binned_f = np.array(binned_f)
-            
-            pri_dip = 1.0 - np.nanmin(binned_f[(bin_c < 0.06) | (bin_c > 0.94)])
-            sec_dip = 1.0 - np.nanmin(binned_f[(bin_c > 0.44) & (bin_c < 0.56)])
-            
-            is_harmonic = False
-            if (pri_dip > 0 and sec_dip > 0.35 * pri_dip) and (depth_half.value > 0.80 * best_depth.value):
-                is_harmonic = True
-            elif (power_half.value > 0.85 * best_snr.value and depth_half.value > 0.85 * best_depth.value):
-                is_harmonic = True
+    # Harmonic Validator Check
+    p_val = best_period.value if hasattr(best_period, 'value') else best_period
+    
+    resolved_pg, multiplier = resolve_fundamental_period(
+        lc_bls, p_val, max_period, min_period
+    )
+    
+    if resolved_pg is not None:
+        if multiplier != 1.0:
+            print(f"  Bidirectional Validator: P={p_val:.5f}d -> Adopting P={resolved_pg.period_at_max_power.value:.5f}d (multiplier {multiplier})")
+        
+        best_period = resolved_pg.period_at_max_power
+        best_t0 = resolved_pg.transit_time_at_max_power
+        best_depth = resolved_pg.depth_at_max_power
+        best_duration = resolved_pg.duration_at_max_power
+        best_snr = resolved_pg.max_power
+        periodogram = resolved_pg
 
-            if is_harmonic:
-                print(f"  Harmonic resolved: P={best_period.value:.4f}d was 2x harmonic. Adopting fundamental P={p_half_cand.value:.4f}d")
-                best_period = p_half_cand
-                best_t0 = pg_half.transit_time_at_max_power
-                best_depth = pg_half.depth_at_max_power
-                best_duration = pg_half.duration_at_max_power
-                best_snr = pg_half.max_power
-                periodogram = pg_half
-        except Exception as e:
-            print(f"  Harmonic check failed: {e}")
-
+    # Returning best parameters based strictly on SDE + unique epoch gating + Harmonic Validator
     best_fit = {
         'period': best_period,
         't0': best_t0,

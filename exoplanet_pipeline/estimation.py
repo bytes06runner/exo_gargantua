@@ -73,9 +73,9 @@ def _log_likelihood(theta, time, flux, flux_err, ld_coeffs):
     return log_norm - 0.5 * chi2
 
 
-def _log_prior(theta, period_init, t0_init):
+def _log_prior(theta, period_init, t0_init, dP):
     """
-    Log-prior with narrow Gaussians on P and t0, flat elsewhere.
+    Log-prior with dynamic bounds on P and t0, flat elsewhere.
     """
     period, t0, rp_rs, a_rs, inc = theta
 
@@ -91,8 +91,8 @@ def _log_prior(theta, period_init, t0_init):
     if not (50.0 <= inc <= 90.0):
         return -np.inf
 
-    # Uniform priors with reasonable bounds on P and t0 around BLS seed
-    if not (max(0.05, period_init - 0.5) <= period <= period_init + 0.5):
+    # Uniform priors with dynamic bounds on P and reasonable bounds on t0 around BLS seed
+    if not (period_init - dP <= period <= period_init + dP):
         return -np.inf
     if not (t0_init - 0.5 <= t0 <= t0_init + 0.5):
         return -np.inf
@@ -105,9 +105,9 @@ def _log_prior(theta, period_init, t0_init):
     return 0.0
 
 
-def _log_probability(theta, time, flux, flux_err, period_init, t0_init, ld_coeffs):
+def _log_probability(theta, time, flux, flux_err, period_init, t0_init, dP, ld_coeffs):
     """Log-posterior = log-prior + log-likelihood."""
-    lp = _log_prior(theta, period_init, t0_init)
+    lp = _log_prior(theta, period_init, t0_init, dP)
     if not np.isfinite(lp):
         return -np.inf
     ll = _log_likelihood(theta, time, flux, flux_err, ld_coeffs)
@@ -185,6 +185,12 @@ def run_mcmc_estimation(lc, bls_results, raw_flux_err=None, stellar_params=None,
 
     # Convert depth to Rp/Rs: depth ≈ (Rp/Rs)^2
     rp_rs_init = np.sqrt(max(depth_init, 1e-6))
+    
+    # Calculate dynamic prior bounds for Period
+    t_baseline = lc.time.value[-1] - lc.time.value[0]
+    df_grid = 1.0 / (3.0 * t_baseline)
+    dP = 3.0 * (period_init**2 * df_grid)
+    dP = np.clip(dP, 0.001, 0.5)
 
     # Prepare data: phase-fold to single transit window for speed
     time = lc.time.value
@@ -253,16 +259,16 @@ def run_mcmc_estimation(lc, bls_results, raw_flux_err=None, stellar_params=None,
     # Ensure all initial positions satisfy priors
     for i in range(n_walkers):
         tries = 0
-        while not np.isfinite(_log_prior(pos[i], period_init, t0_init)) and tries < 100:
+        while not np.isfinite(_log_prior(pos[i], period_init, t0_init, dP)) and tries < 100:
             pos[i] = theta_init + perturbation * np.random.randn(n_dim)
             tries += 1
-        if not np.isfinite(_log_prior(pos[i], period_init, t0_init)):
+        if not np.isfinite(_log_prior(pos[i], period_init, t0_init, dP)):
             pos[i] = theta_init.copy()
 
     # Run MCMC
     sampler = emcee.EnsembleSampler(
         n_walkers, n_dim, _log_probability,
-        args=(time_fit, flux_fit, flux_err_fit, period_init, t0_init, ld_coeffs)
+        args=(time_fit, flux_fit, flux_err_fit, period_init, t0_init, dP, ld_coeffs)
     )
 
     print(f"  Running {n_steps} MCMC steps with {n_walkers} walkers...")

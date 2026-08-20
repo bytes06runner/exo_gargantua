@@ -58,7 +58,7 @@ def preprocess_tess_data(target_star_id):
     try:
         search_result = _api_retry(lk.search_lightcurve, target_star_id, mission='TESS', author='SPOC')
         if search_result:
-            lc_collection = _api_retry(search_result.download_all)
+            lc_collection = _api_retry(search_result.download_all, download_dir='./tess_cache')
     except Exception as e:
         print(f"  MAST API search failed or timed out: {e}")
     

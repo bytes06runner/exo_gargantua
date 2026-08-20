@@ -136,13 +136,21 @@ def decompose_and_filter(lc, raw_flux_err=None, window_length=101):
             f_seg[nan_m] = np.interp(t_seg[nan_m], t_seg[~nan_m], f_seg[~nan_m])
             
         # Determine appropriate window length for this segment
-        wl_seg = min(301, len(seg_idx) // 2)
+        wl_seg = min(501, len(seg_idx) // 2)
         if wl_seg % 2 == 0:
             wl_seg += 1
-        wl_seg = max(wl_seg, 7)
+        wl_seg = max(wl_seg, 11)
         
         if len(seg_idx) > wl_seg:
-            seg_base = savgol_filter(f_seg, window_length=wl_seg, polyorder=2)
+            from scipy.ndimage import median_filter
+            # Apply a median filter first to reject edge discontinuities
+            f_med = median_filter(f_seg, size=min(11, len(seg_idx)))
+            seg_base = savgol_filter(f_med, window_length=wl_seg, polyorder=2)
+            
+            # EDGE MARGIN MASKING: mask first and last 5 cadences of the segment
+            if len(seg_base) > 10:
+                seg_base[:5] = np.nan
+                seg_base[-5:] = np.nan
         else:
             seg_base = np.full(len(seg_idx), np.nanmedian(f_seg))
             
@@ -154,7 +162,7 @@ def decompose_and_filter(lc, raw_flux_err=None, window_length=101):
     
     # Build a new LightCurve with the detrended flux
     import lightkurve as lk_mod
-    filtered_lc = lk_mod.LightCurve(time=lc.time, flux=detrended_flux, flux_err=lc.flux_err)
+    filtered_lc = lk_mod.LightCurve(time=lc.time, flux=detrended_flux, flux_err=lc.flux_err).remove_nans()
     residual_flux = detrended_flux - 1.0
 
     noise_stats = {
