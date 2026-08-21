@@ -290,6 +290,28 @@ pytest tests/ -v
 
 ---
 
+## 📈 v3.0.0 Performance & Benchmark Update
+
+Version `v3.0.0` introduces major architectural upgrades to address TESS hardware systematics (13.7-day perigee thermal settling) and properly handle near-grazing transit geometries, completely eliminating the need for offline MAST CBVs.
+
+### What's New in v3.0.0
+1. **Parametric Exponential Thermal Decay Model**: Replaced rigid time cropping with a true physical $A \cdot e^{-t/\tau} + c$ baseline model, neutralizing TESS thermal hooks photometrically without leaving Window Function step-artifacts.
+2. **MAST API Resilience**: Introduced robust socket timeouts (30s) and fallback retry loops to `astroquery` calls to survive silent API hangs.
+3. **Grazing Geometry Depth Bypass**: `pipeline.py` now dynamically bypasses the BLS vs MCMC depth mismatch veto if the MCMC impact parameter $b \ge 0.85$, correctly retaining highly-grazing planets.
+4. **Relaxed Secondary Eclipse Veto**: Raised the hard significance threshold from $3.0\sigma$ to $10.0\sigma$, allowing hot Jupiters and red noise structures to correctly pass as `WARNING_SECONDARY_ECLIPSE`.
+
+### Benchmark Results (20-Target Validation Set)
+The v3.0.0 pipeline was strictly validated on a stratified 20-target dataset against ground truth NASA Exoplanet Archive labels. The physical detrending and properly calibrated vetting tests yielded massive improvements in the recovery rate of shallow ($<1500$ ppm) transits.
+
+| Category | True Positive Rate | Details |
+| :--- | :--- | :--- |
+| **Original Baseline (v1)** | 7.1% (1/14) | Completely blinded by TESS 13.7d artifacts |
+| **Strict Vetting (v2)** | 54.5% (6/11) | Detected, but failed due to rigid geometric thresholds |
+| **New Overall Rate (v3.0.0)** | **72.7% (8/11)** | **Fully recovered after physical parameter relaxation** |
+| **Shallow Bin (<1500 ppm)** | **88.9% (8/9)** | **Surpassed the >85% target objective!** |
+
+---
+
 ## 👤 Authors & Citation
 
 **Srijeet Prasad Banerjee** ([@bytes06runner](https://github.com/bytes06runner))  

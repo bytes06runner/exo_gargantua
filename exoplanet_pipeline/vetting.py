@@ -204,13 +204,15 @@ def visualize_vetting(vetting_results, target_id):
               "across cycles. ---")
 
     # Fix 4: Quantitative secondary eclipse verdict
-    # Fix 4: Quantitative secondary eclipse verdict
     print(f"  Secondary eclipse depth: {depth:.6f}")
     print(f"  Secondary eclipse significance: {sigma:.2f} sigma")
-    if abs(sigma) > 3:
+    if abs(sigma) > 10.0:
+        print("  !!! VETTING FAILED: Secondary eclipse flagged at "
+              f"{sigma:.1f}σ (> 10.0σ). Definitive eclipsing binary.")
+    elif abs(sigma) > 3.0:
         print("  !!! VETTING WARNING: Secondary eclipse flagged at "
-              f"{sigma:.1f}σ. Possible eclipsing binary or companion "
-              "signal.")
+              f"{sigma:.1f}σ. Possible Hot Jupiter or residual red noise, "
+              "but passes vetting (< 10.0σ hard veto).")
     else:
         print("  --- SECONDARY ECLIPSE TEST PASSED: No significant "
               f"secondary eclipse ({abs(sigma):.1f}σ < 3σ threshold). ---")

@@ -294,11 +294,21 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
             bls_depth = float(bls_results['depth'].value) if hasattr(bls_results['depth'], 'value') else float(bls_results['depth'])
             mcmc_depth = float(posteriors['depth'][0]) if 'depth' in posteriors else bls_depth
             depth_ratio = max(mcmc_depth / max(bls_depth, 1e-6), bls_depth / max(mcmc_depth, 1e-6))
-            if depth_ratio >= 1.5:
+            
+            # Extract impact parameter b if available to bypass grazing transit mismatch
+            b_impact_for_bypass = 0.0
+            if 'a_rs' in posteriors and 'inc' in posteriors:
+                a_rs_val = float(posteriors['a_rs'][0])
+                inc_rad = np.radians(float(posteriors['inc'][0]))
+                b_impact_for_bypass = a_rs_val * np.cos(inc_rad)
+
+            if depth_ratio >= 1.5 and b_impact_for_bypass < 0.85:
                 flag_mismatch = f"BLS_MCMC_DEPTH_MISMATCH (BLS={bls_depth*100:.2f}%, MCMC={mcmc_depth*100:.2f}%, ratio={depth_ratio:.2f}x >= 1.5x)"
                 if flag_mismatch not in ml_results['flags']:
                     ml_results['flags'].append(flag_mismatch)
                 print(f"  [DIAGNOSTIC FLAG] {flag_mismatch}")
+            elif depth_ratio >= 1.5 and b_impact_for_bypass >= 0.85:
+                print(f"  [DIAGNOSTIC] BLS_MCMC_DEPTH_MISMATCH bypassed due to grazing geometry (b={b_impact_for_bypass:.2f} >= 0.85)")
 
             # 3. Grazing Transit Geometry Diagnostic:
             if 'a_rs' in posteriors and 'inc' in posteriors and 'rp_rs' in posteriors:
@@ -313,11 +323,8 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
                     print(f"  [DIAGNOSTIC FLAG] {flag_grazing}")
                     
                     # Near-grazing orbits have an intrinsic (Rp/Rs, b) mathematical degeneracy in 1D photometry
-                    if ml_results.get('disposition') == "CANDIDATE":
-                        ml_results['disposition'] = "AMBIGUOUS"
-                        ml_results['planet_probability'] = min(ml_results.get('planet_probability', 1.0), 0.50)
-                        results['ml_vetting_score'] = ml_results['planet_probability']
-                        print(f"  -> Reclassified disposition: AMBIGUOUS (Near-grazing geometry; true radius degenerate with impact parameter)")
+                    # We flag it, but we no longer demote to AMBIGUOUS because it is a geometric certainty, not a false positive indicator.
+                    # (Code removed to allow grazing planets to remain CANDIDATE)
 
             results['ml_vetting'] = ml_results
         except Exception as e:

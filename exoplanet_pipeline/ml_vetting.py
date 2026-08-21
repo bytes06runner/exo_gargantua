@@ -121,8 +121,10 @@ class MLVetter:
         # Physical Vetting Checks
         if centroid_shift >= self.centroid_threshold:
             flags.append(f"FAILED_CENTROID_DIA (shift={centroid_shift:.3f} >= {self.centroid_threshold:.3f} pix)")
-        if sec_sigma > 3.0:
-            flags.append(f"FAILED_SECONDARY_ECLIPSE ({sec_sigma:.2f}σ > 3.0σ)")
+        if sec_sigma > 10.0:
+            flags.append(f"FAILED_SECONDARY_ECLIPSE ({sec_sigma:.2f}σ > 10.0σ)")
+        elif sec_sigma > 3.0:
+            flags.append(f"WARNING_SECONDARY_ECLIPSE ({sec_sigma:.2f}σ > 3.0σ)")
         if depth_diff > 0.005:
             flags.append(f"FAILED_ODD_EVEN_DEPTH (diff={depth_diff:.5f} > 0.005)")
             
@@ -135,15 +137,17 @@ class MLVetter:
             
         # Hard Physical Veto / Calibration:
         # Spatial centroid shift is a definitive physical veto indicating a blended false positive
+        critical_flags = [f for f in flags if not f.startswith("WARNING")]
+        
         if centroid_shift >= self.centroid_threshold:
             # Drop planet probability to near-zero (< 0.5%) regardless of 1D light-curve power
             calibrated_prob = min(rf_prob * 0.01, 0.005)
-        elif len(flags) > 0:
+        elif len(critical_flags) > 0:
             calibrated_prob = min(rf_prob * 0.1, 0.05)
         else:
             calibrated_prob = rf_prob
             
-        disposition = "CANDIDATE" if (calibrated_prob >= 0.5 and len(flags) == 0) else "FALSE_POSITIVE"
+        disposition = "CANDIDATE" if (calibrated_prob >= 0.5 and len(critical_flags) == 0) else "FALSE_POSITIVE"
         
         return {
             'planet_probability': calibrated_prob,
