@@ -175,8 +175,9 @@ def main():
             
         plt.close('all')
         gc.collect()
-        shutil.rmtree('./tess_cache', ignore_errors=True)
-        shutil.rmtree(os.path.expanduser('~/.lightkurve/cache/mastDownload/TESS'), ignore_errors=True)
+        # We are keeping the cache to survive MAST timeouts.
+        # shutil.rmtree('./tess_cache', ignore_errors=True)
+        # shutil.rmtree(os.path.expanduser('~/.lightkurve/cache/mastDownload/TESS'), ignore_errors=True)
 
     total_elapsed = time.time() - start_time_all
     print(f"\n{'='*70}")

@@ -15,15 +15,18 @@ photon-noise estimates instead of sqrt(~1).
 import numpy as np
 import warnings
 import lightkurve as lk
+import os
+import glob
+import socket
+import time
 from astropy.stats import sigma_clip
 from astroquery.mast import Catalogs
 from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
-
-
-import os
-import glob
-import time
 from astroquery.mast import Conf
+
+# Set global socket timeout to prevent MAST from hanging indefinitely
+socket.setdefaulttimeout(30.0)
+
 Conf.timeout = 30  # Fail fast after 30 seconds
 
 def _api_retry(func, *args, **kwargs):
@@ -65,14 +68,20 @@ def preprocess_tess_data(target_star_id):
     # Offline Cache Fallback
     if lc_collection is None or len(lc_collection) == 0:
         print("  Attempting to load from local cache...")
-        cache_dir = os.path.expanduser("~/.lightkurve/cache/mastDownload/TESS")
+        cache_dir_global = os.path.expanduser("~/.lightkurve/cache/mastDownload/TESS")
+        cache_dir_local = "./tess_cache"
         clean_id = target_star_id.replace("TIC", "").strip()
-        pattern1 = os.path.join(cache_dir, f"**/*{clean_id.zfill(16)}*lc.fits")
-        pattern2 = os.path.join(cache_dir, f"**/*{clean_id}*lc.fits")
         
-        files = glob.glob(pattern1, recursive=True)
+        # Check global cache
+        pattern1_g = os.path.join(cache_dir_global, f"**/*{clean_id.zfill(16)}*lc.fits")
+        pattern2_g = os.path.join(cache_dir_global, f"**/*{clean_id}*lc.fits")
+        # Check local cache
+        pattern1_l = os.path.join(cache_dir_local, f"**/*{clean_id.zfill(16)}*lc.fits")
+        pattern2_l = os.path.join(cache_dir_local, f"**/*{clean_id}*lc.fits")
+        
+        files = glob.glob(pattern1_g, recursive=True) + glob.glob(pattern1_l, recursive=True)
         if not files:
-            files = glob.glob(pattern2, recursive=True)
+            files = glob.glob(pattern2_g, recursive=True) + glob.glob(pattern2_l, recursive=True)
             
         if files:
             print(f"  Found {len(files)} cached light curves.")
@@ -131,6 +140,13 @@ def preprocess_tess_data(target_star_id):
             sector_flux_err = lc.flux_err.value.copy()
         else:
             sector_flux_err = np.sqrt(np.abs(lc.flux.value))
+
+        try:
+            corrector = lk.CBVCorrector(lc, cbv_dir='./tess_cbv_cache')
+            lc = corrector.correct(cbv_type=['SingleScale', 'Spike'], cbv_indices=[np.arange(1, 5), 'ALL'])
+            print(f"  Applied offline CBV correction for Sector {lc.sector}.")
+        except Exception as e:
+            print(f"  CBV Correction failed: {e}. Using raw PDC flux.")
 
         raw_median_flux = np.nanmedian(lc.flux.value)
         if raw_median_flux == 0 or np.isnan(raw_median_flux):

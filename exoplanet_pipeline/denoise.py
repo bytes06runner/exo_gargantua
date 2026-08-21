@@ -31,30 +31,52 @@ def decompose_and_filter(lc, raw_flux_err=None, window_length=101):
     print(f"  Total cadences: {n_cadences}")
 
 
-    # ---- Step 0: Rigid 2.5-Day Thermal Crop ----
-    valid_mask = np.ones(n_cadences, dtype=bool)
+    # ---- Step 0: Parametric Exponential Thermal Decay Model ----
+    # Instead of cropping, we explicitly fit an exponential decay to the baseline
+    # to perfectly remove the TESS thermal settling without cutting data.
+    import scipy.optimize as opt
+    
+    def thermal_model(t, A, tau, c):
+        return A * np.exp(-(t - t[0]) / max(tau, 0.001)) + c
+        
+    thermal_baseline = np.ones_like(flux_orig)
+    
     dt = np.diff(time_orig)
     gap_indices = np.where(dt > 0.5)[0] + 1
     segment_splits = np.split(np.arange(n_cadences), gap_indices)
     
     for seg_idx in segment_splits:
-        if len(seg_idx) == 0: continue
-        t_start = time_orig[seg_idx[0]]
-        invalid = (time_orig[seg_idx] - t_start) < 2.5
-        valid_mask[seg_idx[invalid]] = False
+        if len(seg_idx) < 50: continue
+        t_seg = time_orig[seg_idx]
+        f_seg = flux_orig[seg_idx]
         
-    n_cropped = np.sum(~valid_mask)
-    if n_cropped > 0:
-        print(f"  Rigid Thermal Crop: Masked {n_cropped} cadences from the first 2.5 days of sectors.")
-        lc = lc[valid_mask]
+        # Aggressively mask extreme positive momentum dumps for the baseline fit
+        med = np.nanmedian(f_seg)
+        std = np.nanstd(f_seg)
+        valid = (f_seg - med) < (3.0 * std)
         
-    if raw_flux_err is not None and len(raw_flux_err) == len(valid_mask):
-        raw_flux_err = raw_flux_err[valid_mask]
-        
-    # Re-evaluate arrays post-crop
-    time_orig = lc.time.value
-    flux_orig = lc.flux.value
-    n_cadences = len(lc)
+        if np.sum(valid) > 10:
+            try:
+                # Guess: A = max - median, tau = 0.5 days, c = median
+                A_guess = np.nanpercentile(f_seg[valid][:20], 95) - med
+                if A_guess < 0: A_guess = 0.001
+                
+                popt, _ = opt.curve_fit(
+                    thermal_model, t_seg[valid], f_seg[valid],
+                    p0=[A_guess, 0.5, med],
+                    bounds=([0, 0.01, -np.inf], [np.inf, 3.0, np.inf]),
+                    maxfev=2000
+                )
+                
+                seg_model = thermal_model(t_seg, *popt)
+                # Normalize the thermal model so we can divide it out
+                seg_model /= np.nanmedian(seg_model)
+                thermal_baseline[seg_idx] = seg_model
+            except Exception:
+                pass
+                
+    flux_orig = flux_orig / thermal_baseline
+    print("  Applied Parametric Exponential Thermal Decay correction.")
     
     # ---- Step 1: Fast BLS on heavily decimated data to find transits ----
     print("  Decimating light curve for fast BLS...")
