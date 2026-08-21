@@ -39,9 +39,21 @@ def test_ml_vetter_training_and_spatial_veto():
         'bls_power': 50.0,
         'snr': 50.0,
         'depth_diff': 0.0001,
-        'secondary_eclipse_sigma': 4.5, # > 3.0 sigma
+        'secondary_eclipse_sigma': 14.5, # > 10.0 sigma
         'centroid_shift': 0.05
     }
     pred_eb = vetter.predict(eb_features)
     assert pred_eb['disposition'] == 'FALSE_POSITIVE'
     assert any('FAILED_SECONDARY_ECLIPSE' in flag for flag in pred_eb['flags'])
+
+    # 5. Test an Eclipsing Binary with moderate secondary eclipse (Warning only)
+    eb_warning_features = {
+        'bls_power': 50.0,
+        'snr': 50.0,
+        'depth_diff': 0.0001,
+        'secondary_eclipse_sigma': 4.5, # > 3.0 sigma, < 10.0 sigma
+        'centroid_shift': 0.05
+    }
+    pred_warning_eb = vetter.predict(eb_warning_features)
+    assert pred_warning_eb['disposition'] == 'CANDIDATE'
+    assert any('WARNING_SECONDARY_ECLIPSE' in flag for flag in pred_warning_eb['flags'])
