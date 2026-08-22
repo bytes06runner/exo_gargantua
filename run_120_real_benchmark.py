@@ -16,6 +16,8 @@ warnings.simplefilter('ignore')
 from exoplanet_pipeline.pipeline import run_full_pipeline
 from exoplanet_pipeline.detection import run_bls_search
 
+np.random.seed(42)
+
 def retry_download(target_id, max_retries=5):
     """
     Robust download handler with retry and timeout for MAST server connection drops.

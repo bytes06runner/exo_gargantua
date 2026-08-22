@@ -230,12 +230,16 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
             is_hot_jupiter = True
             
     override_reason = None
+    approx_rp_override = np.sqrt(max(float(bls_results['depth'].value if hasattr(bls_results['depth'], 'value') else bls_results['depth']), 1e-6)) * stellar_params['Rs'] * 109.28
+    
     if raw_snr < 7.1:
         override_reason = f"SNR too low ({raw_snr:.1f} < 7.1)"
     elif sec_sig > 3.0 and not is_hot_jupiter:
         override_reason = f"Secondary eclipse too strong ({sec_sig:.1f} sigma > 3.0)"
     elif odd_even_diff > 0.005:  # Empirical threshold for significant odd/even diff
         override_reason = f"Odd/Even depth discrepancy too large ({odd_even_diff:.5f})"
+    elif approx_rp_override > 25.0:
+        override_reason = f"Radius too large for planetary candidate ({approx_rp_override:.1f} R_earth > 25.0 R_earth / Eclipsing Binary)"
         
     if override_reason:
         print(f"  [OVERRIDE] {override_reason} -> Reclassifying as FALSE_POSITIVE")
@@ -326,20 +330,11 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
             mcmc_depth = float(posteriors['depth'][0]) if 'depth' in posteriors else bls_depth
             depth_ratio = max(mcmc_depth / max(bls_depth, 1e-6), bls_depth / max(mcmc_depth, 1e-6))
             
-            # Extract impact parameter b if available to bypass grazing transit mismatch
-            b_impact_for_bypass = 0.0
-            if 'a_rs' in posteriors and 'inc' in posteriors:
-                a_rs_val = float(posteriors['a_rs'][0])
-                inc_rad = np.radians(float(posteriors['inc'][0]))
-                b_impact_for_bypass = a_rs_val * np.cos(inc_rad)
-
-            if depth_ratio >= 1.5 and b_impact_for_bypass < 0.85:
+            if depth_ratio >= 1.5:
                 flag_mismatch = f"BLS_MCMC_DEPTH_MISMATCH (BLS={bls_depth*100:.2f}%, MCMC={mcmc_depth*100:.2f}%, ratio={depth_ratio:.2f}x >= 1.5x)"
                 if flag_mismatch not in ml_results['flags']:
                     ml_results['flags'].append(flag_mismatch)
                 print(f"  [DIAGNOSTIC FLAG] {flag_mismatch}")
-            elif depth_ratio >= 1.5 and b_impact_for_bypass >= 0.85:
-                print(f"  [DIAGNOSTIC] BLS_MCMC_DEPTH_MISMATCH bypassed due to grazing geometry (b={b_impact_for_bypass:.2f} >= 0.85)")
 
             # 3. Grazing Transit Geometry Diagnostic:
             if 'a_rs' in posteriors and 'inc' in posteriors and 'rp_rs' in posteriors:
@@ -354,8 +349,12 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
                     print(f"  [DIAGNOSTIC FLAG] {flag_grazing}")
                     
                     # Near-grazing orbits have an intrinsic (Rp/Rs, b) mathematical degeneracy in 1D photometry
-                    # We flag it, but we no longer demote to AMBIGUOUS because it is a geometric certainty, not a false positive indicator.
-                    # (Code removed to allow grazing planets to remain CANDIDATE)
+                    # Re-enabling AMBIGUOUS demotion as grazing geometry often mimics eclipsing binaries
+                    if ml_results.get('disposition') == "CANDIDATE":
+                        ml_results['disposition'] = "AMBIGUOUS"
+                        ml_results['planet_probability'] = min(ml_results.get('planet_probability', 1.0), 0.50)
+                        results['ml_vetting_score'] = ml_results['planet_probability']
+                        print(f"  -> Reclassified disposition: AMBIGUOUS (Near-Grazing Geometry Needs Follow-up)")
 
             results['ml_vetting'] = ml_results
         except Exception as e:
