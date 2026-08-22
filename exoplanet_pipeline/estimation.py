@@ -18,6 +18,10 @@ import numpy as np
 import batman
 import emcee
 
+# Enforce deterministic MCMC walker initialization.
+# Without this, borderline targets (e.g. Rp near the 25 R_earth ceiling)
+# can flip dispositions between runs due to different random walker paths.
+np.random.seed(42)
 
 def _batman_model(time, period, t0, rp_rs, a_rs, inc, ld_coeffs, baseline=1.0):
     """

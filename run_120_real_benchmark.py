@@ -86,6 +86,11 @@ def get_targets():
     return pd.concat([shallow_planets, deep_planets, fp_targets, eb_targets])
 
 def run_benchmark():
+    # CRITICAL: Nuke old results file to prevent append-mode duplication
+    if os.path.exists('real_benchmark_results.jsonl'):
+        os.remove('real_benchmark_results.jsonl')
+        print("Deleted stale real_benchmark_results.jsonl")
+    
     df = get_targets()
     print(f"Total targets selected: {len(df)}")
     
@@ -118,11 +123,27 @@ def run_benchmark():
             continue
             
         try:
-            bls_res = run_bls_search(stitched_lc)
-            spoc_period = bls_res['period'].value if hasattr(bls_res['period'], 'value') else bls_res['period']
-            spoc_snr = bls_res['snr'].value if hasattr(bls_res['snr'], 'value') else bls_res['snr']
-            entry['spoc_period'] = float(spoc_period)
-            entry['spoc_snr'] = float(spoc_snr)
+            # Vanilla BLS Baseline
+            time_val = stitched_lc.time.value
+            flux_val = stitched_lc.flux.value
+            
+            # Remove NaNs
+            valid = ~np.isnan(time_val) & ~np.isnan(flux_val)
+            time_val = time_val[valid]
+            flux_val = flux_val[valid]
+            
+            from astropy.timeseries import BoxLeastSquares
+            model = BoxLeastSquares(time_val, flux_val)
+            period_grid = np.linspace(0.5, 20.0, 10000)
+            durations = np.linspace(0.01, 0.2, 10)
+            res = model.power(period_grid, durations)
+            
+            max_idx = np.argmax(res.power)
+            spoc_period = float(res.period[max_idx])
+            spoc_snr = float(res.power[max_idx])
+            
+            entry['spoc_period'] = spoc_period
+            entry['spoc_snr'] = spoc_snr
             
             p_diff = abs(spoc_period - catalog_period) / catalog_period
             is_rec = bool(p_diff < 0.05 or abs(spoc_period*2 - catalog_period)/catalog_period < 0.05 or abs(spoc_period/2 - catalog_period)/catalog_period < 0.05)

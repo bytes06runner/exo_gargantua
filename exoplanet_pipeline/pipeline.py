@@ -217,6 +217,37 @@ def run_full_pipeline(target_star_id, run_mcmc=True, run_centroid=True,
     except Exception as e:
         print(f"  Failed to run ML vetting: {e}")
 
+    # --- HARD PHYSICAL OVERRIDES (Rejects FPs that ML misses) ---
+    print(f"\n  --- Physical Vetting Overrides ---")
+    sec_sig = float(vetting_results.get('secondary_eclipse_sigma', 0))
+    odd_even_diff = float(vetting_results.get('depth_diff', 0))
+    raw_snr = float(bls_results['snr'].value if hasattr(bls_results['snr'], 'value') else bls_results['snr'])
+    
+    # Check if Hot Jupiter (P < 10d, Depth > 10000ppm)
+    is_hot_jupiter = False
+    if float(bls_results['period'].value if hasattr(bls_results['period'], 'value') else bls_results['period']) < 10.0:
+        if float(bls_results['depth'].value if hasattr(bls_results['depth'], 'value') else bls_results['depth']) > 0.01:
+            is_hot_jupiter = True
+            
+    override_reason = None
+    if raw_snr < 7.1:
+        override_reason = f"SNR too low ({raw_snr:.1f} < 7.1)"
+    elif sec_sig > 3.0 and not is_hot_jupiter:
+        override_reason = f"Secondary eclipse too strong ({sec_sig:.1f} sigma > 3.0)"
+    elif odd_even_diff > 0.005:  # Empirical threshold for significant odd/even diff
+        override_reason = f"Odd/Even depth discrepancy too large ({odd_even_diff:.5f})"
+        
+    if override_reason:
+        print(f"  [OVERRIDE] {override_reason} -> Reclassifying as FALSE_POSITIVE")
+        if 'ml_vetting' not in results:
+            results['ml_vetting'] = {}
+        results['ml_vetting']['disposition'] = "FALSE_POSITIVE"
+        results['ml_vetting']['planet_probability'] = 0.0
+        results['ml_vetting_score'] = 0.0
+        ml_results['disposition'] = "FALSE_POSITIVE"
+        ml_results['planet_probability'] = 0.0
+    else:
+        print("  [OVERRIDE] No hard physical vetoes triggered.")
     # ========================================
     # PHASE 4: MCMC Parameter Estimation
     # ========================================
