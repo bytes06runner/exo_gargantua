@@ -290,25 +290,31 @@ pytest tests/ -v
 
 ---
 
-## 📈 v3.0.0 Performance & Benchmark Update
+## 📈 Final Performance & Benchmark Update
 
-Version `v3.0.0` introduces major architectural upgrades to address TESS hardware systematics (13.7-day perigee thermal settling) and properly handle near-grazing transit geometries, completely eliminating the need for offline MAST CBVs.
+The pipeline introduces major architectural upgrades to address TESS hardware systematics (13.7-day perigee thermal settling) and properly handle near-grazing transit geometries, completely eliminating the need for offline MAST CBVs.
 
-### What's New in v3.0.0
+### What's New
 1. **Parametric Exponential Thermal Decay Model**: Replaced rigid time cropping with a true physical $A \cdot e^{-t/\tau} + c$ baseline model, neutralizing TESS thermal hooks photometrically without leaving Window Function step-artifacts.
 2. **MAST API Resilience**: Introduced robust socket timeouts (30s) and fallback retry loops to `astroquery` calls to survive silent API hangs.
 3. **Grazing Geometry Depth Bypass**: `pipeline.py` now dynamically bypasses the BLS vs MCMC depth mismatch veto if the MCMC impact parameter $b \ge 0.85$, correctly retaining highly-grazing planets.
-4. **Relaxed Secondary Eclipse Veto**: Raised the hard significance threshold from $3.0\sigma$ to $10.0\sigma$, allowing hot Jupiters and red noise structures to correctly pass as `WARNING_SECONDARY_ECLIPSE`.
+4. **Bidirectional Harmonic Validator**: A deterministic grid evaluation ($1/7\times$ to $7\times$) utilizing a $>95\%$ depth plateau criterion to eliminate harmonic locks and TTV smearing traps.
 
-### Benchmark Results (20-Target Validation Set)
-The v3.0.0 pipeline was strictly validated on a stratified 20-target dataset against ground truth NASA Exoplanet Archive labels. The physical detrending and properly calibrated vetting tests yielded massive improvements in the recovery rate of shallow ($<1500$ ppm) transits.
+### Strict Benchmark Results (109-Target Validation Set)
+The pipeline was strictly validated on a stratified 109-target dataset against a vanilla Box Least Squares (BLS) baseline on matched SPOC `PDCSAP` flux using a strict 1% period-matching tolerance.
 
-| Category | True Positive Rate | Details |
+| Metric | Vanilla BLS Baseline (`PDCSAP`) | Exo-Gargantua (`PDCSAP`) |
 | :--- | :--- | :--- |
-| **Original Baseline (v1)** | 7.1% (1/14) | Completely blinded by TESS 13.7d artifacts |
-| **Strict Vetting (v2)** | 54.5% (6/11) | Detected, but failed due to rigid geometric thresholds |
-| **New Overall Rate (v3.0.0)** | **72.7% (8/11)** | **Fully recovered after physical parameter relaxation** |
-| **Shallow Bin (<1500 ppm)** | **88.9% (8/9)** | **Surpassed the >85% target objective!** |
+| **Total Recovery Rate (n=61 CP)** | $50.8\% \pm 6.4\%$ | **$45.9\% \pm 6.4\%$** |
+| **Shallow Target ($<1500$ ppm)** | $34.1\% \pm 7.4\%$ | **$29.3\% \pm 7.1\%$** |
+| **Eclipsing Binary (EB) Recovery**| $84.6\% \pm 7.1\%$ | **$61.5\% \pm 9.5\%$** |
+| **False Positive Rejection Rate** | -- | **$35.4\% \pm 6.9\%$** |
+
+*Note: The pipeline intentionally sacrifices raw Eclipsing Binary "recovery" to maximize planetary candidate purity by actively penalizing complex EBs.*
+
+<div align="center">
+  <img src="fig_benchmark_barchart.png" alt="Benchmark Barchart" width="75%">
+</div>
 
 ---
 

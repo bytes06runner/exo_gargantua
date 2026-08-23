@@ -141,14 +141,13 @@ def preprocess_tess_data(target_star_id):
         else:
             sector_flux_err = np.sqrt(np.abs(lc.flux.value))
 
-        try:
-            corrector = lk.CBVCorrector(lc, cbv_dir='./tess_cbv_cache')
-            lc = corrector.correct(cbv_type=['SingleScale', 'Spike'], cbv_indices=[np.arange(1, 5), 'ALL'])
-            print(f"  Applied offline CBV correction for Sector {lc.sector}.")
-        except Exception as e:
-            print(f"  CBV Correction failed: {e}. Using raw PDC flux.")
+        # CRITICAL FIX: Extract raw SAP_FLUX to test Exo-Gargantua's thermal detrending on unconditioned data.
+        if 'sap_flux' in lc.colnames:
+            raw_flux_val = np.asarray(lc['sap_flux'].value, dtype=float)
+        else:
+            raw_flux_val = np.asarray(lc.flux.value if hasattr(lc.flux, 'value') else lc.flux, dtype=float)
 
-        raw_median_flux = np.nanmedian(lc.flux.value)
+        raw_median_flux = np.nanmedian(raw_flux_val)
         if raw_median_flux == 0 or np.isnan(raw_median_flux):
             continue
 
@@ -160,7 +159,6 @@ def preprocess_tess_data(target_star_id):
                 crowdsap = 1.0
 
         # Mathematically exact undilution: F_undiluted = (F_obs / F_med - 1.0) / CROWDSAP + 1.0
-        raw_flux_val = np.asarray(lc.flux.value if hasattr(lc.flux, 'value') else lc.flux, dtype=float)
         norm_flux = (raw_flux_val / raw_median_flux - 1.0) / crowdsap + 1.0
         norm_err = np.asarray(sector_flux_err / raw_median_flux / crowdsap, dtype=float)
 

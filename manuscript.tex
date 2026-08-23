@@ -17,7 +17,7 @@
 
 \title{Exo-Gargantua: A Deterministic, First-Principles Pipeline for Mitigating Spacecraft Systematics and Recovering Shallow Exoplanetary Transits}
 
-\author{Srijeet Prasad Banerjee}
+\author[0009-0009-5889-9550]{Srijeet Prasad Banerjee}
 \email{srijeetprasadbanerjee006@gmail.com}
 \affiliation{Department of Information Technology, Guru Nanak Institute of Technology \\
 157/F Nilgunj Road, Panihati \\
@@ -27,7 +27,7 @@ Kolkata, West Bengal 700114, India}
 %% ABSTRACT
 %% --------------------------------------------------------
 \begin{abstract}
-The Transiting Exoplanet Survey Satellite (TESS) provides high cadence time series photometry across the celestial sphere, yet the detection of shallow planetary transits ($\delta < 1500\,\text{ppm}$) remains heavily constrained by non-stationary instrumental systematics and harmonic folding. Institutional pipelines such as the NASA Science Processing Operations Center (SPOC) utilize extensive Cotrending Basis Vectors (CBVs) and high-performance computing clusters, which remain resource intensive and prone to propagating catalog-level folding errors (e.g., mislabeling the orbital half periods of eclipsing binaries). Here, we introduce \textsc{Exo-Gargantua}, an open source, deterministic transit detection and vetting pipeline, engineered strictly from first physical and signal processing principles. To eliminate the ``convexity bias'' inherent to non-parametric filtering during post-perigee spacecraft cooling, \textsc{Exo-Gargantua} implements a Parametric Exponential Thermal Decay model ($A e^{-t/\tau} + c$) that isolates and subtracts the $\sim 13.7\,\text{d}$ thermal hook without inducing step function boundaries. To resolve Fourier alias trapping and Transit Timing Variation (TTV) smearing, we deploy a Bidirectional Harmonic Validator ($1/7\times$ to $7\times$ grid) evaluated against a strict $>95\%$ transit depth plateau. In a direct head to head search evaluation against a vanilla Box Least Squares (BLS) baseline on SPOC \texttt{PDCSAP} flux, \textsc{Exo-Gargantua} achieved a competitive $50.0\%$ True Positive recovery rate (compared to the baseline's $55.0\%$). Furthermore, our deterministic odd/even depth variance test autonomously identifies and corrects catalog half-period degeneracies among eclipsing binaries, establishing a standalone automated false-positive rejection rate of $32.7\%$. \textsc{Exo-Gargantua} demonstrates that lightweight, transparent algorithmic architectures can independently recover a significant fraction of institutional catalogs on commodity hardware, while highlighting the strict necessity of community driven vetting for borderline astrophysical false positives.
+The Transiting Exoplanet Survey Satellite (TESS) provides high cadence time series photometry across the celestial sphere, yet the detection of shallow planetary transits ($\delta < 1500\,\text{ppm}$) remains heavily constrained by non-stationary instrumental systematics and harmonic folding. Institutional pipelines such as the NASA Science Processing Operations Center (SPOC) utilize extensive Cotrending Basis Vectors (CBVs) and high-performance computing clusters, which remain resource intensive and prone to propagating catalog-level folding errors (e.g., mislabeling the orbital half periods of eclipsing binaries). Here, we introduce \textsc{Exo-Gargantua}, an open source, deterministic transit detection and vetting pipeline, engineered strictly from first physical and signal processing principles. To eliminate the ``convexity bias'' inherent to non-parametric filtering during post-perigee spacecraft cooling, \textsc{Exo-Gargantua} implements a Parametric Exponential Thermal Decay model ($A e^{-t/\tau} + c$) that isolates and subtracts the $\sim 13.7\,\text{d}$ thermal hook without inducing step function boundaries. To resolve Fourier alias trapping and Transit Timing Variation (TTV) smearing, we deploy a Bidirectional Harmonic Validator ($1/7\times$ to $7\times$ grid) evaluated against a strict $>95\%$ transit depth plateau. In a direct head-to-head search evaluation against a vanilla Box Least Squares (BLS) baseline on matched SPOC \texttt{PDCSAP} flux using a strict $1\%$ period-matching tolerance, \textsc{Exo-Gargantua} achieved a competitive $45.9\% \pm 6.4\%$ True Positive recovery rate (compared to the baseline's $50.8\% \pm 6.4\%$). Furthermore, our deterministic odd/even depth variance test autonomously identifies and corrects catalog half-period degeneracies among eclipsing binaries, establishing a standalone automated false-positive rejection rate of $35.4\% \pm 6.9\%$. A secondary robustness evaluation on raw, unconditioned \texttt{SAP\_FLUX} further validated the architecture's autonomy by recovering $41.0\%$ of candidates without institutional pre-conditioning. \textsc{Exo-Gargantua} demonstrates that lightweight, transparent algorithmic architectures can independently recover a significant fraction of institutional catalogs on commodity hardware, while highlighting the strict necessity of community driven vetting for borderline astrophysical false positives.
 \end{abstract}
 
 %% Unified Astronomy Thesaurus (UAT) Keywords
@@ -108,38 +108,39 @@ In the final phase, the pipeline runs a series of strict astrophysical tests to 
 %% --------------------------------------------------------
 \section{Benchmark Results and Analysis} \label{sec:benchmarks}
 
-To evaluate the mathematical limits and physical accuracy of \textsc{Exo-Gargantua}, we executed an unattended, automated benchmark across a stratified validation dataset of 109 unique TESS Objects of Interest (TOIs). The dataset contains a mix of confirmed planets, known eclipsing binaries, and background blends to test the pipeline's robustness against real-world astrophysical false positives. 
+To evaluate the mathematical limits and physical accuracy of \textsc{Exo-Gargantua}, we executed an unattended, automated benchmark across a stratified validation dataset. An initial target list of 120 TESS Objects of Interest (TOIs) was curated. However, 13 targets were excluded prior to final evaluation (11 targets failed during automated MAST data retrieval, 1 unresolved pixel-blend duplicate was removed, and 1 background false positive was dropped). To ensure the inclusion of specific phenomenological case studies, two verified targets were manually patched into the dataset, yielding the final strictly vetted 109-target validation dataset. This dataset contains a mix of confirmed planets, known eclipsing binaries, and background blends to test the pipeline's robustness against real-world astrophysical false positives.
 
 \subsection{Baseline Comparison: Exo-Gargantua vs. Vanilla BLS}
-To ensure a mathematically honest and objective evaluation, we conducted a head-to-head comparison against a standard Box Least Squares (BLS) periodogram search. The baseline was executed directly on the highly conditioned NASA SPOC \texttt{PDCSAP\_FLUX} light curves.
+To ensure a mathematically honest and objective evaluation, we conducted a head-to-head comparison against a standard Box Least Squares (BLS) periodogram search. For this primary benchmark, both pipelines were executed on the highly conditioned NASA SPOC \texttt{PDCSAP\_FLUX} light curves. This matched-input approach securely isolates the search and vetting algorithms from the inherent differences in underlying detrending methods.
 
-Because this test was run on a curated list of established TESS Objects of Interest, NASA's institutional recovery rate on these targets is implicitly 100\%. When evaluated against this ground truth, the baseline Vanilla BLS successfully recovered the correct orbital period $55.0\%$ of the time. In comparison, the fully processed \textsc{Exo-Gargantua} pipeline, operating independently from first principles, achieved a highly competitive $50.0\%$ True Positive recovery rate. 
+Because this test was run on a curated list of established TESS Objects of Interest, NASA's institutional recovery rate on these targets is implicitly 100\%. To objectively benchmark our pipeline against this ground truth, we define a successful algorithmic recovery as a period match within a strict $1\%$ tolerance of either the catalog fundamental period or a primary harmonic alias (e.g., $0.5P$ or $2P$). Furthermore, to accurately assess planetary detection efficacy, the `Total Recovery Rate' is calculated exclusively across the 61 pure Candidate Planets (CPs) within the dataset, isolating the metric from the Eclipsing Binary population. Under these explicit criteria, the baseline Vanilla BLS successfully recovered the orbital period $50.8\% \pm 6.4\%$ of the time. In comparison, the fully processed \textsc{Exo-Gargantua} pipeline achieved a highly competitive $45.9\% \pm 6.4\%$ True Positive recovery rate. 
 
-While \textsc{Exo-Gargantua} does not surpass the baseline metric, successfully recovering half of NASA's cataloged targets on commodity hardware using fully transparent, deterministic logic serves as a powerful demonstration of the pipeline's architectural viability.
+While \textsc{Exo-Gargantua} does not surpass the baseline metric, successfully recovering nearly half of NASA's cataloged targets on commodity hardware using fully transparent, deterministic logic serves as a powerful demonstration of the pipeline's architectural viability.
 
 \subsection{False Positive Rejection and Institutional Vetting}
 
 %% --- BENCHMARK TABLE ---
 
 \begin{deluxetable*}{lccc}
-\tablecaption{Deduplicated Automated Benchmark Results (109 TOI Sample) \label{tab:benchmark}}
+\tablecaption{Strict Automated Benchmark Results (109 TOI Sample, 1\% Tolerance) \label{tab:benchmark}}
 \tablewidth{0pt}
 \tablehead{
-\colhead{Metric} & \colhead{Vanilla BLS Baseline} & \colhead{Exo-Gargantua} & \colhead{Difference}
+\colhead{Metric} & \colhead{Vanilla BLS Baseline (\texttt{PDCSAP})} & \colhead{Exo-Gargantua (\texttt{PDCSAP})} & \colhead{Difference}
 }
 \startdata
-Total Recovery Rate & 55.0\% & 50.0\% & $-5.0\%$ \\
-Shallow Target ($<1500\,\text{ppm}$) Recovery & 40.0\% & 35.0\% & $-5.0\%$ \\
+Total Recovery Rate (n=61 CP) & $50.8\% \pm 6.4\%$ & $45.9\% \pm 6.4\%$ & $-4.9\%$ \\
+Shallow Target ($<1500\,\text{ppm}$) Recovery & $34.1\% \pm 7.4\%$ & $29.3\% \pm 7.1\%$ & $-4.8\%$ \\
+Eclipsing Binary (EB) Recovery & $84.6\% \pm 7.1\%$ & $61.5\% \pm 9.5\%$ & $-23.1\%$ \\
 \hline
 \multicolumn{4}{c}{\textit{Pipeline Vetting Performance}} \\
 \hline
-False Positive Rejection Rate & -- & 32.7\% & -- \\
+False Positive Rejection Rate & -- & $35.4\% \pm 6.9\%$ & -- \\
 \enddata
 \end{deluxetable*}
 
-Unlike raw periodogram searches, a complete pipeline must autonomously differentiate true planetary transits from astrophysical imposters. By actively enforcing rigid physical constraintssuch as a $3\sigma$ secondary eclipse veto and statistical odd/even geometric variance\textsc{Exo-Gargantua} achieved a standalone $32.7\%$ autonomous False Positive (FP) rejection rate against known eclipsing binaries and background blends. 
+Unlike raw periodogram searches, a complete pipeline must autonomously differentiate true planetary transits from astrophysical imposters. By actively enforcing rigid physical constraints—such as a $3\sigma$ secondary eclipse veto and statistical odd/even geometric variance—\textsc{Exo-Gargantua} achieved a standalone $35.4\% \pm 6.9\%$ autonomous False Positive (FP) rejection rate against known eclipsing binaries and background blends. 
 
-However, this metric explicitly demonstrates that the unattended pipeline still accepts $67.3\%$ of background false positives as viable planetary candidates.Rather than a pipeline failure, this highlights the profound structural difficulty of automated exoplanetary classification. It underscores exactly why the NASA SPOC pipeline relies on the TESS Follow-up Observing Program Working Group (TFOPWG) for manual, human-in-the-loop vetting. \textsc{Exo-Gargantua} provides an excellent first-pass detection engine, but robust rejection of complex harmonic aliases ultimately requires multi-layered institutional analyses.
+However, this metric explicitly demonstrates that the unattended pipeline still accepts $64.6\% \pm 6.9\%$ of background false positives as viable planetary candidates. Rather than a pipeline failure, this highlights the profound structural difficulty of automated exoplanetary classification. It underscores exactly why the NASA SPOC pipeline relies on the TESS Follow-up Observing Program Working Group (TFOPWG) for manual, human-in-the-loop vetting. \textsc{Exo-Gargantua} provides an excellent first-pass detection engine, but robust rejection of complex harmonic aliases ultimately requires multi-layered institutional analyses.
 
 %% --- FIGURE 1: THERMAL HOOK FIX ---
 \begin{figure}[ht!]
@@ -153,7 +154,7 @@ However, this metric explicitly demonstrates that the unattended pipeline still 
 \begin{figure}[ht!]
     \centering
     \includegraphics[width=\linewidth]{fig_benchmark_barchart.png}
-    \caption{Performance comparison across the 109-target validation dataset. \textsc{Exo-Gargantua} (orange) provides a highly competitive alternative to the baseline Vanilla BLS extraction (blue), successfully tracking institutional detection limits across both deep and shallow transit regimes.}
+    \caption{Performance comparison across the 109-target validation dataset on matched \texttt{PDCSAP} flux. \textsc{Exo-Gargantua} (orange) provides a highly competitive alternative to the baseline Vanilla BLS extraction (blue), successfully tracking institutional detection limits across both deep and shallow transit regimes.}
     \label{fig:barchart}
 \end{figure}
 
@@ -183,6 +184,12 @@ Conversely, to maintain computational efficiency during unattended bulk processi
     \label{fig:grazing}
 \end{figure}
 
+\subsection{The Eclipsing Binary Recovery Trade-off}
+A critical realization from our strict $1\%$ tolerance evaluation is that \textsc{Exo-Gargantua} seemingly underperforms the vanilla BLS baseline on recovering known Eclipsing Binaries ($61.5\%$ vs. $84.6\%$). However, rather than an algorithmic failure, this performance gap is the intended outcome of aggressive astrophysical vetting. Vanilla BLS operates purely as a search algorithm, blindly accepting the highest periodogram peak regardless of transit shape. In contrast, \textsc{Exo-Gargantua} actively penalizes complex EBs by enforcing a $3\sigma$ secondary eclipse veto and strict radius boundary checks. By successfully weeding out imposters, the pipeline intentionally sacrifices raw Eclipsing Binary ``recovery'' in order to maximize planetary candidate purity.
+
+\subsection{Robustness Check: Evaluation on Raw SAP Flux}
+While the matched \texttt{PDCSAP} comparison provides a controlled baseline for evaluating the search and vetting algorithms, the core architectural advantage of \textsc{Exo-Gargantua} lies in its Parametric Exponential Thermal Decay filter. To stress-test this detrending capability, we executed a secondary, unmatched-input robustness check by evaluating \textsc{Exo-Gargantua} exclusively on raw, unconditioned Simple Aperture Photometry (\texttt{SAP\_FLUX}). Operating entirely without NASA's Cotrending Basis Vectors (CBVs), the pipeline maintained a highly robust $41.0\%$ True Positive recovery rate and a $22.9\%$ False Positive rejection rate. This stress test explicitly demonstrates the pipeline's ability to autonomously mitigate extreme non-stationary spacecraft systematics directly from raw telemetry.
+
 %% --------------------------------------------------------
 %% 4. DISCUSSION AND CONCLUSION
 %% --------------------------------------------------------
@@ -192,12 +199,19 @@ The automated extraction of exoplanetary transits from space-based photometry re
 
 The primary engineering hurdle in TESS data processing is the mitigation of post-perigee thermal settling. Our analysis definitively shows that non-parametric smoothing filters are mathematically insufficient for this task due to convexity bias, which inherently transforms exponential cooling curves into artificial periodic transit signals. By replacing these filters with a Parametric Exponential Thermal Decay model, \textsc{Exo-Gargantua} perfectly isolates the spacecraft hardware systematics, leaving a pristine baseline.
 
-Most notably, \textsc{Exo-Gargantua} achieved a $50.0\%$ automated recovery rate in a direct baseline evaluation, closely trailing the $55.0\%$ baseline metric. Furthermore, the pipeline's $30.6\%$ false-positive rejection rate provides a transparent, deterministic baseline that explicitly demonstrates the mathematical limits of automated vetting, reaffirming the necessity of human-in-the-loop and multi-layered institutional analyses for the remaining $69.4\%$ of astrophysical false alarms.
+Most notably, in a matched \texttt{PDCSAP} evaluation, \textsc{Exo-Gargantua} achieved a $45.9\% \pm 6.4\%$ automated recovery rate, closely trailing the $50.8\% \pm 6.4\%$ baseline metric. Furthermore, the pipeline's $35.4\% \pm 6.9\%$ false-positive rejection rate provides a transparent, deterministic baseline that explicitly demonstrates the mathematical limits of automated vetting, reaffirming the necessity of human-in-the-loop and multi-layered institutional analyses for the remaining $64.6\% \pm 6.9\%$ of astrophysical false alarms. Additionally, a robustness stress test on raw \texttt{SAP\_FLUX} autonomously recovered $41.0\%$ of planetary candidates, independently proving the architectural validity of the parametric thermal filter without institutional pre-conditioning.
 
 In conclusion, \textsc{Exo-Gargantua} provides a highly transparent, open-source framework for exoplanet validation. By prioritizing physical geometry and mathematical transparency over brute-force computation, it democratizes high-precision time-series analysis, empowering independent researchers to explore the TESS photometric archive with confidence.
 
-\section*{Acknowledgments}
+\section*{Data Availability}
+The \textsc{Exo-Gargantua} pipeline described in this work is fully open-source. All TESS time-series photometry used for validation is publicly available via the Mikulski Archive for Space Telescopes (MAST).
+
+\software{Astropy \citep{astropy:2013, astropy:2018}, Lightkurve \citep{lightkurve:2018}, emcee \citep{ForemanMackey2013}, SciPy \citep{scipy:2020}}
+
+
+\begin{acknowledgments}
 We acknowledge the use of public data from the TESS mission, funded by the NASA Explorer Program. Data presented in this paper were obtained from the Mikulski Archive for Space Telescopes (MAST) at the Space Telescope Science Institute.
+\end{acknowledgments}
 
 %% --------------------------------------------------------
 %% APPENDIX: FULL BENCHMARK TABLE
@@ -206,10 +220,9 @@ We acknowledge the use of public data from the TESS mission, funded by the NASA 
 \section{Complete 109-Target Benchmark Results}
 \label{sec:appendix_table}
 
-To ensure complete methodological transparency and reproducibility, we present the fully deduplicated, deterministic results of the \textsc{Exo-Gargantua} pipeline across the 109-target validation dataset. 
+To ensure complete methodological transparency and reproducibility, we present the fully deduplicated, deterministic results of the \textsc{Exo-Gargantua} pipeline across the 109-target validation dataset evaluated at a strict $1\%$ period-matching tolerance on \texttt{PDCSAP} flux. 
 
 \input{appendix_table.tex}
-
 %% --------------------------------------------------------
 %% REFERENCES
 %% --------------------------------------------------------
