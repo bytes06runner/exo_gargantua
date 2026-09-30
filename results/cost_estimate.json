@@ -1,0 +1,213 @@
+{
+ "git_commit": "2d27dda553c0862636b92b3e20b4b6dc7f8c2091",
+ "smoke_commit": "2d27dda553c0862636b92b3e20b4b6dc7f8c2091",
+ "smoke_env": {
+  "cpu_count": 4,
+  "gpu": "none",
+  "platform": "Linux-6.12.90+-x86_64-with-glibc2.35",
+  "python": "3.12.13",
+  "versions": {
+   "numpy": "2.0.2",
+   "scipy": "1.17.1",
+   "astropy": "8.0.1",
+   "lightkurve": "2.6.0",
+   "wotan": "1.10",
+   "transitleastsquares": "1.32",
+   "pandas": "2.3.3"
+  },
+  "kaggle_kernel_run_type": "Batch",
+  "memory_gb": 33.7
+ },
+ "measured": {
+  "targets": 20,
+  "searched": 20,
+  "mean_raw_mb_per_file": 1.94208,
+  "mean_slim_mb_per_file": 0.18278078534031414,
+  "download_mb_per_s": 22.76279206136806,
+  "c_bls_s_per_point_period": 1.6520503045535604e-08,
+  "c_tls_s_per_point_period": 1.0836941994228724e-06,
+  "bins_per_sector": 3275.458333333333,
+  "model_check": [
+   {
+    "toi": "6001.01",
+    "measured_s": 817.6746492385864,
+    "model_s": 995.265786360481
+   },
+   {
+    "toi": "2068.01",
+    "measured_s": 756.8157322406769,
+    "model_s": 1247.5683295081733
+   },
+   {
+    "toi": "560.02",
+    "measured_s": 11.36360788345337,
+    "model_s": 10.67320815184414
+   },
+   {
+    "toi": "5823.01",
+    "measured_s": 11.918484210968018,
+    "model_s": 9.841125149421687
+   },
+   {
+    "toi": "1453.01",
+    "measured_s": 2996.099981546402,
+    "model_s": 5965.345498469085
+   },
+   {
+    "toi": "4593.01",
+    "measured_s": 795.1349394321442,
+    "model_s": 1049.299209868054
+   },
+   {
+    "toi": "7902.01",
+    "measured_s": 26.05619239807129,
+    "model_s": 27.912838938231566
+   },
+   {
+    "toi": "1050.01",
+    "measured_s": 7.18018102645874,
+    "model_s": 4.739412305052718
+   },
+   {
+    "toi": "7396.01",
+    "measured_s": 43.59764766693115,
+    "model_s": 58.208671210116336
+   },
+   {
+    "toi": "1839.01",
+    "measured_s": 10.39385461807251,
+    "model_s": 9.790006650670854
+   },
+   {
+    "toi": "3160.01",
+    "measured_s": 7.699447154998779,
+    "model_s": 5.597228142852297
+   },
+   {
+    "toi": "1181.01",
+    "measured_s": 68.93940544128418,
+    "model_s": 87.22611132971973
+   },
+   {
+    "toi": "663.02",
+    "measured_s": 12.450425386428833,
+    "model_s": 11.454061734442567
+   },
+   {
+    "toi": "1190.01",
+    "measured_s": 1314.1599266529083,
+    "model_s": 1928.5374528591656
+   },
+   {
+    "toi": "696.01",
+    "measured_s": 56.37540626525879,
+    "model_s": 92.06948960904353
+   },
+   {
+    "toi": "782.01",
+    "measured_s": 13.75693964958191,
+    "model_s": 13.079594282252431
+   },
+   {
+    "toi": "2140.01",
+    "measured_s": 11.61605978012085,
+    "model_s": 9.91678867490355
+   },
+   {
+    "toi": "7457.01",
+    "measured_s": 767.964809179306,
+    "model_s": 905.0425728694951
+   },
+   {
+    "toi": "4930.01",
+    "measured_s": 10.815100193023682,
+    "model_s": 10.121846027865395
+   },
+   {
+    "toi": "7066.01",
+    "measured_s": 12.72284746170044,
+    "model_s": 10.162311349116266
+   }
+  ]
+ },
+ "full_sample": {
+  "pinned_files": {
+   "toi_host": 34340,
+   "pool": 29219
+  },
+  "download_gb": 123.43666272,
+  "slim_cache_gb": 11.617363935445026,
+  "download_wall_h_one_session": 1.5063161748447629,
+  "b2_targets_pending_h3": 1204,
+  "b2_bls_wall_h": 137.7317570505568,
+  "b2_tls_wall_h": 70.94383846274049,
+  "b2_by_early_span": [
+   {
+    "span_d": "<=30d",
+    "n": 601,
+    "bls_h": 0.3326040331615602,
+    "tls_h": 1.4719372620073248
+   },
+   {
+    "span_d": "30-60d",
+    "n": 237,
+    "bls_h": 1.0546516047746994,
+    "tls_h": 2.7315121034075958
+   },
+   {
+    "span_d": "60-120d",
+    "n": 78,
+    "bls_h": 1.2646728675003098,
+    "tls_h": 1.9818395699496105
+   },
+   {
+    "span_d": "120-240d",
+    "n": 61,
+    "bls_h": 5.8559105793648225,
+    "tls_h": 4.580611602996147
+   },
+   {
+    "span_d": "240-400d",
+    "n": 227,
+    "bls_h": 129.22391796575542,
+    "tls_h": 60.17793792437982
+   }
+  ]
+ },
+ "b1_proposal": {
+  "injections": 30000,
+  "first_k_sectors": {
+   "mean_search_s_per_injection": 9162.81759849934,
+   "wall_h_one_session": 76356.81332082783
+  },
+  "one_year_window": {
+   "mean_bls_s": 425.58740598313483,
+   "mean_tls_s": 254.35439898473953,
+   "mean_sectors": 3.475,
+   "wall_h_one_session_bls_serial": 5666.181708065619,
+   "wall_h_one_session_bls_parallel": 3006.260420671027
+  },
+  "note": "BLS + TLS seed searches only; resolver cost unknown until Phase 3"
+ },
+ "b2_bls_parallel_across_cores_wall_h": 105.3767777253797,
+ "cores_per_session": 4,
+ "kaggle_quota": {
+  "queried_utc": "2026-09-30T10:27:58+00:00",
+  "source": "kaggle quota (Kaggle CLI 2.2.4)",
+  "resources": {
+   "GPU": {
+    "used": "1.57h",
+    "remaining": "28.43h",
+    "total": "30.00h",
+    "refresh_at": "2026-10-03T00:00:00"
+   },
+   "TPU": {
+    "used": "0.00h",
+    "remaining": "20.00h",
+    "total": "20.00h",
+    "refresh_at": "2026-10-03T00:00:00"
+   }
+  },
+  "note": "The Kaggle API reports GPU/TPU weekly quota only. CPU sessions have no weekly quota in this output; per-session runtime limits are not reported by the API."
+ }
+}
