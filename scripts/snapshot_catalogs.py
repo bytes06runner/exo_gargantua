@@ -33,6 +33,8 @@ SOURCES = {
     "S-EB2-new": ("kostov2025_t10k_table3", "https://cdsarc.cds.unistra.fr/ftp/J/ApJS/279/50/table3.dat.gz", ".dat"),
     "S-EB2-known": ("kostov2025_t10k_table4", "https://cdsarc.cds.unistra.fr/ftp/J/ApJS/279/50/table4.dat", ".dat"),
     "S-EB2-readme": ("kostov2025_t10k_ReadMe", "https://cdsarc.cds.unistra.fr/ftp/J/ApJS/279/50/ReadMe", ".txt"),
+    "S-G21": ("guerrero2021_toi_table2", "https://cdsarc.cds.unistra.fr/ftp/J/ApJS/254/39/table2.dat.gz", ".dat"),
+    "S-G21-readme": ("guerrero2021_toi_ReadMe", "https://cdsarc.cds.unistra.fr/ftp/J/ApJS/254/39/ReadMe", ".txt"),
     "S-ORB": ("tess_orbit_times", "https://tess.mit.edu/public/files/TESS_orbit_times.csv", ".csv"),
 }
 
