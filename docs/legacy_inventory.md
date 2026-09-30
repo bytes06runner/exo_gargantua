@@ -21,7 +21,7 @@ in Phase 3.
 
 | File | What it does | Reusable? | Known bugs / problems |
 |---|---|---|---|
-| `exoplanet_pipeline/ingestion.py` | Downloads SPOC 2-min LCs (all sectors) with lightkurve, de-duplicates 20 s vs 120 s per sector, normalises, "undilutes" by CROWDSAP, upward 5σ clip, stitches. Also `fetch_stellar_parameters` (TIC → NASA Archive → FITS header → solar fallback). | No. Rewrite. | **Loads `SAP_FLUX`, not PDCSAP** (L144-148), although the manuscript says PDCSAP. This line was added in the *final* commit, after the benchmark ran; the benchmark-era version (`ac43691`) instead applied `lk.CBVCorrector` **on top of PDCSAP** (double cotrending). Neither is plain PDCSAP. SAP is divided by CROWDSAP (L161-163) with no FLFRCSAP correction. 5σ clip is applied before detrending (L165-168), so it clips real variability. Stellar parameters silently fall back to the Sun (Rs = 1 R☉) and that fallback feeds the radius cap. |
+| `exoplanet_pipeline/ingestion.py` | Downloads SPOC 2-min LCs (all sectors) with lightkurve, de-duplicates 20 s vs 120 s per sector, normalises, "undilutes" by CROWDSAP, upward 5σ clip, stitches. Also `fetch_stellar_parameters` (TIC → NASA Archive → FITS header → solar fallback). | No. Rewrite. | **Loads `SAP_FLUX`, not PDCSAP** (L144-148), although the manuscript says PDCSAP. This line was added in the *final* commit, after the benchmark ran; the benchmark-era version (`ac43691`) tried to apply `lk.CBVCorrector` on top of PDCSAP (double cotrending), but in the Phase 0 re-runs that step fails silently ("CBVS were not found. Using raw PDC flux") and the exact v1 periods are reproduced, so the submitted numbers were most likely produced on plain PDCSAP. The committed HEAD code (SAP) cannot reproduce them. SAP is divided by CROWDSAP (L161-163) with no FLFRCSAP correction. 5σ clip is applied before detrending (L165-168), so it clips real variability. Stellar parameters silently fall back to the Sun (Rs = 1 R☉) and that fallback feeds the radius cap. |
 | `exoplanet_pipeline/denoise.py` | Per-segment exponential "thermal decay" fit, then a quick BLS for a transit mask, then a Savitzky-Golay (2-day window, order 2) baseline with transits masked. | No. Replaced by wotan (Hippke et al. 2019). | The quick masking BLS (L82-108) runs on the **uncorrected** `lc`, not on the thermal-corrected flux, so mask and baseline come from different light curves. The mask uses the single global BLS maximum with no alias handling; when it picks the wrong period the real transits are not masked and the SG filter partly fits through them (depth suppression, V-shaping; likely contributor to the spurious b = 0.93 "grazing" fit). The "convexity bias" claim in the manuscript has no test or statistic anywhere in the code. |
 | `exoplanet_pipeline/detection.py` | BLS search (`run_bls_search`), the "Bidirectional Harmonic Validator" (`resolve_fundamental_period`), a bootstrap FAP, alert banner. | Idea only. Rebuilt from scratch. | See Section 3.1. Also: the returned `'snr'` key holds the BLS *power* (a Δlog-likelihood in flux² units), not an SNR, and downstream code thresholds it at 7.1 as if it were an SNR. SDE is computed (L193-204) but the final choice uses power, not SDE (L259). |
 | `exoplanet_pipeline/vetting.py` | Odd/even depth difference, secondary-eclipse significance at phase 0.45-0.55, TPF centroid shift. | No. Odd/even and secondary are re-implemented as *cited features* (Twicken et al. 2018; Thompson et al. 2018). | Odd/even epoch index uses `floor((t - t0)/P)` (L66-70), so every transit is **split across the odd and even sets** (points before mid-transit get the previous epoch number). Depth is `1 - min(binned flux)` (L75-80), a noise-biased statistic. Pass/fail is a fixed 0.005 (5000 ppm) absolute difference, independent of noise. Secondary search only at phase 0.5 (misses eccentric EBs). Centroid uses 1 sector and a fixed 0.333 px threshold. |
@@ -141,4 +141,24 @@ benchmark-era code (`ac43691`) on the flagged targets is reported in Section 5.
 
 ## 5. Re-run of benchmark-era code on flagged targets
 
-See the Gate 0 report; results (if any) are in `results/legacy_audit/`.
+`scripts/legacy_audit/rerun_legacy_target.py`, run from a checkout of `ac43691` with the same
+flags as the v1 benchmark (`run_mcmc=False, run_centroid=False, run_fap=False`), on the five
+known planets the reviewer listed. Output: `results/legacy_audit/flagged_planet_reruns.json`.
+
+| Target | Catalog P [d] | v1 P [d] | Re-run P [d] | Reproduced? | Override that fired |
+|---|---|---|---|---|---|
+| TIC 406941612 | 4.6781 | 4.6780 | 4.6780 | yes (to 1e-9) | secondary eclipse 3.1σ > 3.0 |
+| TIC 120317234 | 6.8834 | 7.5977 | 7.5977 | yes | secondary eclipse 3.8σ > 3.0 (at a wrong period) |
+| TIC 36724087 | 0.7684 | 18.6710 | 18.6710 | yes | secondary eclipse 4.8σ > 3.0 (at a wrong period) |
+| TIC 237222864 | 10.2889 | 4.1156 | 9.3701 | **no** (39 sectors today) | none |
+| TIC 321669174 | 10.5054 | 5.3207 | 20.0053 | **no** (26 sectors today) | none |
+
+Findings:
+
+- In every reproducible case the rejection came from the **secondary-eclipse > 3σ override**
+  (`pipeline.py` L237), whose only exemption is P < 10 d *and* depth > 1 %. Two of the three
+  were evaluated at a period that was not the planet's, so the "secondary" was the planet's own
+  transit folded at a wrong phase.
+- Two targets no longer reproduce because MAST now serves more sectors than in August 2026.
+  **v1 never pinned its input data.** v2 must record the exact sectors/files per target and
+  cache them as a versioned Kaggle dataset.
