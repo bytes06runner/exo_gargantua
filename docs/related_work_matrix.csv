@@ -1,0 +1,31 @@
+key,method,problem,data,handles_short_period_aliases,alias_mechanism,calibrated_output,abstain_option,public_benchmark,code_public,evidence_checked
+Jenkins2002;Jenkins2010;Jenkins2016,SPOC TPS,transit search (adaptive matched filter),Kepler/TESS 2-min,n,none beyond periodogram,n,n,n,unknown,abstract + DV docs
+Twicken2018;Li2019,SPOC/Kepler DV,diagnostics for TCEs (odd/even depth & epoch; weak secondary; ghost; centroid; bootstrap),Kepler/TESS 2-min,partial,odd/even and weak-secondary flags; notes EB twin folded at P/2,n,n,n,n,full text grep (1803.04526)
+Huang2020a;Huang2020b;Kunimoto2021;Kunimoto2022;Kunimoto2023qlp,QLP,FFI photometry + BLS search,TESS FFI,n,none reported,n,n,n,n,abstracts
+Kovacs2002,BLS,box-fitting periodic transit search,any,n,none,n,n,n,y,known
+Hippke2019tls,TLS,limb-darkened transit search; reports odd_even_mismatch; empty_transit_count; distinct_transit_count,any,partial,per-transit counts (incl. transits with no data) reported as outputs,n,n,y (injections),y,full text grep (1901.02015)
+Hippke2019wotan,wotan,detrending,any,n,none,n,n,y,y,abstract
+Ivashtenko2025;Robnik2026,Ivashtenko & Zackay / Robnik et al.,independent Kepler search with permutation/injection-based false-alarm probability; per-transit vetting,Kepler,n,none,y (FAP per TCE),n,partial (injections),unknown,abstracts
+DevoraPajares2024,SHERLOCK,end-to-end search + vetting,TESS/Kepler,n,none reported,n,n,n,y,abstract
+Coughlin2016;Thompson2018,Kepler Robovetter DR24/DR25,rule-based vetting; model-shift uniqueness; PERIOD_ALIAS flag (N:1 with N>=3 from model-shift phases; informational only); PLANET_PERIOD_IS_HALF flag,Kepler,partial,deterministic flags from secondary/tertiary phases; odd/even,n (reliability measured via simulated FAs),n,y (simulated false alarms: inverted/scrambled),y,full text grep (1710.06758; 1512.06149)
+Coughlin2014,Kepler ephemeris matching,contamination FPs via period/epoch matching incl. 2:1 and 1:2,Kepler,partial,matching allows P/2 and 2P,n,n,n,n,full text grep
+Kunimoto2025leo,LEO-Vetter,automated flux+pixel vetting for occurrence rates; odd/even fail (EB at half period); data-gap test near 13.7 d; SNR consistency (CHI); model-shift uniqueness,TESS 2-min,partial,odd/even and uniqueness used to FAIL (reject) not correct,n (pass/fail),n,y (inverted/scrambled + injections),y,full text grep (2509.10619)
+Valizadegan2022;Valizadegan2025;Martinho2026,ExoMiner / ExoMiner++ / 2.0,deep-learning planet vs non-planet classification,Kepler/TESS 2-min/FFI,n,none; ExoMiner++ paper lists wrong (2x or 1/2x) TCE periods as a label-noise source,partly (scores),n,y (vetting catalogs),y,full text grep (2502.09790)
+Shallue2018;Yu2019;Tey2023,AstroNet family,CNN vetting/triage,Kepler/TESS QLP,n,none,n,n,n,y,abstracts
+Hadjigeorghiou2025,RAVEN,Bayesian vetting+validation; GBDT + GP classifier trained on injections of planets and 8 FP scenarios into TESS LCs,TESS,n,none (planet vs FP scenarios),y (posterior probabilities),n,partial,unknown,abstract
+Fiscale2025,DART-Vetter,CNN triage on folded LCs,Kepler/TESS,n,none,n,n,n,y,abstract
+DevoraPajares2025,WATSON-Net,NN vetting/validation; calibrated models,Kepler DR25 -> TESS,n,none,y (calibrated),n,n,y,abstract
+Giacalone2021,TRICERATOPS,Bayesian FPP incl. nearby contaminants,TESS,n,none,y (FPP),n,n,y,abstract
+Kostov2019,DAVE,vetting incl. model-shift and centroid,K2,partial,model-shift,n,n,n,y,abstract
+Bryson2013;Bryson2025,Centroid / Transit-APP,background-FP identification,Kepler/TESS,n,none,n,n,n,partial,abstracts
+Tschudi2026a,Tschudi 2026a (M3-M6 survey),TLS search + validation cascade with a HARMONIC CORRECTION module: Mode A equal-depth event at phase 0.5 (2P); Mode B odd/even >3 sigma (P/2); Mode C equal-depth thirds (3P); transit-count correlation; re-run TLS at P/2 P/3 P/4 with SDE thresholds,TESS 2-min/FFI M dwarfs,y,deterministic thresholds (depth ratio 0.4/0.8; SDE ratio 0.3/0.8),n,n,n (validated on 16 known planets),y (GitLab),full text read of Sect. 3.2.1 (2603.10247)
+Tschudi2026b,Tschudi 2026b (461 M-dwarf TOI hosts),same pipeline + event-time O-C coherence test (p_noclock vs a no-clock null) against window-function aliases; applied to all M-dwarf TOI hosts; reports 4 half-period-alias recoveries,TESS M-dwarf TOIs,y,deterministic cascade + coherence p-value,partial (p_noclock),n,n,y (GitLab),full text grep (2607.23781)
+Cooke2019;Cooke2021,Cooke et al.,period aliases of TESS duotransits and follow-up strategy to resolve them,TESS (simulated) + NGTS/HARPS,n (long period),probabilistic alias ranking with follow-up,y (alias probabilities),n,n,partial,abstracts + grep
+Hawthorn2024,Hawthorn et al.,TESS duotransit candidates (P>20 d),TESS,n (long period),alias list for follow-up,partial,n,n,n,abstract
+Osborn2022,MonoTools (via TOI-2076),marginalised probability over duotransit aliases using stellar density + window function,TESS + CHEOPS,n (long period),Bayesian alias marginalisation,y,n,n,y,abstract
+Garai2023;Becker2019,case studies,resolve true period of specific long-period planets,TESS/CHEOPS/K2,n,follow-up observations,n,n,n,n,abstracts
+Bass2025,Bass et al.,rule out shorter aliases of long-period (>100 d) TOIs using TESS data,TESS TOIs,n (long period),data coverage of shorter aliases,n,n,n,unknown,abstract
+Dragomir2020,Dragomir et al.,ephemeris decay/maintenance of TESS planets,TESS,n,n/a,n,n,n,n,abstract
+Prsa2022,TESS EB catalog,EB catalog with human-flagged ambiguous periods (twin eclipses or no secondary),TESS 2-min,partial,manual ambiguous-period flags,n,n,y (catalog),n,full text grep (2110.13382)
+Boyle2026,TARS rotation survey,rotation periods with a half-period ALIAS CLASSIFIER,TESS,y (rotation not transits),learned classifier true vs half-period alias,unknown,n,n,unknown,abstract + search snippet
+Seager2003;Kipping2010;Kipping2014;Dawson2012,density / photo-eccentric,stellar density from transit shape; asterodensity profiling; photo-eccentric effect,any,n (not used for aliases),physics that makes duration scale with period,n/a,n,n,n/a,abstracts
