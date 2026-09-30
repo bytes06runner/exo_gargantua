@@ -86,3 +86,14 @@ def test_n_covered_transits_counts_gapped_data():
     assert S.n_covered_transits(t, 5.0, 0.0, 0.1) == 4  # 0, 5, 15, 20 fully covered
     t_half = t[~((t > 14.99) & (t < 15.05))]  # keep < 50 % of the t = 15 transit
     assert S.n_covered_transits(t_half, 5.0, 0.0, 0.1) == 3
+
+
+def test_amendment_a3_confirmed_planet_never_gets_eb_truth():
+    eb = pd.DataFrame([{"tess_id": 1, "signal_id": 1, "period": 5.179905, "bjd0": 2000.0, "bjd0_uncert": 1e-4,
+                        "period_uncert": 1e-5, "prim_depth_pf": 0.001, "sec_depth_pf": np.nan,
+                        "prim_pos_pf": 0.0, "sec_pos_pf": np.nan}])
+    cp = _toi(5.18, 2000.0, "CP")
+    t = S.assign_truth(cp, pd.DataFrame(), eb)
+    assert t.tier == "C" and not t.source.startswith("tess-ebs")  # catalog reference only, never EB truth
+    assert S.assign_truth(cp, pd.DataFrame(), eb, amendment_a3=False).tier == "B"
+    assert S.assign_truth(_toi(5.18, 2000.0, "FP"), pd.DataFrame(), eb).tier == "B"

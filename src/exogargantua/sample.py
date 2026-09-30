@@ -103,8 +103,16 @@ def eb_period_ambiguous(row: pd.Series) -> bool:
     return bool(abs(dp - ds) / dp < 0.10 and abs(sep - 0.5) < 0.02)
 
 
-def assign_truth(toi: pd.Series, ps_rows: pd.DataFrame, eb_rows: pd.DataFrame) -> Truth:
-    """Tier A (pscomppars) > Tier B (Prsa EB) > Tier C (catalog reference), per Section 3."""
+PLANET_DISPOSITIONS = ("CP", "KP")
+
+
+def assign_truth(toi: pd.Series, ps_rows: pd.DataFrame, eb_rows: pd.DataFrame, amendment_a3: bool = True) -> Truth:
+    """Tier A (pscomppars) > Tier B (Prsa EB) > Tier C (catalog reference), per Section 3.
+
+    Amendment A3 (2026-09-30, docs/decisions.md): a TOI dispositioned CP or KP takes truth only from
+    the NASA Exoplanet Archive (Tier A); it is never assigned Tier B from the EB catalog.
+    `amendment_a3=False` reproduces the original frozen rule (for the audit trail only).
+    """
     p_toi, t_toi = float(toi["period"]), float(toi["epoch_btjd"])
     dur_d = float(toi["duration_h"]) / 24.0 if np.isfinite(toi["duration_h"]) else 0.1
 
@@ -129,8 +137,10 @@ def assign_truth(toi: pd.Series, ps_rows: pd.DataFrame, eb_rows: pd.DataFrame) -
     else:
         tier_a = Truth("")
 
-    # Tier B
+    # Tier B (skipped for CP/KP under amendment A3: they fall through to Tier C / note below)
     b_hits = []
+    if amendment_a3 and toi.get("disposition", "") in PLANET_DISPOSITIONS:
+        eb_rows = pd.DataFrame()
     for _, r in eb_rows.iterrows():
         p_eb, t_eb = r.get("period", np.nan), r.get("bjd0", np.nan)
         if not np.isfinite(t_eb):
