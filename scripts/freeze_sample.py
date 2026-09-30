@@ -52,6 +52,10 @@ def now():
     return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 
 
+def say(msg):
+    print(f"[{now()}] {msg}", flush=True)
+
+
 def get(url, tries=5):
     for i in range(tries):
         try:
@@ -110,48 +114,79 @@ def spoc_tces(out: Path) -> tuple[pd.DataFrame, dict]:
 
 
 # ------------------------------------------------------------------ stage 3: stellar parameters
-def tic_params(tics: list[int]) -> pd.DataFrame:
-    from astroquery.mast import Catalogs
+def tic_params(tics: list[int], workers: int = 6) -> pd.DataFrame:
+    from astroquery.mast import Catalogs, conf
+    conf.timeout = 600
     cols = ["ID", "Teff", "e_Teff", "logg", "e_logg", "Tmag", "rad", "e_rad", "mass", "e_mass", "rho", "e_rho",
             "MH", "GAIA", "objType", "lumclass"]
-    out = []
-    for i in range(0, len(tics), 500):
-        chunk = [str(t) for t in tics[i:i + 500]]
+    batches = [[str(t) for t in tics[i:i + 500]] for i in range(0, len(tics), 500)]
+
+    def one(chunk):
         for k in range(5):
             try:
                 t = Catalogs.query_criteria(catalog="Tic", ID=chunk).to_pandas()
-                break
-            except Exception:
+                return t[[c for c in cols if c in t.columns]]
+            except Exception as exc:
+                say(f"  TIC batch retry {k + 1}: {exc!r:.120}")
                 if k == 4:
                     raise
                 time.sleep(10 * (k + 1))
-        out.append(t[[c for c in cols if c in t.columns]])
+
+    out, t0 = [], time.time()
+    with ThreadPoolExecutor(workers) as ex:
+        for j, df in enumerate(ex.map(one, batches), 1):
+            out.append(df)
+            if j % 5 == 0 or j == len(batches):
+                say(f"  TIC {j}/{len(batches)} batches ({time.time() - t0:.0f}s)")
     df = pd.concat(out, ignore_index=True).rename(columns={"ID": "tic"})
     df["tic"] = df["tic"].astype("int64")
     return df
 
 
-def gaia_dr3(dr2_ids: list[int]) -> pd.DataFrame:
+def gaia_id(x):
+    """Gaia source ids are 19-digit integers: carried as exact digit strings ("" if missing).
+
+    float64 cannot represent them, and pandas turns int columns with gaps into float64, so ids are
+    never stored as numbers in a DataFrame.
+    """
+    if x is None or (isinstance(x, float) and np.isnan(x)):
+        return ""
+    if isinstance(x, (int, np.integer)):
+        return str(int(x))
+    xs = str(x).strip()
+    return xs if xs.isdigit() else ""
+
+
+def gaia_dr3(dr2_ids: list[int], workers: int = 4) -> pd.DataFrame:
     """DR2 -> DR3 via gaiadr3.dr2_neighbourhood (closest match), then RUWE and variability flag."""
     from astroquery.gaia import Gaia
-    rows = []
-    ids = [int(x) for x in dr2_ids if pd.notna(x)]
-    for i in range(0, len(ids), 1000):
-        chunk = ",".join(str(x) for x in ids[i:i + 1000])
+    ids = [i for i in (gaia_id(x) for x in dr2_ids) if i]
+    batches = [",".join(ids[i:i + 1000]) for i in range(0, len(ids), 1000)]
+
+    def one(chunk):
         q = f"""
         SELECT n.dr2_source_id, n.dr3_source_id, n.angular_distance, g.ruwe, g.phot_variable_flag
         FROM gaiadr3.dr2_neighbourhood AS n JOIN gaiadr3.gaia_source AS g ON g.source_id = n.dr3_source_id
         WHERE n.dr2_source_id IN ({chunk})"""
         for k in range(5):
             try:
-                rows.append(Gaia.launch_job_async(q).get_results().to_pandas())
-                break
-            except Exception:
+                return Gaia.launch_job(q).get_results().to_pandas()  # sync job: <= 2000 rows
+            except Exception as exc:
+                say(f"  Gaia batch retry {k + 1}: {exc!r:.120}")
                 if k == 4:
                     raise
-                time.sleep(10 * (k + 1))
+                time.sleep(15 * (k + 1))
+
+    rows, t0 = [], time.time()
+    with ThreadPoolExecutor(workers) as ex:
+        for j, df in enumerate(ex.map(one, batches), 1):
+            rows.append(df)
+            if j % 5 == 0 or j == len(batches):
+                say(f"  Gaia {j}/{len(batches)} batches ({time.time() - t0:.0f}s)")
     df = pd.concat(rows, ignore_index=True) if rows else pd.DataFrame(
         columns=["dr2_source_id", "dr3_source_id", "angular_distance", "ruwe", "phot_variable_flag"])
+    for c in ("dr2_source_id", "dr3_source_id"):
+        df[c] = [gaia_id(v) for v in df[c].astype(object)]
     df = df.sort_values("angular_distance").drop_duplicates("dr2_source_id")
     return df
 
@@ -172,7 +207,9 @@ def main():
     snaps = json.loads((ROOT / "data" / "raw" / "snapshots.json").read_text())
     snap_date = snaps["S-TOI"]["downloaded_utc"][:10]
 
-    t = time.time(); prods, lc_info = mast_products(out, args.max_sector); timings["mast_lc_listing_s"] = time.time() - t
+    say("stage 1: MAST LC bulk scripts")
+    t = time.time(); prods, lc_info = mast_products(out, args.max_sector)
+    say(f"stage 1 done: {len(prods)} products, {time.time() - t:.0f}s"); timings["mast_lc_listing_s"] = time.time() - t
     prods.to_csv(out / f"mast_lc_products_{lc_info['listing_utc'][:10].replace('-', '')}.csv.gz", index=False)
     t = time.time()
     if args.skip_tce:
@@ -180,6 +217,7 @@ def main():
     else:
         tces, tce_info = spoc_tces(out)
     timings["spoc_tce_listing_s"] = time.time() - t
+    say(f"stage 2 done: {len(tces)} TCE rows, {timings['spoc_tce_listing_s']:.0f}s")
     orbit = pd.read_csv(ROOT / snaps["S-ORB"]["file"])
     starts = S.sector_start_btjd(orbit)
 
@@ -224,6 +262,7 @@ def main():
                                   ";".join(c for c, ok in (("H1: no Tier A/B truth", h1), ("H2: no later sectors", h2)) if not ok)))
         log.append(row)
     sample_log = pd.DataFrame(log)
+    say(f"stage 3 done: {int((sample_log['decision'] == 'include').sum())} TOIs included")
     sample_log.to_csv(out / "sample_log.csv", index=False)
     inc = sample_log[sample_log["decision"] == "include"]
     toi_host_tics = sorted(set(inc["tic"]))
@@ -258,13 +297,13 @@ def main():
         stratum = np.array(sorted(c for c in cand if lo <= n_sec[c] <= hi), dtype="int64")
         rng.shuffle(stratum)
         accepted, i = 0, 0
+        say(f"pool stratum {lo}-{hi}: {len(stratum)} eligible candidates")
         while accepted < POOL_PER_STRATUM and i < len(stratum):
-            batch = stratum[i:i + 500].tolist()
+            batch = stratum[i:i + 3000].tolist()  # examined in the same random order as before
             i += len(batch)
             tp = tic_params(batch).set_index("tic")
-            tp["GAIA"] = pd.to_numeric(tp["GAIA"], errors="coerce")
             tp = tp[~tp.index.duplicated(keep=False)]
-            gaia = gaia_dr3(tp["GAIA"].dropna().astype("int64").tolist()).set_index("dr2_source_id")
+            gaia = gaia_dr3(tp["GAIA"].tolist()).set_index("dr2_source_id")
             for tic in batch:  # keep the random order
                 rec = dict(tic=tic, stratum=f"{lo}-{hi if hi < 10_000 else 'inf'}", n_sectors=n_sec[tic],
                            decision="exclude", reason="", stage="freeze", timestamp_utc=now(), git_commit=args.commit)
@@ -277,7 +316,8 @@ def main():
                           and np.isfinite(p["rad"]) and np.isfinite(p["mass"])):
                     rec["reason"] = "P06: Teff/logg/Tmag/radius/mass outside rule"
                 else:
-                    g = gaia.loc[int(p["GAIA"])] if pd.notna(p["GAIA"]) and int(p["GAIA"]) in gaia.index else None
+                    gid = gaia_id(p["GAIA"])
+                    g = gaia.loc[gid] if gid and gid in gaia.index else None
                     if g is None:
                         rec["reason"] = "P05: no Gaia DR3 match"
                     elif str(g["phot_variable_flag"]).upper() == "VARIABLE":
@@ -288,6 +328,7 @@ def main():
                         rec.update(decision="include", reason="P01-P06 pass (P07/P08 at download)")
                         accepted += 1
                 pool_log.append(rec)
+            say(f"  stratum {lo}-{hi}: accepted {accepted}/{POOL_PER_STRATUM} after {i} examined")
         counts[f"stratum_{lo}_{hi}_eligible_candidates"] = int(len(stratum))
         counts[f"stratum_{lo}_{hi}_accepted"] = accepted
     pool_log = pd.DataFrame(pool_log, columns=["tic", "stratum", "n_sectors", "decision", "reason", "stage",
@@ -296,11 +337,12 @@ def main():
     timings["injection_pool_s"] = time.time() - t
     pool_tics = pool_log.loc[pool_log["decision"] == "include", "tic"].astype("int64").tolist()
 
+    say(f"stage 4 done: pool accepted {len(pool_log[pool_log['decision'] == 'include'])}")
     # ---------------- stellar parameters (TOI hosts + pool) and pinned products
     t = time.time()
     stars = tic_params(toi_host_tics + [x for x in pool_tics if x not in set(toi_host_tics)])
-    stars["GAIA"] = pd.to_numeric(stars["GAIA"], errors="coerce")
-    g = gaia_dr3(stars["GAIA"].dropna().astype("int64").tolist())
+    stars["GAIA"] = [gaia_id(v) for v in stars["GAIA"].astype(object)]
+    g = gaia_dr3(stars["GAIA"].tolist())
     stars = stars.merge(g, how="left", left_on="GAIA", right_on="dr2_source_id")
     stars.to_csv(out / "stellar_params.csv", index=False)
     timings["stellar_params_s"] = time.time() - t
