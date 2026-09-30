@@ -31,11 +31,15 @@ def main(job):
     for f in build.glob("*.py"):
         f.write_text(f.read_text().replace("{{COMMIT}}", head))
     meta = json.loads((build / "kernel-metadata.json").read_text())
+    # Decision G1 (docs/decisions.md): Kaggle jobs run on GPU T4 sessions only, never Kaggle CPU.
+    if not meta.get("enable_gpu") or meta.get("machine_shape") != "NvidiaTeslaT4":
+        sys.exit("refusing: G1 requires enable_gpu=true and machine_shape=NvidiaTeslaT4")
     kaggle = str(Path(sys.executable).with_name("kaggle"))
-    res = subprocess.run([kaggle, "kernels", "push", "-p", str(build)], capture_output=True, text=True)
+    res = subprocess.run([kaggle, "kernels", "push", "-p", str(build), "--accelerator", "NvidiaTeslaT4"],
+                         capture_output=True, text=True)
     print(res.stdout, res.stderr)
     rec = {"utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), "commit": head,
-           "kernel": meta["id"], "enable_gpu": meta["enable_gpu"], "push_output": res.stdout.strip()}
+           "kernel": meta["id"], "enable_gpu": meta["enable_gpu"], "accelerator": meta.get("machine_shape"), "push_output": res.stdout.strip()}
     out = ROOT / "results" / "kaggle" / job
     out.mkdir(parents=True, exist_ok=True)
     with open(out / "pushes.jsonl", "a") as fh:
