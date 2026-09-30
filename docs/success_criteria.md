@@ -14,6 +14,6 @@ Definitions used when these are evaluated (fixed now, per the brief):
 - 95% confidence intervals: Wilson (proportions) or bootstrap.
 - "Confident" = the resolver's maximum alias probability ≥ its abstain threshold.
 
-Added at Gate 1 (pending owner approval, see docs/novelty_check.md): the rule-based harmonic
+Added at Gate 1 (approved by the project owner on 2026-09-30, see docs/decisions.md): the rule-based harmonic
 correction of Tschudi (2026a) is included as an additional B2 baseline. The B2 criterion above
 is unchanged; the comparison with Tschudi (2026a) is reported whatever its outcome.

@@ -10,7 +10,7 @@ The part that remains new is narrower: a *calibrated posterior over the alias fa
 abstain option*, a *stellar-density alias likelihood*, a *public alias-resolution benchmark*
 with a confusion matrix by alias factor, and an *all-TOI period audit* (not restricted to M
 dwarfs). The Gate 1 verdict is therefore **proceed, with repositioning** (Section 4), not pivot.
-This is a judgement call the project owner should confirm.
+Approved by the project owner on 2026-09-30 (docs/decisions.md).
 
 Search method: arXiv API title/abstract queries (logged in `data/cache/lit/arxiv_q*.txt`), web
 search, Crossref, and full-text grep of the PDFs of the closest papers (cached in
@@ -116,10 +116,10 @@ counterpart.
    rules on the same targets. If they do not, the contribution shrinks to the benchmark + audit.
 3. ADS full-text search not yet done (Section 0).
 
-## 4. Recommended repositioning (for the owner to confirm)
+## 4. Repositioning (approved 2026-09-30)
 
-- Title can stay. Framing changes from "first alias resolver" to "a calibrated, benchmarked
-  alias resolver, and the first public benchmark for this task".
+- Title can stay. Framing: "calibrated and benchmarked". The words "first" / "the first"
+  are not used anywhere in the paper, including for the benchmark.
 - Add Tschudi 2026a (rule-based harmonic correction) as an explicit baseline in B2, next to raw
   BLS/TLS peaks, SPOC TCE and QLP periods.
 - The benchmark and the audit are the most defensible contributions; the resolver is the tool
