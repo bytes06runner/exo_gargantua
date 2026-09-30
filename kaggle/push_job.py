@@ -37,7 +37,9 @@ def check_compute(meta):
 
 
 def main(job):
-    if git("status", "--porcelain", "--untracked-files=no"):
+    dirty = [l for l in git("status", "--porcelain", "--untracked-files=no").splitlines()
+             if not l[3:].startswith("results/kaggle/")]  # push logs written by this script are allowed
+    if dirty:
         sys.exit("refusing: working tree has uncommitted changes")
     head = git("rev-parse", "HEAD")
     if not git("branch", "-r", "--contains", head):
