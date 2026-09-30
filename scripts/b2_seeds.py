@@ -88,6 +88,7 @@ def main():
     ap.add_argument("--cache", default=None)
     ap.add_argument("--out", required=True)
     ap.add_argument("--commit", required=True)
+    ap.add_argument("--only-tois", default="", help="debug only: comma-separated TOIs")
     args = ap.parse_args()
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -98,11 +99,18 @@ def main():
     toi_table = S.normalise_toi(pd.read_csv(ROOT / snaps["S-TOI"]["file"], comment="#"))
     stars = pd.read_csv(ROOT / "data" / "stellar_params.csv").drop_duplicates("tic").set_index("tic")
     mine = shard(b2_targets(), args.shard, args.nshards)
+    if args.only_tois:
+        allb2 = b2_targets()
+        mine = allb2[allb2["toi"].isin(args.only_tois.split(","))]
     say(f"{args.mode} shard {args.shard}/{args.nshards}: {len(mine)} TOIs, cache {cache}")
 
     tag = f"{args.shard}of{args.nshards}"
     seeds_path, h3_path = out / f"seeds_{args.mode}_{tag}.csv", out / f"h3_{tag}.csv"
     done = set(pd.read_csv(seeds_path, dtype={"toi": str})["toi"]) if seeds_path.exists() else set()
+    if args.mode == "tls":  # Tschudi (2026a) correction applied to the same TLS result (docs/baselines.md §3)
+        from exogargantua.baselines import tschudi as TS
+        ts_mod = TS.load(TS.fetch(Path("/tmp/tschudi_repo") if Path("/tmp").exists() else out / "_tschudi"))
+        ts_cfg = TS.config(ts_mod, os.cpu_count() or 1)
     if args.mode == "bls_gpu":
         import torch
         from exogargantua import gpu_bls
@@ -118,7 +126,9 @@ def main():
             tic = int(r["tic"])
             rs = float(stars.loc[tic, "rad"]) if tic in stars.index else np.nan
             ms = float(stars.loc[tic, "mass"]) if tic in stars.index else np.nan
-            row.update(SE.tls_peak(tb, fb, os.cpu_count() or 1, rs, ms))
+            tls_out, tls_res = SE.tls_peak(tb, fb, os.cpu_count() or 1, rs, ms, return_results=True)
+            row.update(tls_out)
+            row.update(TS.correct(ts_mod, ts_cfg, tls_res, tb, fb, rs, ms))
             # H3: pre-registered eligibility (truth-ephemeris coverage), kept in a separate file
             trow = toi_table[toi_table["toi"] == float(r["toi"])].iloc[0]
             n_tr = S.n_covered_transits(t, float(r["truth_period"]), float(trow["epoch_btjd"]),
@@ -130,7 +140,8 @@ def main():
             grid = SE.bls_grid(tb, pmin, pmax)
             t1 = time.time()
             pw = gpu_bls.bls_power(tb, fb, grid, SE.BLS_DURATIONS, device=dev)
-            torch.cuda.synchronize(dev)
+            if str(dev).startswith("cuda"):
+                torch.cuda.synchronize(dev)
             i = int(np.argmax(pw))
             row.update({"bls_period": float(grid[i]), "bls_index": i, "bls_n_periods": int(len(grid)),
                         "bls_power_max": float(pw[i]), "bls_s": time.time() - t1, "device": dev})
