@@ -1,16 +1,30 @@
-exo-env/
+# environments and tooling
+.venv/
 __pycache__/
 *.pyc
 .pytest_cache/
-scratch/
-scratch_test_report.py
-.ipynb_checkpoints/
-.DS_Store
-dev/
-dist/
-build/
 *.egg-info/
-output/
-benchmark_targets.*
-benchmark_results.*
+build/
+dist/
+.DS_Store
+.ipynb_checkpoints/
+
+# credentials: never commit
+kaggle.json
+.kaggle/
+.env
+
+# large or re-downloadable data
+data/cache/
 tess_cache/
+*.fits
+
+# LaTeX build products
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
