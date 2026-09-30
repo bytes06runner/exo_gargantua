@@ -68,3 +68,24 @@ Seed searches finish around **2026-11-15** (~6.5 weeks from today, ~215 quota ho
    (Kaggle docs, experimental); (c) allow CPU sessions for TLS-only jobs, which have no weekly quota
    (this reverses G1, so only on your instruction).
 4. Approve starting the B2 seed searches (and, separately, B1(ii)).
+
+## 6. Timeline under G2 (CPU sessions for CPU work; 5 concurrent CPU sessions measured)
+
+Inputs: `results/cost_estimate_v2.json` (TLS 70.7 h for B2, 141.3 h for B1(ii); GPU BLS 12.0 h and
+20.6 h on one T4), `results/kaggle/concurrency_probe/result.json` (5 concurrent batch CPU sessions),
+12 h per session. GPU quota is billed per session hour, so running the GPU BLS on both T4s of a
+session halves its quota use (~6 h for B2, ~10 h for B1(ii)).
+
+| When | Work | Sessions | Quota |
+|---|---|---|---|
+| 2026-09-30 (running now) | Compact cache, 4 chained chunks | CPU, sequential, ~45-60 min each | none |
+| 2026-10-01 → 10-02 | B2 seeds: TLS on 1,198 TOIs | 10 CPU jobs in 2 waves of 5 (~7 h each), ~14-15 h wall | none |
+| same window, in parallel | B2 seeds: GPU BLS | 1 T4 session, both GPUs, ~6 h | ~6 GPU h (of 27.47 h this week) |
+| 2026-10-02 → 10-03 | B2 seeds: Tschudi 2026a baseline (its own TLS search + harmonic correction) | ~15 h wall on 5 CPU sessions (after the adapter is written and checked) | none |
+| 2026-10-02 | B2 seeds: SPOC-1/SPOC-E and QLP-hist/SPOC-hist | table lookups, local | none |
+| before B1(ii) | Injection grid specification committed (pre-registered), then the 2,000-injection subsample drawn with seed 20260930 | local | none |
+| 2026-10-03 → 10-05 | B1(ii): TLS on 2,000 injections | ~28 h wall on 5 CPU sessions | none |
+| 2026-10-03 → 10-05, in parallel | B1(ii): GPU BLS | T4, both GPUs, ~10 h | ~10 GPU h (new week's 30 h) |
+
+Seed-search phase: **about 5-6 days** (was ~6.5 weeks under G1). The B2 seeds are stored sealed (A4):
+no comparison with holdout truth until `resolver-frozen-v1`.
