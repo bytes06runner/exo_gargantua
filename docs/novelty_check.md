@@ -13,16 +13,17 @@ dwarfs). The Gate 1 verdict is therefore **proceed, with repositioning** (Sectio
 Approved by the project owner on 2026-09-30 (docs/decisions.md).
 
 Search method: arXiv API title/abstract queries (logged in `data/cache/lit/arxiv_q*.txt`), web
-search, Crossref, and full-text grep of the PDFs of the closest papers (cached in
-`data/cache/lit/pdf/`, gitignored). No ADS token was available, so ADS full-text search was not
-run. **That is a gap:** an ADS full-text query for "period alias" AND ("TCE" OR "TOI") should
-be run before submission.
+search, Crossref, full-text grep of the closest papers' PDFs (cached in `data/cache/lit/pdf/`,
+gitignored), and an **ADS full-text search** (Section 5).
+
+**Gate 1: CLOSED on 2026-09-30.** The ADS full-text search found no work that does calibrated
+(probabilistic) period-alias resolution for short-period TESS signals.
 
 ---
 
 ## 1. Closest prior work, with evidence
 
-### Tschudi 2026a (arXiv:2603.10247, submitted to A&A): the closest match
+### Tschudi 2026a (A&A 710, A352; arXiv:2603.10247): the closest match
 
 A TLS search on 121 M3-M6 dwarfs with a "harmonic correction" step (their Sect. 3.2.1):
 
@@ -114,7 +115,7 @@ counterpart.
 2. A reviewer may argue calibration is incremental. The answer has to be empirical: B1/B2 must
    show that probabilities + abstain give a better accuracy-coverage trade-off than deterministic
    rules on the same targets. If they do not, the contribution shrinks to the benchmark + audit.
-3. ADS full-text search not yet done (Section 0).
+3. ~~ADS full-text search not yet done.~~ Done 2026-09-30 (Section 5); no new overlap found.
 
 ## 4. Repositioning (approved 2026-09-30)
 
@@ -124,3 +125,39 @@ counterpart.
   BLS/TLS peaks, SPOC TCE and QLP periods.
 - The benchmark and the audit are the most defensible contributions; the resolver is the tool
   that makes them possible.
+
+## 5. ADS full-text search (Gate 1 close-out, 2026-09-30)
+
+`scripts/ads_novelty_search.py` (`make ads-search`) ran 8 fixed queries (listed in the
+script, written before any results were seen) over the ADS astronomy collection, 2014-2026,
+with full pagination: **603 unique records**, all in `docs/ads_novelty_hits.csv` with a
+`screened` level and a note for each.
+
+| Screening level | Records |
+|---|---|
+| Title only (single-system papers, RV, rotation, unrelated topics that mention aliases in passing) | 559 |
+| Already reviewed in Phase 1 (in `paper/bib_sources.csv`) | 14 |
+| Abstract read | 27 |
+| Full text read (relevant sections) | 3 |
+
+Relevant findings (none change the Gate 1 verdict):
+
+- **Lafarga et al. 2026** (MNRAS, RAVEN on TESS-SPOC FFIs): aliases were handled by *visual*
+  vetting ("folding their light curves at various aliases of the detected period and visually
+  discarding"), which removed 79 candidates. Of 465 unrecovered TOIs, 80 matched a harmonic of
+  the ExoFOP period (27 at 2P, 48 at P/2, 3 at 3P, 2 at P/3). This is strong motivation: a
+  recent large pipeline still resolves aliases by eye.
+- **Tschudi 2026a** is now published (A&A 710, A352). A third Tschudi paper (arXiv:2609.04887)
+  measures completeness and false-alarm rate for PLATO M dwarfs, not aliases.
+- **Javed et al. 2026** (arXiv:2608.01101): a period *posterior* from a *single* transit's
+  duration, with a neural network marginalising over the unobserved geometry. Probabilistic, but
+  for single transits (long periods), not the alias family of a multi-transit signal. Cited as
+  related physics for our density/duration feature.
+- **Lissauer et al. 2024** (Kepler catalog focused on period accuracy): period precision and
+  TTV-driven ephemeris drift, not alias resolution. Cited for the audit framing.
+- **Kostov et al. 2025** (TESS Ten Thousand EB catalog): updated EB ephemerides. Additional EB
+  ground truth for Phase 2.
+
+Updated gap table rows (Section 2): "Calibrated probability over the alias family",
+"Abstain option", "Stellar-density likelihood per alias (short period)" and "Public
+alias-resolution benchmark" remain **not found** after the ADS search.
