@@ -3,7 +3,7 @@
 Resolving orbital-period aliases in TESS transit signals: a calibrated resolver, a public
 benchmark, and an audit of the TOI catalog.
 
-**Status: under reconstruction (Phase 1 of 7).** There are no results in this branch yet, by
+**Status: under reconstruction (Gate 1 closed; Phase 2 not started).** There are no results in this branch yet, by
 design. The v1 pipeline and paper (rejected, AAS80459) are kept read-only in [`legacy/`](legacy/);
 no v1 number is reused. Why is documented in
 [`docs/legacy_inventory.md`](docs/legacy_inventory.md).

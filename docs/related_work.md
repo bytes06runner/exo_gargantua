@@ -1,7 +1,7 @@
 # Related work (Phase 1)
 
 All keys refer to `paper/refs.bib`, which is generated from `paper/bib_sources.csv` by
-`scripts/build_bib.py` and checked by `scripts/verify_bib.py` (65/65 entries resolve at
+`scripts/build_bib.py` and checked by `scripts/verify_bib.py` (69/69 entries resolve at
 Crossref/DataCite/arXiv; title overlap ≥ 0.6). The structured version is
 `docs/related_work_matrix.csv`; the gap analysis is `docs/novelty_check.md`.
 
@@ -68,6 +68,12 @@ sections), or *abstract* only.
 - **TESS EB catalog** (Prsa2022): human classifiers could flag EBs "where the period was
   ambiguous (whether there are two nearly identical primary and secondary eclipses or no visible
   secondary eclipse)". Useful ground truth and a source of hard EB cases. *Full text (grep).*
+- **RAVEN on TESS-SPOC FFIs** (Lafarga2026): aliases resolved by visual inspection; 80 of 465
+  unrecovered TOIs sit at 2P, P/2, 3P or P/3 of the ExoFOP period. *Full text (grep).*
+- **Single-transit period posteriors** (Javed2026): period from transit duration with a neural
+  network marginalising over geometry; single transits only. *Abstract.*
+- **Kepler period-accuracy catalog** (Lissauer2024) and **TESS Ten Thousand EB catalog**
+  (Kostov2025, updated EB ephemerides). *Abstracts.*
 - **Ephemeris maintenance** (Dragomir2020). *Abstract.*
 - **Rotation-period alias classifier** (Boyle2026, TARS): a learned half-period alias
   corrector for rotation periods; different signal class, but a precedent for learned alias
@@ -88,7 +94,7 @@ boosting).
 
 ## 5. Not yet covered (to do before writing)
 
-- ADS full-text search (needs an ADS API token).
+- ~~ADS full-text search~~: done 2026-09-30, see docs/novelty_check.md Section 5.
 - SPOC TESS-specific TPS/DV documentation for multi-sector runs (the TESS DV release notes are
   not DOI-registered; decide how to cite).
 - Tuson et al. CHEOPS duotransit programme (found only as an EPSC abstract so far).

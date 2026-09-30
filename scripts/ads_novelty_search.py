@@ -40,10 +40,20 @@ QUERIES = {
 
 
 def query(token, q):
-    params = urllib.parse.urlencode({"q": f"{q} {BASE}", "fl": FIELDS, "rows": ROWS, "sort": "date desc"})
-    req = urllib.request.Request(f"{API}?{params}", headers={"Authorization": f"Bearer {token}"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return json.load(r)
+    """All pages of one query (ADS caps rows per request)."""
+    docs, start = [], 0
+    while True:
+        params = urllib.parse.urlencode({"q": f"{q} {BASE}", "fl": FIELDS, "rows": ROWS,
+                                         "start": start, "sort": "date desc"})
+        req = urllib.request.Request(f"{API}?{params}", headers={"Authorization": f"Bearer {token}"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            data = json.load(r)
+        docs += data["response"]["docs"]
+        start += ROWS
+        if start >= data["response"]["numFound"]:
+            data["response"]["docs"] = docs
+            return data
+        time.sleep(1)
 
 
 def main():
