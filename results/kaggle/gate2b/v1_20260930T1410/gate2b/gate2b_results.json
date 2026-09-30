@@ -1,0 +1,424 @@
+{
+ "git_commit": "9200933f322f187c8f4ccfc393ac1d8e73aa7473",
+ "started_utc": "2026-09-30T13:12:42+00:00",
+ "probe": {
+  "cpu_count": 4,
+  "disk_/kaggle/working": {
+   "total_gb": 21.0,
+   "free_gb": 20.9
+  },
+  "disk_/tmp": {
+   "total_gb": 8758.4,
+   "free_gb": 1201.1
+  },
+  "disk_/": {
+   "total_gb": 8758.4,
+   "free_gb": 1201.1
+  },
+  "ram_gb": 33.7,
+  "nvidia_smi": [
+   "Tesla T4, 15360 MiB",
+   "Tesla T4, 15360 MiB"
+  ],
+  "df_h": "Filesystem        Size  Used Avail Use% Mounted on\noverlay           8.0T  6.9T  1.1T  87% /\ntmpfs              64M     0   64M   0% /dev\nshm                14G     0   14G   0% /dev/shm\n/dev/loop2         20G  108K   20G   1% /kaggle/src\n/dev/sdb1         122G  5.4G  117G   5% /opt/bin\n/dev/mapper/snap  8.0T  6.9T  1.1T  87% /etc/hosts\ntmpfs              16G     0   16G   0% /proc/acpi\ntmpfs              16G     0   16G   0% /proc/scsi\ntmpfs              16G     0   16G   0% /sys/firmware\n",
+  "torch": "2.10.0+cu128",
+  "cuda_available": true
+ },
+ "rebuild_s": 90.38915419578552,
+ "bls_parallel": {
+  "wall_s": 2765.199049472809,
+  "workers": 4,
+  "serial_wall_s_smoke": 6067.9525690078735,
+  "targets": [
+   {
+    "toi": "1453.01",
+    "serial_bls_period": 6.588646721967443,
+    "parallel_bls_period": 6.588646721967443,
+    "identical": true,
+    "n_periods": 6084188,
+    "parallel_worker_s": 2765.1414256095886,
+    "serial_s": 2384.4394583702087
+   },
+   {
+    "toi": "1190.01",
+    "serial_bls_period": 3.6950213484993832,
+    "parallel_bls_period": 3.6950213484993832,
+    "identical": true,
+    "n_periods": 6084222,
+    "parallel_worker_s": 1592.543826341629,
+    "serial_s": 1089.3416283130646
+   },
+   {
+    "toi": "7457.01",
+    "serial_bls_period": 0.5238407990762142,
+    "parallel_bls_period": 0.5238407990762142,
+    "identical": true,
+    "n_periods": 6955915,
+    "parallel_worker_s": 1042.8547904491425,
+    "serial_s": 720.022707939148
+   },
+   {
+    "toi": "6001.01",
+    "serial_bls_period": 0.5005665314759002,
+    "parallel_bls_period": 0.5005665314759002,
+    "identical": true,
+    "n_periods": 6955914,
+    "parallel_worker_s": 1040.615139722824,
+    "serial_s": 717.1199476718903
+   },
+   {
+    "toi": "4593.01",
+    "serial_bls_period": 0.998050823149019,
+    "parallel_bls_period": 0.998050823149019,
+    "identical": true,
+    "n_periods": 6084224,
+    "parallel_worker_s": 787.7604784965515,
+    "serial_s": 587.9260852336884
+   },
+   {
+    "toi": "2068.01",
+    "serial_bls_period": 7.769115334178912,
+    "parallel_bls_period": 7.769115334178912,
+    "identical": true,
+    "n_periods": 2906548,
+    "parallel_worker_s": 681.3556447029114,
+    "serial_s": 467.5796411037445
+   },
+   {
+    "toi": "1181.01",
+    "serial_bls_period": 2.103385630212675,
+    "parallel_bls_period": 2.103385630212675,
+    "identical": true,
+    "n_periods": 309455,
+    "parallel_worker_s": 58.34375214576721,
+    "serial_s": 40.689536809921265
+   },
+   {
+    "toi": "7902.01",
+    "serial_bls_period": 0.5923891736940686,
+    "parallel_bls_period": 0.5923891736940686,
+    "identical": true,
+    "n_periods": 145288,
+    "parallel_worker_s": 21.532065629959106,
+    "serial_s": 16.131450414657593
+   },
+   {
+    "toi": "7396.01",
+    "serial_bls_period": 15.436793516492942,
+    "parallel_bls_period": 15.436793516492942,
+    "identical": true,
+    "n_periods": 143636,
+    "parallel_worker_s": 20.138790369033813,
+    "serial_s": 14.204035758972168
+   },
+   {
+    "toi": "696.01",
+    "serial_bls_period": 15.168746303955672,
+    "parallel_bls_period": 15.168746303955672,
+    "identical": true,
+    "n_periods": 136947,
+    "parallel_worker_s": 17.906407833099365,
+    "serial_s": 12.78432846069336
+   },
+   {
+    "toi": "4930.01",
+    "serial_bls_period": 6.786642246808768,
+    "parallel_bls_period": 6.786642246808768,
+    "identical": true,
+    "n_periods": 35512,
+    "parallel_worker_s": 3.5207440853118896,
+    "serial_s": 2.4878640174865723
+   },
+   {
+    "toi": "3160.01",
+    "serial_bls_period": 3.972057641773278,
+    "parallel_bls_period": 3.972057641773278,
+    "identical": true,
+    "n_periods": 31635,
+    "parallel_worker_s": 2.8914241790771484,
+    "serial_s": 2.005703926086426
+   },
+   {
+    "toi": "2140.01",
+    "serial_bls_period": 2.4708737475696494,
+    "parallel_bls_period": 2.4708737475696494,
+    "identical": true,
+    "n_periods": 30252,
+    "parallel_worker_s": 2.6939496994018555,
+    "serial_s": 1.8289785385131836
+   },
+   {
+    "toi": "5823.01",
+    "serial_bls_period": 3.8679394165288024,
+    "parallel_bls_period": 3.8679394165288024,
+    "identical": true,
+    "n_periods": 36166,
+    "parallel_worker_s": 2.923103094100952,
+    "serial_s": 1.9337568283081055
+   },
+   {
+    "toi": "1839.01",
+    "serial_bls_period": 1.4239250154157144,
+    "parallel_bls_period": 1.4239250154157144,
+    "identical": true,
+    "n_periods": 29823,
+    "parallel_worker_s": 2.534360647201538,
+    "serial_s": 1.7167327404022217
+   },
+   {
+    "toi": "1050.01",
+    "serial_bls_period": 3.7356282714683062,
+    "parallel_bls_period": 3.7356282714683062,
+    "identical": true,
+    "n_periods": 28022,
+    "parallel_worker_s": 2.483128309249878,
+    "serial_s": 1.5171279907226562
+   },
+   {
+    "toi": "560.02",
+    "serial_bls_period": 16.71349469762353,
+    "parallel_bls_period": 16.71349469762353,
+    "identical": true,
+    "n_periods": 28354,
+    "parallel_worker_s": 2.2386317253112793,
+    "serial_s": 1.569350242614746
+   },
+   {
+    "toi": "663.02",
+    "serial_bls_period": 4.6982619709029825,
+    "parallel_bls_period": 4.6982619709029825,
+    "identical": true,
+    "n_periods": 26463,
+    "parallel_worker_s": 2.1647393703460693,
+    "serial_s": 1.5021004676818848
+   },
+   {
+    "toi": "782.01",
+    "serial_bls_period": 8.024163039742849,
+    "parallel_bls_period": 8.024163039742849,
+    "identical": true,
+    "n_periods": 26381,
+    "parallel_worker_s": 2.1670875549316406,
+    "serial_s": 1.4985816478729248
+   },
+   {
+    "toi": "7066.01",
+    "serial_bls_period": 0.5360448794701005,
+    "parallel_bls_period": 0.5360448794701005,
+    "identical": true,
+    "n_periods": 33694,
+    "parallel_worker_s": 2.4402780532836914,
+    "serial_s": 1.653552532196045
+   }
+  ]
+ },
+ "gpu_bls": {
+  "cap_s": 7200,
+  "device": "Tesla T4",
+  "targets": [
+   {
+    "toi": "7066.01",
+    "n_periods": 33694,
+    "gpu_s": 1.523205280303955,
+    "astropy_s": 1.653552532196045,
+    "astropy_period": 0.5360448794701005,
+    "gpu_period": 0.5360448794701005,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "782.01",
+    "n_periods": 26381,
+    "gpu_s": 0.8726346492767334,
+    "astropy_s": 1.4985816478729248,
+    "astropy_period": 8.024163039742849,
+    "gpu_period": 8.024163039742849,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "663.02",
+    "n_periods": 26463,
+    "gpu_s": 0.8808779716491699,
+    "astropy_s": 1.5021004676818848,
+    "astropy_period": 4.6982619709029825,
+    "gpu_period": 4.6982619709029825,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "560.02",
+    "n_periods": 28354,
+    "gpu_s": 0.9960916042327881,
+    "astropy_s": 1.569350242614746,
+    "astropy_period": 16.71349469762353,
+    "gpu_period": 16.71349469762353,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "1050.01",
+    "n_periods": 28022,
+    "gpu_s": 1.245978593826294,
+    "astropy_s": 1.5171279907226562,
+    "astropy_period": 3.7356282714683062,
+    "gpu_period": 3.7356282714683062,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "1839.01",
+    "n_periods": 29823,
+    "gpu_s": 0.5718038082122803,
+    "astropy_s": 1.7167327404022217,
+    "astropy_period": 1.4239250154157144,
+    "gpu_period": 1.4239250154157144,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "5823.01",
+    "n_periods": 36166,
+    "gpu_s": 0.8148233890533447,
+    "astropy_s": 1.9337568283081055,
+    "astropy_period": 3.8679394165288024,
+    "gpu_period": 3.8679394165288024,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "2140.01",
+    "n_periods": 30252,
+    "gpu_s": 0.644340991973877,
+    "astropy_s": 1.8289785385131836,
+    "astropy_period": 2.4708737475696494,
+    "gpu_period": 2.4708737475696494,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "3160.01",
+    "n_periods": 31635,
+    "gpu_s": 0.7445688247680664,
+    "astropy_s": 2.005703926086426,
+    "astropy_period": 3.972057641773278,
+    "gpu_period": 3.972057641773278,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "4930.01",
+    "n_periods": 35512,
+    "gpu_s": 0.5617103576660156,
+    "astropy_s": 2.4878640174865723,
+    "astropy_period": 6.786642246808768,
+    "gpu_period": 6.786642246808768,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "696.01",
+    "n_periods": 136947,
+    "gpu_s": 1.6841492652893066,
+    "astropy_s": 12.78432846069336,
+    "astropy_period": 15.168746303955672,
+    "gpu_period": 15.168746303955672,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "7396.01",
+    "n_periods": 143636,
+    "gpu_s": 1.655282735824585,
+    "astropy_s": 14.204035758972168,
+    "astropy_period": 15.436793516492942,
+    "gpu_period": 15.436793516492942,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "7902.01",
+    "n_periods": 145288,
+    "gpu_s": 1.7566194534301758,
+    "astropy_s": 16.131450414657593,
+    "astropy_period": 0.5923891736940686,
+    "gpu_period": 0.5923891736940686,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "1181.01",
+    "n_periods": 309455,
+    "gpu_s": 3.91329026222229,
+    "astropy_s": 40.689536809921265,
+    "astropy_period": 2.103385630212675,
+    "gpu_period": 2.103385630212675,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "2068.01",
+    "n_periods": 2906548,
+    "gpu_s": 40.281715631484985,
+    "astropy_s": 467.5796411037445,
+    "astropy_period": 7.769115334178912,
+    "gpu_period": 7.769115334178912,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "4593.01",
+    "n_periods": 6084224,
+    "gpu_s": 61.30102777481079,
+    "astropy_s": 587.9260852336884,
+    "astropy_period": 0.998050823149019,
+    "gpu_period": 0.998050823149019,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "6001.01",
+    "n_periods": 6955914,
+    "gpu_s": 72.5728325843811,
+    "astropy_s": 717.1199476718903,
+    "astropy_period": 0.5005665314759002,
+    "gpu_period": 0.5005665314759002,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "7457.01",
+    "n_periods": 6955915,
+    "gpu_s": 72.81717467308044,
+    "astropy_s": 720.022707939148,
+    "astropy_period": 0.5238407990762142,
+    "gpu_period": 0.5238407990762142,
+    "index_diff": 0,
+    "within_one_step": true
+   },
+   {
+    "toi": "1190.01",
+    "n_periods": 6084222,
+    "gpu_s": 94.80259609222412,
+    "astropy_s": 1089.3416283130646,
+    "astropy_period": 3.6950213484993832,
+    "gpu_period": 3.695016935242707,
+    "index_diff": 1,
+    "within_one_step": true
+   },
+   {
+    "toi": "1453.01",
+    "n_periods": 6084188,
+    "gpu_s": 178.0521879196167,
+    "astropy_s": 2384.4394583702087,
+    "astropy_period": 6.588646721967443,
+    "gpu_period": 6.588646721967443,
+    "index_diff": 0,
+    "within_one_step": true
+   }
+  ],
+  "wall_s": 538.3153898715973,
+  "accepted": true
+ },
+ "finished_utc": "2026-09-30T14:09:21+00:00"
+}

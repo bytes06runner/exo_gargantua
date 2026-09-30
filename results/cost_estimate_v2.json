@@ -1,0 +1,84 @@
+{
+ "git_commit": "9200933f322f187c8f4ccfc393ac1d8e73aa7473",
+ "inputs": {
+  "smoke": "results/kaggle/smoke_run/v1_20260930T1241/smoke/smoke_results.json",
+  "gate2b": "results/kaggle/gate2b/v1_20260930T1410/gate2b/gate2b_results.json",
+  "quota": "results/kaggle/quota_20260930.json"
+ },
+ "constants": {
+  "c_bls": 1.6520503045535604e-08,
+  "c_tls": 1.0836941994228724e-06,
+  "c_gpu_bls": 1.4403003071792326e-09,
+  "gpu_bls_accepted": true,
+  "bls_parallel_speedup_measured": 2.1943999185753884,
+  "bins_per_sector": 3275.458333333333,
+  "detrend_s_per_sector": 0.47751550674438475,
+  "cores": 4
+ },
+ "download": {
+  "files": 63559,
+  "raw_gb": 123.43666272,
+  "raw_mb_per_file": 1.94208,
+  "download_h": 1.5063161748447629,
+  "read_compact_h": 2.4760614845842595,
+  "compact_float32_gb": 11.617363935445026,
+  "compact_float64_flux_gb_estimate": 14.521704919306282,
+  "probe_disk": {
+   "disk_/kaggle/working": {
+    "total_gb": 21.0,
+    "free_gb": 20.9
+   },
+   "disk_/tmp": {
+    "total_gb": 8758.4,
+    "free_gb": 1201.1
+   },
+   "disk_/": {
+    "total_gb": 8758.4,
+    "free_gb": 1201.1
+   }
+  }
+ },
+ "b2": {
+  "targets": 1198,
+  "bls_serial_h": 137.39294568446343,
+  "bls_parallel_h": 34.34823642111586,
+  "bls_gpu_h": 11.978273381152764,
+  "tls_h": 70.72230822654042,
+  "total_h_parallel_bls": 105.07054464765628,
+  "total_h_gpu_bls": 82.70058160769318
+ },
+ "b1": {
+  "injections_total": 30000,
+  "full_search_subsample": 2000,
+  "mean_sectors_per_injection": 3.475,
+  "search_subsample": {
+   "bls_serial_h": 236.43744776840822,
+   "bls_parallel_h": 59.109361942102055,
+   "bls_gpu_h": 20.613229979188667,
+   "tls_h": 141.3079994359663,
+   "total_h_parallel_bls": 200.41736137806836,
+   "total_h_gpu_bls": 161.92122941515498
+  },
+  "wrong_seed_runs_prep_h": 13.828053216139475,
+  "wrong_seed_runs_resolver_h": "unknown until Phase 3 (resolver not built yet)"
+ },
+ "kaggle_quota": {
+  "queried_utc": "2026-09-30T10:27:58+00:00",
+  "source": "kaggle quota (Kaggle CLI 2.2.4)",
+  "resources": {
+   "GPU": {
+    "used": "1.57h",
+    "remaining": "28.43h",
+    "total": "30.00h",
+    "refresh_at": "2026-10-03T00:00:00"
+   },
+   "TPU": {
+    "used": "0.00h",
+    "remaining": "20.00h",
+    "total": "20.00h",
+    "refresh_at": "2026-10-03T00:00:00"
+   }
+  },
+  "note": "The Kaggle API reports GPU/TPU weekly quota only. CPU sessions have no weekly quota in this output; per-session runtime limits are not reported by the API."
+ }
+}
