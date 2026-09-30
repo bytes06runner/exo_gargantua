@@ -23,6 +23,13 @@ def test_bib_is_generated_not_handwritten():
         assert f"{{{key}," in text, f"{key} listed in bib_sources.csv but missing from refs.bib"
 
 
+SAMPLE_LOG_COLUMNS = ("toi,tic,decision,reason,stage,timestamp_utc,git_commit,snapshot_date,"
+                      "sectors_all,sectors_early,sectors_later,product_files,lc_listing_date,"
+                      "data_release,download_date,truth_tier,truth_period,truth_source,"
+                      "b2_eligible,b2_reason")
+
+
 def test_sample_log_header():
+    """Columns pre-registered in docs/sample_definition.md, Section 7."""
     header = (ROOT / "data" / "sample_log.csv").read_text().splitlines()[0]
-    assert header == "target,decision,reason,stage,timestamp_utc,git_commit"
+    assert header == SAMPLE_LOG_COLUMNS
