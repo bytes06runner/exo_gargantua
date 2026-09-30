@@ -9,7 +9,7 @@ decision G1 are in `docs/decisions.md`.
 | Check | Result |
 |---|---|
 | A1: parallel BLS (4 at a time) vs serial, 20 smoke targets | **20 / 20 identical peak periods**; wall 2,765 s vs 6,068 s serial (bounded here by one 2,384 s target) |
-| A2(iv): GPU BLS (PyTorch port of astropy `bls.c`) vs astropy | **Accepted.** 19 / 20 peaks at the same grid index, 1 (TOI 1190.01) one grid step away (allowed). One T4 is ~10-13x faster on large grids (TOI 1453.01: 178 s vs 2,384 s). GPU part took 538 s of the 2 h cap |
+| A2(iv): GPU BLS (PyTorch port of astropy `bls.c`) vs astropy | **Accepted.** 19 / 20 peaks at the same grid index, 1 (TOI 1190.01) one grid step away (allowed). One T4 is ~10-13x faster on large grids (TOI 1453.01: 178 s vs 2,384 s). GPU BLS part took 538 s; the whole T4 session used **~0.96 GPU-quota hours** (28.43 h → 27.47 h remaining) of the 2 h cap |
 | Session limits (probe) | `/kaggle/working` 21.0 GB (saved output); scratch `/` and `/tmp` 1.1 TB free (shared overlay); 4 CPU cores; 33.7 GB RAM; 2x Tesla T4 (15 GB each) |
 | Documented limits (kaggle.com/docs) | 12 h per GPU session; 20 GB saved output; datasets 200 GB each and 200 GB private total; a dataset is versioned from exactly one source; weekly GPU quota "30 hours or sometimes higher". **No global concurrent-session limit is documented**, and the API does not report one. |
 | GPU quota now | 2.53 h used, **27.47 h remaining**, refresh 2026-10-03 00:00 UTC |
