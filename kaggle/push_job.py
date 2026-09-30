@@ -54,7 +54,13 @@ def main(job):
     compute = meta.pop("compute")
     (build / "kernel-metadata.json").write_text(json.dumps(meta, indent=2))
     kaggle = str(Path(sys.executable).with_name("kaggle"))
-    res = subprocess.run([kaggle, "kernels", "push", "-p", str(build), *args], capture_output=True, text=True)
+    try:
+        res = subprocess.run([kaggle, "kernels", "push", "-p", str(build), *args], capture_output=True, text=True,
+                             timeout=300)
+    except subprocess.TimeoutExpired:
+        # the upload may still have reached Kaggle (seen 2026-09-30); callers must check status before retrying
+        print(f"push timed out: verify with `kaggle kernels status {meta['id']}` before retrying")
+        return 3
     print(res.stdout, res.stderr)
     rec = {"utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), "commit": head,
            "kernel": meta["id"], "enable_gpu": meta["enable_gpu"], "compute": compute, "accelerator": meta.get("machine_shape"), "push_output": res.stdout.strip()}
