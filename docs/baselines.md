@@ -50,6 +50,12 @@ numpy 2.0.2, scipy 1.17.1, astropy 8.0.1, lightkurve 2.6.0, wotan 1.10, transitl
   will state that the method was designed for M dwarfs and that we apply it outside that domain.
 - If the adapter cannot reproduce the behaviour on the 2026a paper's own worked examples, we
   report that instead of silently changing its code.
+- Implementation (2026-09-30): `src/exogargantua/baselines/tschudi.py` calls
+  `resolve_harmonic_alias` exactly as their pipeline does (`model=None`, their TLSConfig values for
+  the keys it reads, harmonic thresholds at their in-function defaults, `found_periods=[]`), on the
+  same TLS result as our TLS seed, inside the B2 TLS shards (one TLS run per TOI). Positive/negative
+  control in `tests/test_tschudi_adapter.py`: a synthetic 2.0 d signal seeded at 4.0 d is corrected
+  to 2.0 d (trigger: equal-depth secondary); seeded at 2.0 d it is left unchanged.
 
 ## 4. SPOC TCE periods
 

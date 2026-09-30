@@ -67,7 +67,7 @@ def bls_peaks_parallel(inputs, workers=4):
         return list(ex.map(_bls_peak_args, inputs))
 
 
-def tls_peak(tb, fb, n_threads, r_star=np.nan, m_star=np.nan):
+def tls_peak(tb, fb, n_threads, r_star=np.nan, m_star=np.nan, return_results=False):
     from transitleastsquares import transitleastsquares
     t0 = time.time()
     pmin, pmax, _ = period_limits(tb)
@@ -76,5 +76,6 @@ def tls_peak(tb, fb, n_threads, r_star=np.nan, m_star=np.nan):
         kw.update(R_star=r_star, M_star=m_star, R_star_min=0.1, R_star_max=max(3.0, 1.5 * r_star),
                   M_star_min=0.1, M_star_max=max(2.5, 1.5 * m_star))
     res = transitleastsquares(tb, fb).power(**kw)
-    return {"tls_period": float(res.period), "tls_sde": float(res.SDE), "tls_n_periods": int(len(res.periods)),
-            "tls_s": time.time() - t0}
+    out = {"tls_period": float(res.period), "tls_sde": float(res.SDE), "tls_n_periods": int(len(res.periods)),
+           "tls_s": time.time() - t0}
+    return (out, res) if return_results else out
