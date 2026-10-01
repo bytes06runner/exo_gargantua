@@ -1,17 +1,15 @@
 {
   "compute": "cpu",
-  "id": "srijeetbanerjee/exog-b2-tls-3",
-  "title": "exog-b2-tls-3",
+  "id": "srijeetbanerjee/exog-orchestrator-smoke",
+  "title": "exog-orchestrator-smoke",
   "code_file": "job.py",
   "language": "python",
   "kernel_type": "script",
   "is_private": true,
   "enable_gpu": false,
   "enable_tpu": false,
-  "enable_internet": true,
-  "dataset_sources": [
-    "srijeetbanerjee/exog-lc-cache-v1"
-  ],
+  "enable_internet": false,
+  "dataset_sources": [],
   "kernel_sources": [],
   "competition_sources": []
 }

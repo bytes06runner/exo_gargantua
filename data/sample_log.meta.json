@@ -1,0 +1,17 @@
+{
+  "description": "Sidecar metadata for data/sample_log.csv (the CSV itself is frozen by checksum; see data/FROZEN.json).",
+  "lc_cache_dataset": {
+    "slug": "srijeetbanerjee/exog-lc-cache-v1",
+    "version": 1,
+    "kaggle_dataset_id": 12302259,
+    "private": true,
+    "created_by": "project owner, Kaggle UI 'New Dataset' from kernel output",
+    "source": "kernel srijeetbanerjee/exog-cache-chunk-4, version 1, folder cache/",
+    "last_updated_utc": "2026-10-01T05:06:40",
+    "total_bytes": 15168466849,
+    "files": {"lc_npz": 8123, "other": ["cache/manifest.csv", "cache/chunk_1_summary.json", "cache/chunk_2_summary.json", "cache/chunk_3_summary.json", "cache/chunk_4_summary.json"]},
+    "verified_utc": "2026-10-01",
+    "verification": "8,123 lc/<tic>.npz files; their TIC set equals data/stellar_params.csv; total bytes consistent with the chunk-4 summary (15,155,021,972 bytes of npz + manifest + summaries)",
+    "build": {"script": "scripts/build_cache.py", "chunks": 4, "pinned_files": 63559, "x10_download_failures": 0, "x11_sectors_dropped": 53}
+  }
+}
