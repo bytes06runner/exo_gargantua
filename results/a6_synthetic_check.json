@@ -8,27 +8,31 @@
   "span_d": 27,
   "cadence_min": 2
  },
- "git_commit": "043326122259d282a27b97fc45cc3770f208edd7",
+ "git_commit": "ad0e86cdca064cdbc7661befd5c2380c2c5872c4",
  "cases": {
   "noise_only": {
    "n_bls_periods": 35722,
    "n_tls_periods": 2458,
    "sde_raw": 5.030595920532662,
-   "sde_a6": 5.09124521862168,
-   "peak_period_a6": 0.6196939923517673,
+   "sde_a6": 5.68415127225925,
+   "peak_period_a6": 3.7312511417694934,
    "peak_period_bls": 0.5959976366559256,
-   "sde_dense_tlspts": 8.72591392244924,
-   "sde_dense_scaled": 4.568068025757971
+   "sde_a6_cellmax": 5.254146105079849,
+   "sde_dense_tlspts": 8.532611017594943,
+   "sde_dense_scaled": 5.9688767810596755,
+   "max_in_transit_fraction": 0.6036522633744856
   },
   "with_transit": {
    "n_bls_periods": 35722,
    "n_tls_periods": 2458,
    "sde_raw": 14.556580245133963,
-   "sde_a6": 15.812151465890473,
+   "sde_a6": 16.403075049744736,
    "peak_period_a6": 3.6990144448856235,
    "peak_period_bls": 3.701420834244273,
-   "sde_dense_tlspts": 34.959197133835815,
-   "sde_dense_scaled": 19.907134794823886
+   "sde_a6_cellmax": 15.387259231025052,
+   "sde_dense_tlspts": 34.696264047960774,
+   "sde_dense_scaled": 20.814439506286128,
+   "max_in_transit_fraction": 0.6021090534979424
   }
  }
 }
