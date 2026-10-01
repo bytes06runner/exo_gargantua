@@ -52,6 +52,7 @@ def main(job):
     meta = json.loads((build / "kernel-metadata.json").read_text())
     args = check_compute(meta)
     compute = meta.pop("compute")
+    meta.pop("est_quota_h", None)  # orchestrator-only field
     (build / "kernel-metadata.json").write_text(json.dumps(meta, indent=2))
     kaggle = str(Path(sys.executable).with_name("kaggle"))
     try:
