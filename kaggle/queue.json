@@ -1,6 +1,9 @@
 {
   "description": "Ordered Kaggle job queue for the GitHub Actions orchestrator (kaggle/orchestrate.py). Each entry is a directory under kaggle/jobs/. A job is pushed once, when Kaggle has no kernel with its id and capacity allows. (test round 2: orchestrator decisions are now emitted as annotations.)",
   "jobs": [
-    "orchestrator_smoke"
+    "orchestrator_smoke",
+    "p08_validate_gpu",
+    "p08_validate_cpu_1",
+    "p08_validate_cpu_2"
   ]
 }
