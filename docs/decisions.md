@@ -40,3 +40,86 @@ No benchmark result existed when these were made (see the statement above the am
 | A5 | 2026-10-01 | **P08 screening window (in effect; owner-approved option b).** The P08 pool screen (docs/sample_definition.md §5: "a BLS search (Section 6 configuration) of the uninjected, pinned light curve gives SDE < 9") is applied to the light curve each star's injections will use: its first <= 10 pinned sectors that start within 365.25 d of the first one (docs/injection_design.md §1), instead of all pinned sectors. Search configuration, SDE threshold (9) and the no-replacement rule are unchanged. | The literal wording cannot be applied as written: on full pinned spans (median 815 d, max 2,936 d) one star needs up to 21.0 h on one T4 and 101 stars exceed Kaggle's 12 h session limit, so their search cannot complete as specified; all 3,000 stars would cost 3,163 GPU-quota h (dual T4) or 14,511 h wall on 5 CPU sessions. The injection-window screen costs 36.7 GPU-quota h or 168.6 h wall on 5 CPU sessions, with no star over 0.09 h. `results/p08_cost.json`. No injection existed when this was made. |
 | V1 | 2026-10-01 | **P08 SDE definition and GPU-port validation (pre-registered before any screen run).** SDE = (max(power) - mean(power)) / std(power) over the full BLS trial-period grid (likelihood objective; Kovács et al. 2002). P07 is applied first (sectors with CROWDSAP < 0.9 or X10/X11 dropped; star out if < 2 remain), then the A5 window. Validation: 50 pool stars drawn with `numpy.random.default_rng(20260930).choice(include, 50, replace=False)` (`data/p08_validation_stars.csv`, committed before the runs); SDE computed with astropy BLS on Kaggle CPU sessions and with the GPU port on a T4 session, same inputs and grid. Reported: max |SDE_gpu - SDE_astropy| and whether any star changes side of SDE = 9. If any star flips, the screen is not run and the owner decides. If none flips but differences exist, a borderline re-check rule is pre-registered before the screen. | Owner instruction (Gate 2, P08). |
 | O2 | 2026-10-01 | **Orchestrator skip-guard test passed** (owner-confirmed). Launch: push-triggered run 36827603777 (06:57 UTC) pushed `orchestrator_smoke`, `p08_validate_cpu_1`, `p08_validate_cpu_2` and skipped `p08_validate_gpu` (COMPLETE). Skip while running: manual run #7, 36827899550 (07:00:49 UTC), and push run 36827853986 (07:00:24 UTC): all four jobs reported "already on Kaggle; never re-pushed", `pushed=[]`. Decision logs: `results/orchestrator_test/runs.json`. The smoke job is removed from `kaggle/queue.json` once it finishes. Note: the 15-minute cron had not fired by 07:00 UTC (~80 min after the workflow reached `main`); runs so far came from pushes and a manual dispatch. | Gate-2 orchestrator test. |
+| A6 | 2026-10-01 | **P08 SDE on a TLS-detrended spectrum (in effect; owner-approved, TLS-grid reading). Supersedes V1's SDE definition for the P08 decision; V1's raw SDE is still computed and reported.** Full text in "Amendment A6" below. | The threshold 9 is TLS's (Hippke & Heller 2019), defined on a running-median-detrended spectrum; V1 applied it to the raw BLS spectrum, and in the 50-star validation raw-rule exclusions tracked window length, grid edges and the 13.7 d orbit rather than stellar signals (`results/p08_validation_report.json`). |
+
+### Amendment A6 (in effect from this commit)
+
+**Reason.** P08 excludes a pool star if an uninjected BLS search over its injection window gives
+SDE >= 9. The threshold comes from TLS (Hippke & Heller 2019, A&A 623, A39), where SDE is computed
+on a spectrum detrended with a running median. Decision V1 applied it to the raw BLS spectrum. In the
+50-star validation (GPU half, raw rule), exclusions track the length of the screening window, and
+the excluded stars' peaks sit at the edges of the trial-period grid or near the 13.7 d TESS orbit.
+
+**Rule.** Only the SDE computation changes.
+
+- **Unchanged:**
+  - P07 and the A5 screening window;
+  - §6 preparation (PDCSAP, wotan biweight 0.75 d, 10-min bins);
+  - the BLS search (autoperiod grid, durations, likelihood objective, astropy or the validated GPU port);
+  - the threshold (exclude if SDE >= 9);
+  - the no-replacement rule.
+- **Steps, per star:**
+  1. **Exact chi² per BLS trial period.** Astropy's likelihood power (`bls.c`, astropy 8.0.1, unit
+     weights when no uncertainties are given) is 0.5·ivar_in·(y_out − y_in)². Here y_in and y_out are
+     the in- and out-of-transit means of the box selected at period P, and ivar_in is its in-transit
+     point count.
+     - This equals ½[χ²_ref(P) − χ²_box(P)], where χ²_box is the residual χ² of the selected box
+       model.
+     - χ²_ref(P) = Σ(y − y_out(P))² is the χ² of a constant at that box's **out-of-transit mean**. It
+       is not the global mean, weighted mean or median, and it changes with P. Astropy's median
+       subtraction cancels.
+     - Hence, exactly, χ²(P) = χ²_box(P) = S − 2·power(P)·(1 − ivar_in(P)/W), with
+       S = Σ(y − ȳ)² about the global mean and W = N.
+     - ivar_in comes from `gpu_bls.bls_power(..., return_ivar_in=True)`. For astropy it is
+       2·power/depth², an integer to float precision.
+     - `tests/test_sde.py` rebuilds astropy's selected box point by point with a plain-Python `bls.c`
+       and confirms all three: astropy's power (rtol 1e-11), the χ² identity (rtol 1e-9 on the power,
+       1e-12 on χ²), and the GPU port's ivar_in.
+  2. **TLS's own trial periods.** Take the grid TLS would search on this light curve:
+     `transitleastsquares.period_grid(R_star, M_star, time_span, period_min, period_max,
+     oversampling_factor=3, n_transits_min=2)`.
+     - These are the arguments of `search.tls_peak`.
+     - R_star and M_star come from `data/stellar_params.csv`, or default to TLS's 1.0 when missing.
+     - The period limits are the §6 limits.
+  3. **Reading χ² at those periods: nearest BLS trial period (decides).** Each TLS period takes the
+     χ² of the nearest BLS trial period (ties to the shorter period).
+     - Nearest is used because each value is then the χ² of a box model that was actually fitted:
+       power and ivar_in belong to the same box.
+     - Linear interpolation would blend two different boxes and produce a χ² of no model. BLS power
+       is not smooth between trial periods, because phase and duration jump.
+     - The BLS grid is 70–770× finer than TLS's on the smoke targets. The nearest BLS period is
+       therefore within half a BLS step of the TLS period, below 1/140 of TLS's own spacing.
+  4. **SDE.** Call `transitleastsquares.stats.spectra(chi2, 3)` unmodified (transitleastsquares
+     **1.32**, 5 Apr 2024, file `transitleastsquares/stats.py`). It detrends with
+     `transitleastsquares/helpers.py::running_median` over 3 × `SDE_MEDIAN_KERNEL_SIZE` (30) → 91
+     trial periods. Its fifth output is the A6 SDE.
+- **Implementation:** `src/exogargantua/sde.py::sde_a6`; recorded as `sde_a6` / `p08_a6` by
+  `scripts/p08_screen.py`.
+- **Diagnostics only, never decide:**
+  - `sde_a6_cellmax`: per TLS period, the minimum χ² over the BLS periods in its cell (edges at
+    midpoints between TLS periods).
+  - `sde_dense_tlspts` and `sde_dense_scaled`: TLS detrending applied directly on the dense BLS
+    grid. With the literal 91-point kernel the median follows transit peaks, and the noise-only SDE
+    is inflated (`results/a6_synthetic_check.json`).
+
+**Declarations.**
+- **No benchmark results existed when A6 was made.** No injection has been generated, no injected
+  search run, and no resolver built or scored. B2 seeds are sealed under A4.
+- **P08 outcomes seen so far:** only those of the 50 validation stars under the raw rule.
+- **Pool size is accepted as it falls.** We accept whatever pool size A6 produces, and P08 will not
+  be changed again.
+  - If the pool is small, B1 results are reported by sector-count stratum with wider intervals
+    (option a).
+  - Injections stay at 10 per star (option b, 20 per star, is rejected).
+- **Sensitivity.** The paper reports pool size and injection results under both the raw rule (V1)
+  and A6. Every screen row records both. The raw-rule analysis (`scripts/p08_validation_report.py`)
+  is kept.
+
+**Validation before the screen.**
+- Re-run the 50 V1 stars with spectra saved (`kaggle/jobs/p08_a6val_*`), on GPU and on CPU astropy.
+- For the raw rule and for A6, report:
+  - flips across 9 between the two engines;
+  - the maximum |ΔSDE| between engines;
+  - peak-period agreement;
+  - the A6 pool projection by sector stratum (Wilson 95%).
+- The full screen is queued only after the owner approves these results.
