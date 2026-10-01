@@ -1,0 +1,429 @@
+{
+ "git_commit": "f857f5e567aa830560939f995ead164851a59d4d",
+ "runs_commits": [
+  "e3113897b8856d16963bf8a1fd4e70c0f8e66f59"
+ ],
+ "engines_present": {
+  "gpu": true,
+  "astropy": true
+ },
+ "gpu": {
+  "n_stars": 50,
+  "p07_pass": 45,
+  "projection": {
+   "raw_V1": {
+    "overall": {
+     "pass": 25,
+     "n": 50,
+     "stars": 1500,
+     "stars_ci95": [
+      1099,
+      1901
+     ]
+    },
+    "by_stratum": {
+     "13-inf": {
+      "pass": 1,
+      "n": 9,
+      "stars": 83,
+      "stars_ci95": [
+       15,
+       326
+      ]
+     },
+     "2-3": {
+      "pass": 11,
+      "n": 13,
+      "stars": 635,
+      "stars_ci95": [
+       433,
+       718
+      ]
+     },
+     "4-6": {
+      "pass": 6,
+      "n": 10,
+      "stars": 450,
+      "stars_ci95": [
+       235,
+       624
+      ]
+     },
+     "7-12": {
+      "pass": 7,
+      "n": 18,
+      "stars": 292,
+      "stars_ci95": [
+       152,
+       460
+      ]
+     }
+    },
+    "injections_at_10_per_star": 15000,
+    "injections_ci95": [
+     10990,
+     19010
+    ]
+   },
+   "A6": {
+    "overall": {
+     "pass": 34,
+     "n": 50,
+     "stars": 2040,
+     "stars_ci95": [
+      1626,
+      2377
+     ]
+    },
+    "by_stratum": {
+     "13-inf": {
+      "pass": 7,
+      "n": 9,
+      "stars": 583,
+      "stars_ci95": [
+       339,
+       703
+      ]
+     },
+     "2-3": {
+      "pass": 11,
+      "n": 13,
+      "stars": 635,
+      "stars_ci95": [
+       433,
+       718
+      ]
+     },
+     "4-6": {
+      "pass": 7,
+      "n": 10,
+      "stars": 525,
+      "stars_ci95": [
+       298,
+       669
+      ]
+     },
+     "7-12": {
+      "pass": 9,
+      "n": 18,
+      "stars": 375,
+      "stars_ci95": [
+       218,
+       532
+      ]
+     }
+    },
+    "injections_at_10_per_star": 20400,
+    "injections_ci95": [
+     16260,
+     23770
+    ]
+   }
+  },
+  "diagnostics_excluded_at_9": {
+   "sde": 20,
+   "sde_a6": 11,
+   "sde_a6_cellmax": 14,
+   "sde_dense_tlspts": 42,
+   "sde_dense_scaled": 20
+  },
+  "raw_rerun_vs_first_validation": {
+   "stars": 45,
+   "max_abs_sde_diff": 0.0,
+   "peak_period_identical": 45
+  },
+  "a6_excluded": {
+   "tics": [
+    166128290,
+    219744158,
+    291017714,
+    149478361,
+    349059153,
+    382633872,
+    355946913,
+    160471611,
+    167416321,
+    150189995,
+    261334793
+   ],
+   "sde_a6": [
+    13.913,
+    12.077,
+    11.601,
+    17.712,
+    12.261,
+    9.29,
+    9.088,
+    9.396,
+    9.968,
+    13.209,
+    16.435
+   ],
+   "peak_period_a6_d": [
+    13.4883,
+    28.4332,
+    27.0945,
+    1.0147,
+    13.2028,
+    27.6578,
+    1.1314,
+    1.4791,
+    14.0004,
+    26.688,
+    27.3713
+   ],
+   "n_window_sectors": [
+    5,
+    8,
+    3,
+    8,
+    3,
+    3,
+    3,
+    8,
+    10,
+    8,
+    7
+   ],
+   "median_window_sectors_excluded": 7.0,
+   "median_window_sectors_kept": 3.5
+  },
+  "a6_vs_raw_decision_changes": {
+   "raw_exclude_to_a6_pass": [
+    232679537,
+    275690220,
+    238037356,
+    230087750,
+    199632719,
+    402448314,
+    219376911,
+    88874569,
+    158562911,
+    306512813
+   ],
+   "raw_pass_to_a6_exclude": [
+    382633872
+   ]
+  }
+ },
+ "astropy": {
+  "n_stars": 50,
+  "p07_pass": 45,
+  "projection": {
+   "raw_V1": {
+    "overall": {
+     "pass": 25,
+     "n": 50,
+     "stars": 1500,
+     "stars_ci95": [
+      1099,
+      1901
+     ]
+    },
+    "by_stratum": {
+     "13-inf": {
+      "pass": 1,
+      "n": 9,
+      "stars": 83,
+      "stars_ci95": [
+       15,
+       326
+      ]
+     },
+     "2-3": {
+      "pass": 11,
+      "n": 13,
+      "stars": 635,
+      "stars_ci95": [
+       433,
+       718
+      ]
+     },
+     "4-6": {
+      "pass": 6,
+      "n": 10,
+      "stars": 450,
+      "stars_ci95": [
+       235,
+       624
+      ]
+     },
+     "7-12": {
+      "pass": 7,
+      "n": 18,
+      "stars": 292,
+      "stars_ci95": [
+       152,
+       460
+      ]
+     }
+    },
+    "injections_at_10_per_star": 15000,
+    "injections_ci95": [
+     10990,
+     19010
+    ]
+   },
+   "A6": {
+    "overall": {
+     "pass": 34,
+     "n": 50,
+     "stars": 2040,
+     "stars_ci95": [
+      1626,
+      2377
+     ]
+    },
+    "by_stratum": {
+     "13-inf": {
+      "pass": 7,
+      "n": 9,
+      "stars": 583,
+      "stars_ci95": [
+       339,
+       703
+      ]
+     },
+     "2-3": {
+      "pass": 11,
+      "n": 13,
+      "stars": 635,
+      "stars_ci95": [
+       433,
+       718
+      ]
+     },
+     "4-6": {
+      "pass": 7,
+      "n": 10,
+      "stars": 525,
+      "stars_ci95": [
+       298,
+       669
+      ]
+     },
+     "7-12": {
+      "pass": 9,
+      "n": 18,
+      "stars": 375,
+      "stars_ci95": [
+       218,
+       532
+      ]
+     }
+    },
+    "injections_at_10_per_star": 20400,
+    "injections_ci95": [
+     16260,
+     23770
+    ]
+   }
+  },
+  "diagnostics_excluded_at_9": {
+   "sde": 20,
+   "sde_a6": 11,
+   "sde_a6_cellmax": 14,
+   "sde_dense_tlspts": 42,
+   "sde_dense_scaled": 20
+  },
+  "raw_rerun_vs_first_validation": {
+   "stars": 45,
+   "max_abs_sde_diff": 0.0,
+   "peak_period_identical": 45
+  },
+  "a6_excluded": {
+   "tics": [
+    349059153,
+    382633872,
+    355946913,
+    160471611,
+    167416321,
+    150189995,
+    261334793,
+    166128290,
+    219744158,
+    291017714,
+    149478361
+   ],
+   "sde_a6": [
+    12.261,
+    9.29,
+    9.088,
+    9.396,
+    9.968,
+    13.209,
+    16.435,
+    13.913,
+    12.077,
+    11.601,
+    17.712
+   ],
+   "peak_period_a6_d": [
+    13.2028,
+    27.6578,
+    1.1314,
+    1.4791,
+    14.0004,
+    26.688,
+    27.3713,
+    13.4883,
+    28.4332,
+    27.0945,
+    1.0147
+   ],
+   "n_window_sectors": [
+    3,
+    3,
+    3,
+    8,
+    10,
+    8,
+    7,
+    5,
+    8,
+    3,
+    8
+   ],
+   "median_window_sectors_excluded": 7.0,
+   "median_window_sectors_kept": 3.5
+  },
+  "a6_vs_raw_decision_changes": {
+   "raw_exclude_to_a6_pass": [
+    199632719,
+    402448314,
+    219376911,
+    88874569,
+    158562911,
+    306512813,
+    232679537,
+    275690220,
+    238037356,
+    230087750
+   ],
+   "raw_pass_to_a6_exclude": [
+    382633872
+   ]
+  }
+ },
+ "gpu_vs_astropy": {
+  "stars_compared": 45,
+  "same_bls_grid": true,
+  "same_tls_grid": true,
+  "raw_V1": {
+   "flips_across_9": [],
+   "max_abs_sde_diff": 3.552713678800501e-15,
+   "median_abs_sde_diff": 0.0,
+   "peak_period_identical": 45,
+   "max_abs_peak_period_diff_d": 0.0,
+   "min_distance_to_9": 0.03323132220397973
+  },
+  "A6": {
+   "flips_across_9": [],
+   "max_abs_sde_diff": 5.329070518200751e-15,
+   "median_abs_sde_diff": 8.881784197001252e-16,
+   "peak_period_identical": 41,
+   "max_abs_peak_period_diff_d": 3.552713678800501e-15,
+   "min_distance_to_9": 0.08789990154029148
+  }
+ }
+}
