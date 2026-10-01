@@ -33,7 +33,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
-from exogargantua import sample as S, search as SE, sde as SD  # noqa: E402
+from exogargantua import p08io, sample as S, search as SE, sde as SD  # noqa: E402
 import b2_seeds as B2  # noqa: E402  (find_cache)
 import estimate_costs as E1  # noqa: E402
 
@@ -108,7 +108,8 @@ def main():
     spec_dir = out / "spectra"
     if args.save_spectra:
         spec_dir.mkdir(exist_ok=True)
-    done = set(pd.read_csv(path)["tic"]) if path.exists() else set()
+    cols = p08io.A6_FULL_COLS if args.dense_diagnostics else p08io.A6_NODENSE_COLS
+    done = set(p08io.read_rows(path)["tic"]) if path.exists() else set()
 
     def prep(t):
         win, why = wins[t]
@@ -150,7 +151,7 @@ def main():
             np.savez_compressed(spec_dir / f"{row['tic']}_{args.engine}.npz", period=grid.astype(np.float64),
                                 power=np.asarray(pw, np.float64), ivar_in=np.asarray(iin, np.float32),
                                 periods_tls=ptls, flux=np.asarray(fb, np.float64))
-        pd.DataFrame([row]).to_csv(path, mode="a", header=not path.exists(), index=False)
+        p08io.write_row(path, row, cols)
         say(f"  {row['tic']}: SDE raw {s:.4f}, A6 {s_a6:.4f} ({secs:.0f}s)")
 
     todo = [t for t in mine if t not in done]
@@ -160,7 +161,7 @@ def main():
         for t in todo:
             row, tb, fb = prep(t)
             if tb is None:
-                pd.DataFrame([row]).to_csv(path, mode="a", header=not path.exists(), index=False)
+                p08io.write_row(path, row, cols)
                 continue
             pmin, pmax, _ = SE.period_limits(tb)
             grid = SE.bls_grid(tb, pmin, pmax)
@@ -174,7 +175,7 @@ def main():
         prepped = [prep(t) for t in todo]
         for row, tb, fb in prepped:
             if tb is None:
-                pd.DataFrame([row]).to_csv(path, mode="a", header=not path.exists(), index=False)
+                p08io.write_row(path, row, cols)
         jobs = [(row, tb, fb) for row, tb, fb in prepped if tb is not None]
         with ProcessPoolExecutor(args.workers) as ex:
             for (row, _, fb), res in zip(jobs, ex.map(_astropy_power, [(tb, fb) for _, tb, fb in jobs])):

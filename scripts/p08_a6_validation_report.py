@@ -16,6 +16,8 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from exogargantua import p08io  # noqa: E402
 sys.path.insert(0, str(ROOT / "scripts"))
 from p08_validation_report import wilson  # noqa: E402
 
@@ -26,7 +28,7 @@ RULES = {"raw_V1": ("sde", "peak_period", "p08"), "A6": ("sde_a6", "peak_period_
 
 def load(engine):
     files = glob.glob(str(ROOT / f"results/kaggle/p08a6val/*/p08a6val/p08_{engine}_*.csv"))
-    return pd.concat(pd.read_csv(f) for f in files) if files else None
+    return pd.concat(p08io.read_rows(f) for f in files) if files else None
 
 
 def projection(df, col):
