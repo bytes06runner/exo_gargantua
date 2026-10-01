@@ -8,12 +8,15 @@ import glob
 import json
 import math
 import subprocess
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from exogargantua import p08io  # noqa: E402
 SDE_MAX = 9.0
 
 
@@ -29,7 +32,7 @@ def wilson(k, n, z=1.96):
 
 def load(engine):
     files = glob.glob(str(ROOT / f"results/kaggle/p08val/*/p08val/p08_{engine}_*.csv"))
-    return pd.concat(pd.read_csv(f) for f in files) if files else None
+    return pd.concat(p08io.read_rows(f) for f in files) if files else None
 
 
 def main():

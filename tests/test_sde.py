@@ -120,3 +120,16 @@ def test_sde_a6_and_cellmax_find_injected_peak():
     s, peak = sde.sde_a6(P, pw, iin, y, ptls)
     assert abs(peak - 7.3) < 0.01 and s > 9
     assert sde.sde_a6_cellmax(P, pw, iin, y, ptls) > 9
+
+
+def test_p08io_recovers_short_header(tmp_path):
+    from exogargantua import p08io
+    p = tmp_path / "x.csv"
+    p.write_text("tic,p07,p07_reason\n1,exclude,P07: 0 sector(s)\n"
+                 "2,pass,,14;15,27.5,3000,100,1.5,1e-6,1e-7,1e-7,9.0,exclude,3.0,astropy\n")
+    df = p08io.read_rows(p)
+    assert df.loc[df.tic == 2, "sde"].item() == 9.0 and df.loc[df.tic == 2, "engine"].item() == "astropy"
+    assert df.loc[df.tic == 1, "p07"].item() == "exclude"
+    q = tmp_path / "y.csv"
+    p08io.write_row(q, {"tic": 1, "p07": "exclude", "p07_reason": "r"}, p08io.A6_FULL_COLS)
+    assert q.read_text().splitlines()[0].split(",") == p08io.A6_FULL_COLS
