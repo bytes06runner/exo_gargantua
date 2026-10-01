@@ -1,0 +1,5 @@
+# DRAFT amendment A5 (not in effect; awaiting owner approval)
+
+Proposed text for docs/decisions.md:
+
+| A5 | 2026-10-01 | **P08 screening window.** The P08 pool screen (docs/sample_definition.md §5: "a BLS search (Section 6 configuration) of the uninjected, pinned light curve gives SDE < 9") is applied to the light curve each star's injections will use: its first <= 10 pinned sectors that start within 365.25 d of the first one (docs/injection_design.md §1), instead of all pinned sectors. Search configuration, SDE threshold (9) and the no-replacement rule are unchanged. | The literal wording cannot be applied as written: on full pinned spans (median 815 d, max 2,936 d) one star needs up to 21.0 h on one T4 and 101 stars exceed Kaggle's 12 h session limit, so their search cannot complete as specified; all 3,000 stars would cost 3,163 GPU-quota h (dual T4) or 14,511 h wall on 5 CPU sessions. The injection-window screen costs 36.7 GPU-quota h or 168.6 h wall on 5 CPU sessions, with no star over 0.09 h. `results/p08_cost.json`. No injection existed when this was made. |
