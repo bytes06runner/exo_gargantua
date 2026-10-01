@@ -65,6 +65,19 @@ def main():
         s = df[df["p07"] == "pass"]
         rep[name]["diagnostics_excluded_at_9"] = {c: int((s[c] >= SDE_MAX).sum()) for c in
                                                   ("sde", "sde_a6", "sde_a6_cellmax", "sde_dense_tlspts", "sde_dense_scaled") if c in s}
+        first = sorted(glob.glob(str(ROOT / f"results/kaggle/p08val/*/p08val/p08_{name}_*.csv")))
+        if first:
+            f0 = pd.concat(p08io.read_rows(f) for f in first)
+            j = s.merge(f0[f0["p07"] == "pass"][["tic", "sde", "peak_period"]], on="tic", suffixes=("", "_first"))
+            rep[name]["raw_rerun_vs_first_validation"] = {"stars": int(len(j)), "max_abs_sde_diff": float((j["sde"] - j["sde_first"]).abs().max()),
+                                                          "peak_period_identical": int((j["peak_period"] == j["peak_period_first"]).sum())}
+        ex = s[s["p08_a6"] == "exclude"].copy()
+        ex["n_window_sectors"] = ex["window_sectors"].astype(str).str.count(";") + 1
+        rep[name]["a6_excluded"] = {"tics": ex["tic"].astype(int).tolist(), "sde_a6": ex["sde_a6"].round(3).tolist(),
+                                    "peak_period_a6_d": ex["peak_period_a6"].round(4).tolist(),
+                                    "n_window_sectors": ex["n_window_sectors"].astype(int).tolist(),
+                                    "median_window_sectors_excluded": float(ex["n_window_sectors"].median()),
+                                    "median_window_sectors_kept": float((s[s["p08_a6"] == "pass"]["window_sectors"].astype(str).str.count(";") + 1).median())}
         rep[name]["a6_vs_raw_decision_changes"] = {"raw_exclude_to_a6_pass": s.loc[(s["p08"] == "exclude") & (s["p08_a6"] == "pass"), "tic"].astype(int).tolist(),
                                                    "raw_pass_to_a6_exclude": s.loc[(s["p08"] == "pass") & (s["p08_a6"] == "exclude"), "tic"].astype(int).tolist()}
     if gpu is not None and cpu is not None:
