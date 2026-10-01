@@ -4,7 +4,7 @@ Plan: results/p08_screen_plan.json."""
 import subprocess
 import sys
 
-COMMIT = "{{COMMIT}}"
+COMMIT = "2197afa0a0ba12b1a2834ae1cddfef0f60d96baa"  # pinned: every screen session runs the code of session 1
 REPO = "https://github.com/bytes06runner/exo_gargantua.git"
 SRC = "/tmp/exog"
 subprocess.run(["git", "clone", "--quiet", REPO, SRC], check=True)
