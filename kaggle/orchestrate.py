@@ -16,6 +16,7 @@ Credentials: KAGGLE_USERNAME / KAGGLE_KEY environment variables (GitHub Secrets)
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -43,6 +44,18 @@ def status(kernel_id: str) -> str:
     return "unknown"
 
 
+def note(msg: str, level: str = "notice") -> None:
+    """Print, and also emit a GitHub Actions annotation + step-summary line (readable without signing in)."""
+    print(msg, flush=True)
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        safe = msg.replace("\n", " ")[:900]
+        print(f"::{level} title=orchestrator::{safe}", flush=True)
+        summ = os.environ.get("GITHUB_STEP_SUMMARY")
+        if summ:
+            with open(summ, "a") as fh:
+                fh.write(f"- {safe}\n")
+
+
 def main():
     dry = "--dry-run" in sys.argv
     queue = json.loads((ROOT / "kaggle" / "queue.json").read_text())
@@ -52,14 +65,18 @@ def main():
         jobs.append({"name": name, "id": meta["id"], "compute": meta["compute"]})
     for j in jobs:
         j["status"] = status(j["id"])
-        print(f"{j['name']:28s} {j['compute']:3s} {j['status']}")
+        note(f"status {j['name']} ({j['compute']}): {j['status']}")
     if any(j["status"] == "unknown" for j in jobs):
-        print("Kaggle API did not answer for some jobs; pushing nothing this round (no-double-launch guard).")
-        return 0
+        note("Kaggle API did not answer for some jobs; pushing nothing this round (no-double-launch guard).", "warning")
+        return 1
     running = {c: sum(1 for j in jobs if j["compute"] == c and j["status"] in ACTIVE) for c in CAP}
     pushed = []
     for j in jobs:
-        if j["status"] != "absent" or running[j["compute"]] >= CAP[j["compute"]]:
+        if j["status"] != "absent":
+            note(f"skip {j['name']}: already on Kaggle ({j['status']}); never re-pushed")
+            continue
+        if running[j["compute"]] >= CAP[j["compute"]]:
+            note(f"skip {j['name']}: {j['compute']} capacity full {running}")
             continue
         if dry:
             print(f"DRY-RUN would push {j['name']}")
@@ -71,20 +88,20 @@ def main():
         if "pushed" in out:
             running[j["compute"]] += 1
             pushed.append(j["name"])
-            print(f"PUSHED {j['name']}: {out.splitlines()[-1] if out else ''}")
+            note(f"PUSHED {j['name']}: {out.splitlines()[-1] if out else ''}")
         elif "timed out" in out:
             st = status(j["id"])
-            print(f"push of {j['name']} timed out; Kaggle status now: {st}")
+            note(f"push of {j['name']} timed out; Kaggle status now: {st}", "warning")
             if st in ACTIVE:
                 running[j["compute"]] += 1
             break  # do not push anything else this round
         elif "Maximum batch" in out:
-            print(f"Kaggle session limit reached at {j['name']}; waiting for the next round")
+            note(f"Kaggle session limit reached at {j['name']}; waiting for the next round")
             running[j["compute"]] = CAP[j["compute"]]
         else:
-            print(f"push of {j['name']} refused/failed: {out[-300:]}")
-            break
-    print(json.dumps({"pushed": pushed, "running": running}))
+            note(f"push of {j['name']} refused/failed: {out[-400:]}", "error")
+            return 1
+    note(f"round done: pushed={pushed} running={running}")
     return 0
 
 
