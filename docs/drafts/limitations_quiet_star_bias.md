@@ -22,3 +22,23 @@ threshold, so that longer windows (more trial periods, more red-noise structure)
 more often. The consequence is that the surviving pool is weighted towards short windows: B1
 results for injections spanning many sectors rest on fewer host stars and carry wider intervals,
 which the paper must state explicitly (per-sector-count results with their CIs).
+
+Amendment A6 changes how the P08 SDE is computed but not what was found. SDE is now computed from a
+running-median-detrended spectrum on TLS's own period grid, with TLS 1.32's own code. The threshold
+of 9, the search and the no-replacement rule are unchanged. A6 reduces the window-length dependence
+but does not remove it.
+- **Fewer exclusions.** In the same 50-star validation (`results/p08_a6_validation_report.json`),
+  A6 excludes 11 of the 45 searched stars, against 20 under the raw rule.
+- **Peaks of the A6 exclusions.** Most sit at instrumental rather than stellar timescales:
+  - 5 near one TESS sector (26.7–28.4 d);
+  - 3 near the 13.7 d spacecraft orbit (13.2–14.0 d);
+  - 3 at 1.0–1.5 d.
+- **Window length.** Excluded stars still have longer screening windows (median 7 sectors) than kept
+  ones (median 3.5).
+
+The screen was not changed again: the pool is accepted as A6 leaves it (decisions.md, A6). So the
+injection hosts remain weighted towards shorter windows and away from stars with strong
+sector- or orbit-period systematics. B1 results for many-sector light curves, and for light curves
+with such systematics, should be read with that in mind.
+- **Reporting.** The paper reports B1 by sector-count stratum with Wilson intervals, and gives the
+  pool size and injection results under both the raw rule and A6.
