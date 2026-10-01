@@ -1,0 +1,34 @@
+{
+ "config": {
+  "seed": 0,
+  "noise": 0.001,
+  "period": 3.7,
+  "depth": 0.002,
+  "duration": 0.1,
+  "span_d": 27,
+  "cadence_min": 2
+ },
+ "git_commit": "043326122259d282a27b97fc45cc3770f208edd7",
+ "cases": {
+  "noise_only": {
+   "n_bls_periods": 35722,
+   "n_tls_periods": 2458,
+   "sde_raw": 5.030595920532662,
+   "sde_a6": 5.09124521862168,
+   "peak_period_a6": 0.6196939923517673,
+   "peak_period_bls": 0.5959976366559256,
+   "sde_dense_tlspts": 8.72591392244924,
+   "sde_dense_scaled": 4.568068025757971
+  },
+  "with_transit": {
+   "n_bls_periods": 35722,
+   "n_tls_periods": 2458,
+   "sde_raw": 14.556580245133963,
+   "sde_a6": 15.812151465890473,
+   "peak_period_a6": 3.6990144448856235,
+   "peak_period_bls": 3.701420834244273,
+   "sde_dense_tlspts": 34.959197133835815,
+   "sde_dense_scaled": 19.907134794823886
+  }
+ }
+}
