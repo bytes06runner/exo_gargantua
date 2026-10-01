@@ -9,10 +9,10 @@ Per pool star:
        biweight 0.75 d, 10-min bins, autoperiod grid, likelihood objective);
        SDE = (max(power) - mean(power)) / std(power) over the full trial-period grid
        (Kovacs et al. 2002 definition, decision V1); star excluded if SDE >= 9.
-  A6   (DRAFT, not in effect; docs/drafts/A6_P08_draft.md) the same spectrum, SDE computed after TLS's
+  A6   (docs/decisions.md) the same spectrum, SDE computed after TLS's
        spectrum detrending (src/exogargantua/sde.py). Both values are recorded for every star: column
-       `sde` / `p08` is the pre-registered raw rule, `sde_a6` / `p08_a6` the A6 rule; `sde_dense_*` are
-       diagnostics only (TLS detrending applied on the dense BLS grid) and never decide anything.
+       `sde` / `p08` is the pre-registered raw rule, `sde_a6` / `p08_a6` the A6 rule; `sde_a6_cellmax` and
+       `sde_dense_*` are diagnostics only and never decide anything.
 Engines: --engine astropy (CPU) or --engine gpu (src/exogargantua/gpu_bls.py, one CUDA device).
 Output rows: tic, p07 status, window sectors, grid size, peak period, power stats, SDE, timings.
 """
@@ -128,27 +128,28 @@ def main():
 
     tb_of = {}
 
-    def finish(row, grid, pw, secs, fb):
+    def finish(row, grid, pw, iin, secs, fb):
         i = int(np.nanargmax(pw))
         s = sde(pw)
         t0 = time.time()
         ptls = SD.tls_periods(tb_of[row["tic"]], row.pop("rs"), row.pop("ms"))
         ok = np.isfinite(pw)
-        s_a6, peak_a6 = SD.sde_a6(grid[ok], pw[ok], fb, ptls)
-        diag = {}
+        s_a6, peak_a6 = SD.sde_a6(grid[ok], pw[ok], iin[ok], fb, ptls)
+        diag = {"sde_a6_cellmax": SD.sde_a6_cellmax(grid[ok], pw[ok], iin[ok], fb, ptls)}
         if args.dense_diagnostics:
-            diag = {"sde_dense_tlspts": SD.sde_dense(pw, fb, len(ptls), "tls_points"),
-                    "sde_dense_scaled": SD.sde_dense(pw, fb, len(ptls), "scaled")}
+            diag.update({"sde_dense_tlspts": SD.sde_dense(pw[ok], iin[ok], fb, len(ptls), "tls_points"),
+                         "sde_dense_scaled": SD.sde_dense(pw[ok], iin[ok], fb, len(ptls), "scaled")})
         row.update({"n_periods": int(len(grid)), "peak_period": float(grid[i]), "power_max": float(pw[i]),
                     "power_mean": float(np.nanmean(pw)), "power_std": float(np.nanstd(pw)), "sde": s,
                     "p08": "exclude" if s >= SDE_MAX else "pass",
                     "n_tls_periods": int(len(ptls)), "sde_a6": s_a6, "peak_period_a6": peak_a6,
                     "p08_a6": "exclude" if s_a6 >= SDE_MAX else "pass",
-                    "two_power_max_over_sumsq": float(2 * pw[i] / np.sum((fb - np.median(fb)) ** 2)), **diag,
+                    **diag,
                     "search_s": secs, "a6_s": time.time() - t0, "engine": args.engine})
         if args.save_spectra:
             np.savez_compressed(spec_dir / f"{row['tic']}_{args.engine}.npz", period=grid.astype(np.float64),
-                                power=np.asarray(pw, np.float32), sum_sq=np.float64(np.sum((fb - np.median(fb)) ** 2)))
+                                power=np.asarray(pw, np.float64), ivar_in=np.asarray(iin, np.float32),
+                                periods_tls=ptls, flux=np.asarray(fb, np.float64))
         pd.DataFrame([row]).to_csv(path, mode="a", header=not path.exists(), index=False)
         say(f"  {row['tic']}: SDE raw {s:.4f}, A6 {s_a6:.4f} ({secs:.0f}s)")
 
@@ -164,10 +165,10 @@ def main():
             pmin, pmax, _ = SE.period_limits(tb)
             grid = SE.bls_grid(tb, pmin, pmax)
             t0 = time.time()
-            pw = gpu_bls.bls_power(tb, fb, grid, SE.BLS_DURATIONS, device=args.device)
+            pw, iin = gpu_bls.bls_power(tb, fb, grid, SE.BLS_DURATIONS, device=args.device, return_ivar_in=True)
             if str(args.device).startswith("cuda"):
                 torch.cuda.synchronize(args.device)
-            finish(row, grid, pw, time.time() - t0, fb)
+            finish(row, grid, pw, iin, time.time() - t0, fb)
     else:
         from concurrent.futures import ProcessPoolExecutor
         prepped = [prep(t) for t in todo]
@@ -177,8 +178,8 @@ def main():
         jobs = [(row, tb, fb) for row, tb, fb in prepped if tb is not None]
         with ProcessPoolExecutor(args.workers) as ex:
             for (row, _, fb), res in zip(jobs, ex.map(_astropy_power, [(tb, fb) for _, tb, fb in jobs])):
-                grid, pw, secs = res
-                finish(row, grid, pw, secs, fb)
+                grid, pw, iin, secs = res
+                finish(row, grid, pw, iin, secs, fb)
     (out / f"done_{tag}.json").write_text(json.dumps({"git_commit": args.commit, "engine": args.engine, "n": len(mine),
                                                       "cache": str(cache), "finished_utc": dt.datetime.now(dt.timezone.utc).isoformat()}))
     return 0
@@ -190,8 +191,9 @@ def _astropy_power(args):
     t0 = time.time()
     pmin, pmax, _ = SE.period_limits(tb)
     grid = SE.bls_grid(tb, pmin, pmax)
-    pw = np.asarray(BoxLeastSquares(tb, fb).power(grid, SE.BLS_DURATIONS, objective="likelihood").power)
-    return grid, pw, time.time() - t0
+    res = BoxLeastSquares(tb, fb).power(grid, SE.BLS_DURATIONS, objective="likelihood")
+    pw = np.asarray(res.power)
+    return grid, pw, SD.ivar_in_from_depth(pw, np.asarray(res.depth)), time.time() - t0
 
 
 if __name__ == "__main__":

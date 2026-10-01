@@ -17,7 +17,10 @@ import numpy as np
 DBL_EPSILON = np.finfo(np.float64).eps
 
 
-def bls_power(t, y, periods, durations, oversample=10, device=None, max_elems=4e7):
+def bls_power(t, y, periods, durations, oversample=10, device=None, max_elems=4e7, return_ivar_in=False):
+    """BLS power per period. With return_ivar_in, also the in-transit inverse-variance sum (= number of
+    in-transit points, unit weights) of the box selected at each period, chosen as bls.c chooses it:
+    durations in order, phases ascending, replaced only by a strictly larger objective."""
     import torch
 
     dev = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
@@ -33,6 +36,7 @@ def bls_power(t, y, periods, durations, oversample=10, device=None, max_elems=4e
     durs = [int(math.floor(d / bin_d + 0.5)) for d in durations]
     periods = np.asarray(periods, np.float64)
     out = np.full(periods.size, -np.inf)
+    out_iin = np.full(periods.size, np.nan)
     batch = max(8, int(max_elems // max(N, 1)))
     ones = torch.ones(N, dtype=torch.float64, device=dev)
     for s in range(0, periods.size, batch):
@@ -53,6 +57,7 @@ def bls_power(t, y, periods, durations, oversample=10, device=None, max_elems=4e
         cy = torch.cumsum(my, dim=1)
         ci = torch.cumsum(mi, dim=1)
         best = torch.full((B,), -math.inf, dtype=torch.float64, device=dev)
+        best_iin = torch.full((B,), math.nan, dtype=torch.float64, device=dev)
         cols = torch.arange(width, device=dev)
         for dur in durs:
             if dur >= width:
@@ -67,6 +72,14 @@ def bls_power(t, y, periods, durations, oversample=10, device=None, max_elems=4e
             yout_n = y_out / torch.where(ok, i_out, torch.ones_like(i_out))
             obj = 0.5 * i_in * (yout_n - yin_n) ** 2
             obj = torch.where(ok & (yout_n >= yin_n), obj, torch.full_like(obj, -math.inf))
-            best = torch.maximum(best, obj.max(dim=1).values)
+            if return_ivar_in:
+                j = torch.argmax(obj, dim=1)  # first maximal index, as the C loop's strict '>' keeps
+                m = obj.gather(1, j[:, None])[:, 0]
+                upd = m > best
+                best = torch.where(upd, m, best)
+                best_iin = torch.where(upd, i_in.gather(1, j[:, None])[:, 0], best_iin)
+            else:
+                best = torch.maximum(best, obj.max(dim=1).values)
         out[s:s + B] = best.cpu().numpy()
-    return out
+        out_iin[s:s + B] = best_iin.cpu().numpy()
+    return (out, out_iin) if return_ivar_in else out
