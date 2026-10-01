@@ -9,6 +9,10 @@ Per pool star:
        biweight 0.75 d, 10-min bins, autoperiod grid, likelihood objective);
        SDE = (max(power) - mean(power)) / std(power) over the full trial-period grid
        (Kovacs et al. 2002 definition, decision V1); star excluded if SDE >= 9.
+  A6   (DRAFT, not in effect; docs/drafts/A6_P08_draft.md) the same spectrum, SDE computed after TLS's
+       spectrum detrending (src/exogargantua/sde.py). Both values are recorded for every star: column
+       `sde` / `p08` is the pre-registered raw rule, `sde_a6` / `p08_a6` the A6 rule; `sde_dense_*` are
+       diagnostics only (TLS detrending applied on the dense BLS grid) and never decide anything.
 Engines: --engine astropy (CPU) or --engine gpu (src/exogargantua/gpu_bls.py, one CUDA device).
 Output rows: tic, p07 status, window sectors, grid size, peak period, power stats, SDE, timings.
 """
@@ -29,7 +33,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
-from exogargantua import sample as S, search as SE  # noqa: E402
+from exogargantua import sample as S, search as SE, sde as SD  # noqa: E402
 import b2_seeds as B2  # noqa: E402  (find_cache)
 import estimate_costs as E1  # noqa: E402
 
@@ -72,6 +76,8 @@ def main():
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--workers", type=int, default=4, help="astropy: stars searched in parallel")
     ap.add_argument("--cache", default=None)
+    ap.add_argument("--dense-diagnostics", action="store_true", help="also record the diagnostic sde_dense_* columns")
+    ap.add_argument("--save-spectra", action="store_true", help="write each star's power spectrum (float32 npz)")
     ap.add_argument("--out", required=True)
     ap.add_argument("--commit", required=True)
     args = ap.parse_args()
@@ -98,6 +104,10 @@ def main():
     tag = f"{args.engine}_{args.shard}of{args.nshards}"
     say(f"{tag}: {len(mine)} stars, cache {cache}")
     path = out / f"p08_{tag}.csv"
+    stars = pd.read_csv(ROOT / "data" / "stellar_params.csv").drop_duplicates("tic").set_index("tic")
+    spec_dir = out / "spectra"
+    if args.save_spectra:
+        spec_dir.mkdir(exist_ok=True)
     done = set(pd.read_csv(path)["tic"]) if path.exists() else set()
 
     def prep(t):
@@ -109,17 +119,38 @@ def main():
             tt = np.concatenate([z[f"s{s:04d}_time"] for s in win])
             ff = np.concatenate([z[f"s{s:04d}_flux"] for s in win])
         tb, fb = SE.prepare(tt, ff)
-        row.update({"window_sectors": ";".join(map(str, win)), "span_d": float(tb.max() - tb.min()), "n_binned": int(tb.size)})
+        rs = float(stars.loc[t, "rad"]) if t in stars.index else np.nan
+        ms = float(stars.loc[t, "mass"]) if t in stars.index else np.nan
+        row.update({"window_sectors": ";".join(map(str, win)), "span_d": float(tb.max() - tb.min()), "n_binned": int(tb.size),
+                    "rs": rs, "ms": ms})
+        tb_of[t] = tb
         return row, tb, fb
 
-    def finish(row, grid, pw, secs):
+    tb_of = {}
+
+    def finish(row, grid, pw, secs, fb):
         i = int(np.nanargmax(pw))
         s = sde(pw)
+        t0 = time.time()
+        ptls = SD.tls_periods(tb_of[row["tic"]], row.pop("rs"), row.pop("ms"))
+        ok = np.isfinite(pw)
+        s_a6, peak_a6 = SD.sde_a6(grid[ok], pw[ok], fb, ptls)
+        diag = {}
+        if args.dense_diagnostics:
+            diag = {"sde_dense_tlspts": SD.sde_dense(pw, fb, len(ptls), "tls_points"),
+                    "sde_dense_scaled": SD.sde_dense(pw, fb, len(ptls), "scaled")}
         row.update({"n_periods": int(len(grid)), "peak_period": float(grid[i]), "power_max": float(pw[i]),
                     "power_mean": float(np.nanmean(pw)), "power_std": float(np.nanstd(pw)), "sde": s,
-                    "p08": "exclude" if s >= SDE_MAX else "pass", "search_s": secs, "engine": args.engine})
+                    "p08": "exclude" if s >= SDE_MAX else "pass",
+                    "n_tls_periods": int(len(ptls)), "sde_a6": s_a6, "peak_period_a6": peak_a6,
+                    "p08_a6": "exclude" if s_a6 >= SDE_MAX else "pass",
+                    "two_power_max_over_sumsq": float(2 * pw[i] / np.sum((fb - np.median(fb)) ** 2)), **diag,
+                    "search_s": secs, "a6_s": time.time() - t0, "engine": args.engine})
+        if args.save_spectra:
+            np.savez_compressed(spec_dir / f"{row['tic']}_{args.engine}.npz", period=grid.astype(np.float64),
+                                power=np.asarray(pw, np.float32), sum_sq=np.float64(np.sum((fb - np.median(fb)) ** 2)))
         pd.DataFrame([row]).to_csv(path, mode="a", header=not path.exists(), index=False)
-        say(f"  {row['tic']}: SDE {s:.4f} ({secs:.0f}s)")
+        say(f"  {row['tic']}: SDE raw {s:.4f}, A6 {s_a6:.4f} ({secs:.0f}s)")
 
     todo = [t for t in mine if t not in done]
     if args.engine == "gpu":
@@ -136,7 +167,7 @@ def main():
             pw = gpu_bls.bls_power(tb, fb, grid, SE.BLS_DURATIONS, device=args.device)
             if str(args.device).startswith("cuda"):
                 torch.cuda.synchronize(args.device)
-            finish(row, grid, pw, time.time() - t0)
+            finish(row, grid, pw, time.time() - t0, fb)
     else:
         from concurrent.futures import ProcessPoolExecutor
         prepped = [prep(t) for t in todo]
@@ -145,9 +176,9 @@ def main():
                 pd.DataFrame([row]).to_csv(path, mode="a", header=not path.exists(), index=False)
         jobs = [(row, tb, fb) for row, tb, fb in prepped if tb is not None]
         with ProcessPoolExecutor(args.workers) as ex:
-            for (row, _, _), res in zip(jobs, ex.map(_astropy_power, [(tb, fb) for _, tb, fb in jobs])):
+            for (row, _, fb), res in zip(jobs, ex.map(_astropy_power, [(tb, fb) for _, tb, fb in jobs])):
                 grid, pw, secs = res
-                finish(row, grid, pw, secs)
+                finish(row, grid, pw, secs, fb)
     (out / f"done_{tag}.json").write_text(json.dumps({"git_commit": args.commit, "engine": args.engine, "n": len(mine),
                                                       "cache": str(cache), "finished_utc": dt.datetime.now(dt.timezone.utc).isoformat()}))
     return 0
