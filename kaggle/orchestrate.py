@@ -9,7 +9,10 @@ Guards (same as the local launchers):
     manual decision;
   * capacity: at most 5 concurrent CPU sessions (measured, G2-m) and at most 1 GPU session;
   * push timeout 300 s, and after a timeout the kernel status is checked before anything is retried;
-  * compute tag enforcement (G2) and commit pinning come from kaggle/push_job.py.
+  * compute tag enforcement (G2) and commit pinning come from kaggle/push_job.py;
+  * GPU quota guard: a GPU job that declares `est_quota_h` in its kernel-metadata.json is pushed only if the
+    weekly GPU quota left (`kaggle quota`) is at least QUOTA_FACTOR * est_quota_h + QUOTA_MARGIN_H; otherwise it
+    waits for a later round (e.g. after the weekly reset). If the quota cannot be read, no GPU job is pushed.
 Credentials: KAGGLE_USERNAME / KAGGLE_KEY environment variables (GitHub Secrets), never files in git.
 """
 
@@ -24,6 +27,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CAP = {"cpu": 5, "gpu": 1}
 ACTIVE = ("QUEUED", "RUNNING", "NEW", "CANCEL_REQUESTED")
+QUOTA_FACTOR = 1.25
+QUOTA_MARGIN_H = 0.5
 
 
 def kaggle(*args, timeout=90):
@@ -44,6 +49,20 @@ def status(kernel_id: str) -> str:
     return "unknown"
 
 
+def gpu_quota_left():
+    """Hours of weekly GPU quota left, or None if Kaggle does not answer."""
+    code, out = kaggle("quota", "--format", "json")
+    try:
+        rows = json.loads(out[out.index("["):])
+        return float(next(r for r in rows if r["resource"] == "GPU")["remaining"].rstrip("h"))
+    except (ValueError, StopIteration, KeyError):
+        return None
+
+
+def quota_ok(est_h, left):
+    return left is not None and left >= QUOTA_FACTOR * est_h + QUOTA_MARGIN_H
+
+
 def note(msg: str, level: str = "notice") -> None:
     """Print, and also emit a GitHub Actions annotation + step-summary line (readable without signing in)."""
     print(msg, flush=True)
@@ -62,7 +81,7 @@ def main():
     jobs = []
     for name in queue["jobs"]:
         meta = json.loads((ROOT / "kaggle" / "jobs" / name / "kernel-metadata.json").read_text())
-        jobs.append({"name": name, "id": meta["id"], "compute": meta["compute"]})
+        jobs.append({"name": name, "id": meta["id"], "compute": meta["compute"], "est_quota_h": meta.get("est_quota_h")})
     for j in jobs:
         j["status"] = status(j["id"])
         note(f"status {j['name']} ({j['compute']}): {j['status']}")
@@ -71,6 +90,10 @@ def main():
         return 1
     running = {c: sum(1 for j in jobs if j["compute"] == c and j["status"] in ACTIVE) for c in CAP}
     pushed = []
+    gpu_left = None
+    if any(j["compute"] == "gpu" and j["status"] == "absent" and j["est_quota_h"] for j in jobs):
+        gpu_left = gpu_quota_left()
+        note(f"GPU quota left: {gpu_left} h")
     for j in jobs:
         if j["status"] != "absent":
             note(f"skip {j['name']}: already on Kaggle ({j['status']}); never re-pushed")
@@ -78,6 +101,10 @@ def main():
         if running[j["compute"]] >= CAP[j["compute"]]:
             note(f"skip {j['name']}: {j['compute']} capacity full {running}")
             continue
+        if j["compute"] == "gpu" and j["est_quota_h"]:
+            if not quota_ok(float(j["est_quota_h"]), gpu_left):
+                note(f"skip {j['name']}: GPU quota guard (left {gpu_left} h, need {QUOTA_FACTOR} x {j['est_quota_h']:.2f} + {QUOTA_MARGIN_H} h)")
+                continue
         if dry:
             print(f"DRY-RUN would push {j['name']}")
             running[j["compute"]] += 1
