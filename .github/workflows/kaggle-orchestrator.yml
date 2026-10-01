@@ -1,0 +1,39 @@
+name: kaggle-orchestrator
+
+# Pushes queued Kaggle jobs (kaggle/queue.json) so that orchestration does not depend on a laptop.
+# Credentials: repository secrets KAGGLE_USERNAME and KAGGLE_KEY only.
+on:
+  schedule:
+    - cron: "*/15 * * * *"        # scheduled runs fire from the default branch's copy of this file
+  workflow_dispatch:
+  push:
+    branches: [v2-alias-resolver]
+    paths: ["kaggle/queue.json"]
+
+concurrency:
+  group: kaggle-orchestrator
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2-alias-resolver
+          fetch-depth: 0             # push_job.py checks the pinned commit exists on origin
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install --quiet kaggle==2.2.4
+      - name: orchestrate
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: |
+          if [ -z "$KAGGLE_USERNAME" ] || [ -z "$KAGGLE_KEY" ]; then echo "Kaggle secrets missing"; exit 1; fi
+          python kaggle/orchestrate.py
