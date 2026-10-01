@@ -1,5 +1,5 @@
 {
-  "description": "Ordered Kaggle job queue for the GitHub Actions orchestrator (kaggle/orchestrate.py). Each entry is a directory under kaggle/jobs/. A job is pushed once, when Kaggle has no kernel with its id and capacity allows. (round 3 trigger: cron not yet firing; slots freed).",
+  "description": "Ordered Kaggle job queue for the GitHub Actions orchestrator (kaggle/orchestrate.py). Each entry is a directory under kaggle/jobs/. A job is pushed once, when Kaggle has no kernel with its id and capacity allows. (round 4 trigger: must skip orchestrator_smoke while it runs).",
   "jobs": [
     "orchestrator_smoke",
     "p08_validate_gpu",
