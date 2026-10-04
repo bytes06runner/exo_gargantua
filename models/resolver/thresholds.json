@@ -1,0 +1,46 @@
+{
+ "trained_at_commit": "578763ae90bdd0a2417494051147b3cc7e2ee22e",
+ "sklearn_params": {
+  "max_iter": 300,
+  "learning_rate": 0.05,
+  "max_leaf_nodes": 31,
+  "l2_regularization": 1.0,
+  "random_state": 20260930
+ },
+ "temperature": 1.4569544670706165,
+ "columns": [
+  "cov_frac",
+  "d_F1_coverage",
+  "d_F2_oddeven",
+  "d_F3_secondary",
+  "d_F4_density",
+  "d_F5_coherence",
+  "d_F6_shape",
+  "d_logpost",
+  "depth",
+  "dur_ratio_oe",
+  "log10_P",
+  "log_rho_ratio",
+  "n_cov",
+  "n_missing",
+  "n_timed",
+  "oc_chi2_red",
+  "oe_sigma",
+  "sec_depth_ratio",
+  "sec_dur_ratio",
+  "sec_phase_off05",
+  "sec_snr",
+  "shape_chi2",
+  "snr_all",
+  "tau_over_T",
+  "twin"
+ ],
+ "abstain_threshold": {
+  "principled": 0.99,
+  "learned": 0.54
+ },
+ "threshold_rule": "smallest t in 0.50..0.99 with calib accuracy >= 0.95",
+ "n_fit": 9690,
+ "n_calib": 3240,
+ "errors_skipped": 0
+}
