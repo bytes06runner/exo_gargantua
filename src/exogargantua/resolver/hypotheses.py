@@ -74,6 +74,19 @@ def enumerate_hypotheses(P0, t0, T, alias_set=ALIAS_SET):
     return out
 
 
+TIE_NATS = 0.5  # grid points within this log-likelihood of the best are statistically indistinguishable
+
+
+def pick_near_seed(g, dP, dt0, tol=TIE_NATS):
+    """Among grid points within `tol` of the best log-likelihood, the one closest to the seed-implied
+    ephemeris (smallest |dP|, then smallest |dt0|). When the data do not constrain the period (one transit
+    in the data), the refinement therefore leaves the period at r x P0 instead of a grid edge."""
+    ok = g >= g.max() - tol
+    ii, kk = np.nonzero(ok)
+    o = np.lexsort((np.abs(dt0[kk]), np.abs(dP[ii])))
+    return int(ii[o[0]]), int(kk[o[0]])
+
+
 def refine(h, t, y, sigma, n_steps=17):
     """Local refinement of (P, t0): the period within +-T*P/span (phase drift <= T over the baseline) and the
     epoch within +-T/2, maximising the folded matched-filter likelihood ratio; then a least-squares trapezoid
@@ -83,7 +96,7 @@ def refine(h, t, y, sigma, n_steps=17):
     dP = np.linspace(-dPmax, dPmax, n_steps)
     dt0 = np.linspace(-h.T / 2, h.T / 2, n_steps)
     g = M.matched_filter_grid(t, y, h.P, h.t0, h.T, h.tau, dP, dt0, sigma)
-    i, k = np.unravel_index(int(np.argmax(g)), g.shape)
+    i, k = pick_near_seed(g, dP, dt0)
     h.P, h.t0 = h.P + dP[i], h.t0 + dt0[k]
     # keep t0 near the middle of the data so P and t0 decorrelate in the fit
     mid = 0.5 * (t.min() + t.max())

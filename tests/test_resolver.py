@@ -183,3 +183,25 @@ def test_metrics():
     assert abs(C.ece([0.8] * 10, [1] * 8 + [0] * 2)) < 1e-12
     acc, th = C.accuracy_at_coverage([0.9, 0.8, 0.3, 0.2], [1, 1, 0, 0], 0.5)
     assert acc == 1.0 and th == 0.8
+
+
+def test_refine_keeps_seed_period_when_unconstrained():
+    # one transit in the data: the period is unconstrained, so refinement must stay at r x P0
+    t, f = box_lc(P=40.0, t0=10.0, span=27.0)
+    y = 1 - f
+    h = H.refine(H.Hypothesis(Fraction(1), 0, 40.0, 10.0, 0.12, 0.03), t, y, 5e-4)
+    assert abs(h.P - 40.0) < 1e-6
+
+
+def test_pick_near_seed_tie_break():
+    g = np.zeros((5, 3))
+    dP, dt0 = np.linspace(-2, 2, 5), np.linspace(-1, 1, 3)
+    assert H.pick_near_seed(g, dP, dt0) == (2, 1)
+    g[0, 0] = 10.0
+    assert H.pick_near_seed(g, dP, dt0) == (0, 0)
+
+
+def test_fit_holds_period_with_one_transit():
+    t, f = box_lc(P=40.0, t0=10.0, span=27.0)
+    fit = M.fit_trapezoid(t, 1 - f, 40.0, 10.0, 0.12, 0.03, 5e-4, free_ephemeris=True)
+    assert fit["P"] == 40.0 and "P" not in fit["err"] and abs(fit["t0"] - 10.0) < 0.01

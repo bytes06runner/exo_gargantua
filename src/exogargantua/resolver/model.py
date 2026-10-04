@@ -120,14 +120,19 @@ def fit_trapezoid(t, y, P, t0, T, tau, sigma, free_ephemeris=True, max_dt=None):
     Returns parameters, 1-sigma errors (covariance scaled by sigma^2) and chi2 improvement over y = 0."""
     from scipy.optimize import least_squares
     half = 1.5 * T + (max_dt or 0)
-    w, _, _ = window(t, P, t0, half)
+    w, _, cyc = window(t, P, t0, half)
     tt, yy = t[w], y[w]
     if tt.size < 8:
         return None
+    # with points from fewer than two transit epochs the period is unconstrained: hold it fixed (a free
+    # parameter with a zero Jacobian column would otherwise take an arbitrary step under x_scale="jac")
+    fix_P = free_ephemeris and np.unique(cyc[w]).size < 2
     m0 = trapezoid(_dt(tt, P, t0), T, tau)
     d0 = float(np.sum(m0 * yy) / max(np.sum(m0 * m0), 1e-12))
 
     def unpack(p):
+        if fix_P:
+            return np.r_[p[:3], P, p[3]]
         if free_ephemeris:
             return p
         return np.r_[p, P, t0]
@@ -138,7 +143,11 @@ def fit_trapezoid(t, y, P, t0, T, tau, sigma, free_ephemeris=True, max_dt=None):
 
     p0 = [d0, T, min(tau, 0.49 * T)]
     lb, ub = [-np.inf, 0.2 * T, 1e-4], [np.inf, 3.0 * T, 1.5 * T]
-    if free_ephemeris:
+    if fix_P:
+        p0 += [t0]
+        lb += [t0 - 0.5 * T]
+        ub += [t0 + 0.5 * T]
+    elif free_ephemeris:
         span = tt.max() - tt.min()
         p0 += [P, t0]
         lb += [P - 0.5 * T * P / max(span, P), t0 - 0.5 * T]
@@ -155,7 +164,7 @@ def fit_trapezoid(t, y, P, t0, T, tau, sigma, free_ephemeris=True, max_dt=None):
         err = np.full(len(r.x), np.nan)
     chi2_0 = float(np.sum((yy / sigma) ** 2))
     chi2 = float(np.sum(r.fun ** 2))
-    names = ["depth", "T", "tau", "P", "t0"][:len(r.x)]
+    names = ["depth", "T", "tau", "t0"] if fix_P else ["depth", "T", "tau", "P", "t0"][:len(r.x)]
     return {"depth": float(dep), "T": float(TT), "tau": float(ta), "P": float(PP), "t0": float(tt0),
             "err": dict(zip(names, map(float, err))), "dchi2": chi2_0 - chi2, "n_points": int(tt.size)}
 
