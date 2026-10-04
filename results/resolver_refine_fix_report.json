@@ -1,0 +1,222 @@
+{
+ "git_commit": "f7cb3903b7b8e4d277ceb9d46200023c77b81996",
+ "n_targets": 3000,
+ "errors_before": 0,
+ "errors_after": 0,
+ "all_splits": {
+  "before": {
+   "detectable": 2585,
+   "truth_in_candidates": 2528,
+   "missing": 57,
+   "principled_top1_correct": 2250,
+   "principled_top1_accuracy": 0.8704061895551257
+  },
+  "after": {
+   "detectable": 2585,
+   "truth_in_candidates": 2564,
+   "missing": 21,
+   "principled_top1_correct": 2263,
+   "principled_top1_accuracy": 0.8754352030947775
+  },
+  "fixed": 38,
+  "newly_missing": [
+   808,
+   1770
+  ],
+  "still_missing": [
+   202,
+   240,
+   343,
+   356,
+   547,
+   851,
+   906,
+   1035,
+   1386,
+   1399,
+   1578,
+   1826,
+   1925,
+   2033,
+   2266,
+   2446,
+   2587,
+   2745,
+   2938
+  ]
+ },
+ "test_split": {
+  "before": {
+   "detectable": 526,
+   "truth_in_candidates": 516,
+   "missing": 10,
+   "principled_top1_correct": 456,
+   "principled_top1_accuracy": 0.8669201520912547
+  },
+  "after": {
+   "detectable": 526,
+   "truth_in_candidates": 522,
+   "missing": 4,
+   "principled_top1_correct": 461,
+   "principled_top1_accuracy": 0.876425855513308
+  },
+  "fixed": 7,
+  "newly_missing": [
+   808
+  ],
+  "still_missing": [
+   1399,
+   1578,
+   2938
+  ]
+ },
+ "remaining_misses": [
+  {
+   "i": 202,
+   "cls": "planet",
+   "snr": 31.0,
+   "n_sectors": 1,
+   "P_true": 13.3241
+  },
+  {
+   "i": 240,
+   "cls": "planet",
+   "snr": 17.5,
+   "n_sectors": 1,
+   "P_true": 3.4612
+  },
+  {
+   "i": 343,
+   "cls": "planet",
+   "snr": 8.2,
+   "n_sectors": 2,
+   "P_true": 3.0569
+  },
+  {
+   "i": 356,
+   "cls": "planet",
+   "snr": 14.5,
+   "n_sectors": 4,
+   "P_true": 13.5937
+  },
+  {
+   "i": 547,
+   "cls": "planet",
+   "snr": 9.6,
+   "n_sectors": 1,
+   "P_true": 21.8391
+  },
+  {
+   "i": 851,
+   "cls": "eb_ecc",
+   "snr": 9.6,
+   "n_sectors": 1,
+   "P_true": 8.295
+  },
+  {
+   "i": 906,
+   "cls": "eb_twin",
+   "snr": 19.5,
+   "n_sectors": 2,
+   "P_true": 17.4797
+  },
+  {
+   "i": 1035,
+   "cls": "planet",
+   "snr": 8.9,
+   "n_sectors": 1,
+   "P_true": 8.5219
+  },
+  {
+   "i": 1386,
+   "cls": "eb_ecc",
+   "snr": 9.5,
+   "n_sectors": 1,
+   "P_true": 18.0946
+  },
+  {
+   "i": 1399,
+   "cls": "eb_twin",
+   "snr": 10.2,
+   "n_sectors": 2,
+   "P_true": 5.2085
+  },
+  {
+   "i": 1578,
+   "cls": "eb_unequal",
+   "snr": 7.7,
+   "n_sectors": 2,
+   "P_true": 27.3964
+  },
+  {
+   "i": 1826,
+   "cls": "eb_ecc",
+   "snr": 20.0,
+   "n_sectors": 1,
+   "P_true": 14.1128
+  },
+  {
+   "i": 1925,
+   "cls": "eb_twin",
+   "snr": 10.5,
+   "n_sectors": 1,
+   "P_true": 6.7734
+  },
+  {
+   "i": 2033,
+   "cls": "planet",
+   "snr": 7.5,
+   "n_sectors": 2,
+   "P_true": 2.8332
+  },
+  {
+   "i": 2266,
+   "cls": "eb_unequal",
+   "snr": 67.7,
+   "n_sectors": 1,
+   "P_true": 14.8637
+  },
+  {
+   "i": 2446,
+   "cls": "planet",
+   "snr": 10.7,
+   "n_sectors": 1,
+   "P_true": 15.9252
+  },
+  {
+   "i": 2587,
+   "cls": "eb_unequal",
+   "snr": 8.6,
+   "n_sectors": 3,
+   "P_true": 6.4183
+  },
+  {
+   "i": 2745,
+   "cls": "planet",
+   "snr": 14.6,
+   "n_sectors": 1,
+   "P_true": 9.6457
+  },
+  {
+   "i": 2938,
+   "cls": "planet",
+   "snr": 13.8,
+   "n_sectors": 1,
+   "P_true": 4.745
+  },
+  {
+   "i": 808,
+   "cls": "eb_ecc",
+   "snr": 10.9,
+   "n_sectors": 2,
+   "P_true": 3.2526
+  },
+  {
+   "i": 1770,
+   "cls": "eb_ecc",
+   "snr": 28.0,
+   "n_sectors": 3,
+   "P_true": 24.8046
+  }
+ ]
+}
