@@ -7,10 +7,14 @@ Output: synth_<shard>of<n>.jsonl.gz (one JSON object per target).
 
 from __future__ import annotations
 
+import os
+
+for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):  # one BLAS thread per worker process
+    os.environ.setdefault(_v, "1")
+
 import argparse
 import gzip
 import json
-import os
 import sys
 import time
 from concurrent.futures import ProcessPoolExecutor

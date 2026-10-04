@@ -27,6 +27,22 @@ def trapezoid(dt, T, tau):
     return np.clip((T / 2 - a) / tau, 0.0, 1.0)
 
 
+def trapezoid_grad(dt, T, tau):
+    """Unit-depth trapezoid and its partial derivatives with respect to T, tau and dt (tau clipped to T/2
+    exactly as in `trapezoid`)."""
+    a = np.abs(dt)
+    sgn = np.sign(dt)
+    if tau >= T / 2:  # triangle: m = 1 - 2|dt|/T
+        m = np.clip(1 - 2 * a / T, 0.0, 1.0)
+        on = (m > 0) & (m < 1)
+        return m, np.where(on, 2 * a / T ** 2, 0.0), np.zeros_like(m), np.where(on, -sgn * 2 / T, 0.0)
+    tau = max(tau, 1e-6)
+    raw = (T / 2 - a) / tau
+    m = np.clip(raw, 0.0, 1.0)
+    on = (raw > 0) & (raw < 1)
+    return m, np.where(on, 0.5 / tau, 0.0), np.where(on, -raw / tau, 0.0), np.where(on, -sgn / tau, 0.0)
+
+
 def cadence(t):
     d = np.diff(np.sort(t))
     d = d[d > 0]
@@ -67,27 +83,35 @@ def epochs(tmin, tmax, P, t0, T):
 def epoch_fits(t, y, P, t0, T, tau, sigma_eff, cad):
     """Per-epoch depth with the shape fixed: d_n = sum(m y) / sum(m^2), s_n = sigma_eff / sqrt(sum m^2).
     Returns dict of arrays over all predicted epochs; `covered` marks epochs with >= MIN_COVERAGE of the
-    expected in-transit cadences present."""
+    expected in-transit cadences present. Points within [tc - T/2 - tau, tc + T/2 + tau) of epoch tc count
+    for that epoch. Vectorised when epoch windows cannot overlap (T + 2 tau < P); otherwise per epoch."""
     n, tc = epochs(t.min(), t.max(), P, t0, T)
     if n.size == 0:
         z = np.zeros(0)
         return {"n": n.astype(int), "tc": z, "d": z, "s": z, "covered": z.astype(bool), "cov_frac": z}
-    order = np.argsort(t)
-    ts, ys = t[order], y[order]
-    lo = np.searchsorted(ts, tc - T / 2 - tau)
-    hi = np.searchsorted(ts, tc + T / 2 + tau)
-    d = np.full(n.size, np.nan)
-    s = np.full(n.size, np.nan)
-    cov = np.zeros(n.size)
-    for k in range(n.size):
-        sl = slice(lo[k], hi[k])
-        dt = ts[sl] - tc[k]
-        m = trapezoid(dt, T, tau)
-        sm2 = float(np.sum(m * m))
-        cov[k] = np.sum(np.abs(dt) < T / 2) * cad / T
-        if sm2 > 0:
-            d[k] = float(np.sum(m * ys[sl]) / sm2)
-            s[k] = sigma_eff / np.sqrt(sm2)
+    half = T / 2 + tau
+    if 2 * half < P:
+        cyc = np.floor((t - t0) / P + 0.5).astype(np.int64)
+        dt = t - (t0 + cyc * P)
+        sel = (dt >= -half) & (dt < half) & (cyc >= n[0]) & (cyc <= n[-1])
+        k = cyc[sel] - n[0]
+        m = trapezoid(dt[sel], T, tau)
+        sm2 = np.bincount(k, weights=m * m, minlength=n.size)
+        smy = np.bincount(k, weights=m * y[sel], minlength=n.size)
+        cov = np.bincount(k, weights=(np.abs(dt[sel]) < T / 2).astype(float), minlength=n.size) * cad / T
+    else:
+        order = np.argsort(t)
+        ts, ys = t[order], y[order]
+        lo, hi = np.searchsorted(ts, tc - half), np.searchsorted(ts, tc + half)
+        sm2, smy, cov = np.zeros(n.size), np.zeros(n.size), np.zeros(n.size)
+        for j in range(n.size):
+            dtj = ts[lo[j]:hi[j]] - tc[j]
+            mj = trapezoid(dtj, T, tau)
+            sm2[j], smy[j] = np.sum(mj * mj), np.sum(mj * ys[lo[j]:hi[j]])
+            cov[j] = np.sum(np.abs(dtj) < T / 2) * cad / T
+    ok = sm2 > 0
+    d = np.where(ok, smy / np.where(ok, sm2, 1.0), np.nan)
+    s = np.where(ok, sigma_eff / np.sqrt(np.where(ok, sm2, 1.0)), np.nan)
     covered = (cov >= MIN_COVERAGE) & np.isfinite(d)
     return {"n": n.astype(int), "tc": tc, "d": d, "s": s, "covered": covered, "cov_frac": cov}
 
@@ -153,7 +177,18 @@ def fit_trapezoid(t, y, P, t0, T, tau, sigma, free_ephemeris=True, max_dt=None):
         lb += [P - 0.5 * T * P / max(span, P), t0 - 0.5 * T]
         ub += [P + 0.5 * T * P / max(span, P), t0 + 0.5 * T]
     p0 = np.clip(p0, np.array(lb) + 1e-12, np.array(ub) - 1e-12)
-    r = least_squares(resid, p0, bounds=(lb, ub), x_scale="jac")
+    def jac(p):
+        dep, TT, ta, PP, tt0 = unpack(p)
+        cyc = np.round((tt - tt0) / PP)
+        m, dT, dta, ddt = trapezoid_grad(tt - tt0 - cyc * PP, TT, ta)
+        cols = [-m, -dep * dT, -dep * dta]
+        if fix_P:
+            cols += [dep * ddt]                   # d(dt)/d(t0) = -1
+        elif free_ephemeris:
+            cols += [dep * ddt * cyc, dep * ddt]  # d(dt)/dP = -cyc
+        return np.vstack(cols).T / sigma
+
+    r = least_squares(resid, p0, jac=jac, bounds=(lb, ub), x_scale="jac")
     dep, TT, ta, PP, tt0 = unpack(r.x)
     ta = min(ta, TT / 2)
     J = r.jac

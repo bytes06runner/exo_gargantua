@@ -205,3 +205,45 @@ def test_fit_holds_period_with_one_transit():
     t, f = box_lc(P=40.0, t0=10.0, span=27.0)
     fit = M.fit_trapezoid(t, 1 - f, 40.0, 10.0, 0.12, 0.03, 5e-4, free_ephemeris=True)
     assert fit["P"] == 40.0 and "P" not in fit["err"] and abs(fit["t0"] - 10.0) < 0.01
+
+
+def _epoch_fits_reference(t, y, P, t0, T, tau, sigma, cad):
+    """Straightforward per-epoch loop (the pre-vectorisation implementation)."""
+    n, tc = M.epochs(t.min(), t.max(), P, t0, T)
+    d, s, cov = np.full(n.size, np.nan), np.full(n.size, np.nan), np.zeros(n.size)
+    for k, c in enumerate(tc):
+        w = (t >= c - T / 2 - tau) & (t < c + T / 2 + tau)
+        m = M.trapezoid(t[w] - c, T, tau)
+        cov[k] = np.sum(np.abs(t[w] - c) < T / 2) * cad / T
+        if np.sum(m * m) > 0:
+            d[k] = np.sum(m * y[w]) / np.sum(m * m)
+            s[k] = sigma / np.sqrt(np.sum(m * m))
+    return d, s, cov
+
+
+@pytest.mark.parametrize("P,T", [(3.0, 0.12), (0.7, 0.1), (0.15, 0.12)])  # last: overlapping windows
+def test_epoch_fits_vectorised_matches_reference(P, T):
+    t, f = box_lc(P=P, T=T, span=30.0, seed=4)
+    rng = np.random.default_rng(1)
+    t = np.sort(rng.permutation(t)[: int(0.9 * t.size)])  # random gaps, still sorted
+    y = 1 - np.interp(t, *box_lc(P=P, T=T, span=30.0, seed=4))
+    ef = M.epoch_fits(t, y, P, 1.0, T, T / 5, 5e-4, CAD)
+    d, s, cov = _epoch_fits_reference(t, y, P, 1.0, T, T / 5, 5e-4, CAD)
+    np.testing.assert_allclose(ef["d"], d, rtol=1e-9, atol=1e-15)
+    np.testing.assert_allclose(ef["s"], s, rtol=1e-9)
+    np.testing.assert_allclose(ef["cov_frac"], cov, rtol=1e-12)
+
+
+@pytest.mark.parametrize("tau", [0.02, 0.07])  # trapezoid and clipped-to-triangle
+def test_trapezoid_gradient_matches_finite_differences(tau):
+    T = 0.12
+    dt = np.linspace(-0.08, 0.08, 333)
+    corners = np.array([T / 2, T / 2 - min(tau, T / 2), 0.0])
+    dt = dt[np.min(np.abs(np.abs(dt)[:, None] - corners[None, :]), axis=1) > 1e-5]  # derivative undefined at corners
+    m, dT, dta, ddt = M.trapezoid_grad(dt, T, tau)
+    np.testing.assert_allclose(m, M.trapezoid(dt, T, tau))
+    h = 1e-7
+    np.testing.assert_allclose(dT, (M.trapezoid(dt, T + h, tau) - M.trapezoid(dt, T - h, tau)) / (2 * h), atol=1e-4)
+    if tau < T / 2:
+        np.testing.assert_allclose(dta, (M.trapezoid(dt, T, tau + h) - M.trapezoid(dt, T, tau - h)) / (2 * h), atol=1e-4)
+    np.testing.assert_allclose(ddt, (M.trapezoid(dt + h, T, tau) - M.trapezoid(dt - h, T, tau)) / (2 * h), atol=1e-4)
