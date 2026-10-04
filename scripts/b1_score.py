@@ -118,8 +118,8 @@ def main():
            "B1_ii_tls_seed": score("results/kaggle/b1/*/b1/b1_search_tls_*.jsonl.gz", inj, lc, thr, starts),
            "B1_ii_bls_seed": score("results/kaggle/b1/*/b1/b1_search_bls_gpu_*.jsonl.gz", inj, lc, thr, starts)}
     (ROOT / "results" / "b1_test_report.json").write_text(json.dumps(rep, indent=1, default=float))
-    print(json.dumps({k: (v if not isinstance(v, dict) or "principled" not in v else
-                          {c: v[c]["all"] for c in ("principled", "learned")}) for k, v in rep.items()}, indent=1, default=float))
+    print(json.dumps({k: ({c: v[c]["all"] for c in ("principled", "learned")} if k.startswith("B1_") and v else v)
+                      for k, v in rep.items()}, indent=1, default=float))
 
 
 if __name__ == "__main__":
