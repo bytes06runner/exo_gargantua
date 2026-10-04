@@ -37,7 +37,16 @@ def require_frozen_resolver(repo: Path = ROOT) -> str:
     return tag.stdout.strip()
 
 
+_GUARD_OK: dict = {}
+
+
+def _guard_once() -> None:
+    """require_frozen_resolver() once per process (it runs git; per-call checking made scoring O(rows x git))."""
+    if ROOT not in _GUARD_OK:
+        _GUARD_OK[ROOT] = require_frozen_resolver()
+
+
 def period_correct(p_found: float, p_true: float, tol: float = 1e-3) -> bool:
     """The pre-registered correctness rule (docs/success_criteria.md). Guarded."""
-    require_frozen_resolver()
+    _guard_once()
     return abs(p_found / p_true - 1.0) < tol
