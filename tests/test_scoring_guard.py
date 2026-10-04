@@ -26,7 +26,27 @@ def test_opens_with_tag_on_history(tmp_path):
     assert scoring.require_frozen_resolver(tmp_path)
 
 
-def test_this_repository_is_sealed_now():
-    """The real repository has no resolver-frozen-v1 tag yet, so scoring must refuse."""
+def test_refuses_if_resolver_changed_after_tag(tmp_path):
+    g = _repo(tmp_path)
+    (tmp_path / "src/exogargantua/resolver").mkdir(parents=True)
+    f = tmp_path / "src/exogargantua/resolver/x.py"
+    f.write_text("a = 1\n")
+    g("add", ".")
+    g("-c", "user.email=t@t", "-c", "user.name=t", "commit", "-q", "-m", "r")
+    g("tag", scoring.FROZEN_TAG)
+    assert scoring.require_frozen_resolver(tmp_path)
+    f.write_text("a = 2\n")  # uncommitted change
+    with pytest.raises(scoring.HoldoutSealed):
+        scoring.require_frozen_resolver(tmp_path)
+    g("-c", "user.email=t@t", "-c", "user.name=t", "commit", "-q", "-am", "change")  # committed change
+    with pytest.raises(scoring.HoldoutSealed):
+        scoring.require_frozen_resolver(tmp_path)
+
+
+def test_this_repository_is_sealed_until_tagged():
+    """Until resolver-frozen-v1 exists in this repository, scoring must refuse."""
+    tagged = scoring._git("rev-parse", "--verify", "--quiet", f"refs/tags/{scoring.FROZEN_TAG}").returncode == 0
+    if tagged:
+        pytest.skip("resolver-frozen-v1 exists")
     with pytest.raises(scoring.HoldoutSealed):
         scoring.period_correct(1.0, 1.0)
