@@ -88,10 +88,13 @@ def score(pattern, inj, lc, thr, starts):
                 t = inj.loc[r["inj_id"]]
                 base = {"inj_id": r["inj_id"], "stratum": t["stratum"], "seed_r": t["seed_r"], "cls": t["cls"],
                         "epochs": n_epochs(t, starts), "error": "error" in r}
+                P_seed = (r.get("seed") or {}).get("P_seed", np.nan)
+                base["seed_ok"] = bool(np.isfinite(P_seed) and scoring.period_correct(P_seed, t["P_true"]))
                 if "error" in r:
-                    rows.append({**base, "pr_conf": 0.0, "pr_ok": False, "le_conf": 0.0, "le_ok": False})
+                    rows.append({**base, "pr_conf": 0.0, "pr_ok": False, "le_conf": 0.0, "le_ok": False, "oracle_ok": False})
                     continue
                 ok = np.array([scoring.period_correct(x["P"], t["P_true"]) for x in r["rows"]])
+                base["oracle_ok"] = bool(ok.any())
                 pa = r["summary"]["p_alias"]
                 p_pr = np.array([pa[x["r"]] for x in r["rows"]])
                 p_le = lc.predict([(x["r"], x["P"], x["x"]) for x in r["rows"]])
@@ -101,7 +104,10 @@ def score(pattern, inj, lc, thr, starts):
     if d.empty:
         return None
     d["epoch_bin"] = pd.cut(d["epochs"], [-1, 1, 3, 10 ** 6], labels=["0-1", "2-3", ">=4"]).astype(str)
-    out = {"n": int(len(d)), "errors_counted_wrong": int(d["error"].sum())}
+    out = {"n": int(len(d)), "errors_counted_wrong": int(d["error"].sum()),
+           "seed_alone_accuracy": float(d["seed_ok"].mean()), "seed_alone_accuracy_ci95": wilson(int(d["seed_ok"].sum()), len(d)),
+           "truth_in_candidates": float(d["oracle_ok"].mean()), "truth_in_candidates_ci95": wilson(int(d["oracle_ok"].sum()), len(d)),
+           "mcnemar_learned_vs_seed": mcnemar(d["seed_ok"].to_numpy(), d["le_ok"].to_numpy())}
     for name, key in (("principled", "pr"), ("learned", "le")):
         res = {"all": metrics(d[f"{key}_conf"], d[f"{key}_ok"], thr[name])}
         for by in ("stratum", "seed_r", "cls", "epoch_bin"):
