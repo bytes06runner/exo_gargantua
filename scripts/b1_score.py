@@ -113,7 +113,11 @@ def main():
         lc = pickle.load(fh)
     thr = json.loads((ROOT / "models" / "resolver" / "thresholds.json").read_text())["abstain_threshold"]
     starts = S.sector_start_btjd(pd.read_csv(sorted((ROOT / "data" / "raw").glob("tess_orbit_times_*.csv"))[0]))
+    run_commits = sorted({json.loads(Path(f).read_text())["git_commit"] for f in glob.glob(str(ROOT / "results/kaggle/b1/*/b1/done_*.json"))})
+    identical = {c: scoring._git("diff", "--quiet", c, tag_commit, "--", "src/exogargantua/resolver").returncode == 0 for c in run_commits}
+    assert all(identical.values()), f"runs used resolver code different from the frozen tag: {identical}"
     rep = {"resolver_frozen_v1": tag_commit, "abstain_threshold": thr,
+           "run_commits_resolver_code_identical_to_tag": identical,
            "B1_i_wrong_seed": score("results/kaggle/b1/*/b1/b1_wrong_*.jsonl.gz", inj, lc, thr, starts),
            "B1_ii_tls_seed": score("results/kaggle/b1/*/b1/b1_search_tls_*.jsonl.gz", inj, lc, thr, starts),
            "B1_ii_bls_seed": score("results/kaggle/b1/*/b1/b1_search_bls_gpu_*.jsonl.gz", inj, lc, thr, starts)}
