@@ -1,13 +1,6 @@
 {
   "description": "Ordered Kaggle job queue for the GitHub Actions orchestrator (kaggle/orchestrate.py). Each entry is a directory under kaggle/jobs/. A job is pushed once, when Kaggle has no kernel with its id and capacity allows.",
   "jobs": [
-    "b1_train",
-    "b1_search_tls_1",
-    "b1_search_tls_2",
-    "b1_search_tls_3",
-    "b1_search_tls_4",
-    "b1_search_tls_5",
-    "b1_search_bls_gpu"
-  ],
-  "kick": "2026-10-04T19:33:24+00:00 training done; CPU slot free"
+    "b1_search_tls_resume"
+  ]
 }
