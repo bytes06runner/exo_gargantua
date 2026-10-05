@@ -99,6 +99,27 @@ def do_host(args):
     return out
 
 
+def read_records(path):
+    """Records of a (possibly truncated, e.g. session time limit) jsonl.gz, up to the last complete line."""
+    import zlib
+    out = []
+    try:
+        with gzip.open(path, "rt") as fh:
+            for line in fh:
+                try:
+                    out.append(json.loads(line))
+                except json.JSONDecodeError:
+                    break
+    except (EOFError, zlib.error):
+        pass
+    return out
+
+
+def done_ids(pattern):
+    import glob
+    return {r["inj_id"] for p in glob.glob(str(ROOT / pattern)) for r in read_records(p)}
+
+
 def main():
     global CACHE
     ap = argparse.ArgumentParser()
@@ -111,6 +132,8 @@ def main():
     ap.add_argument("--cache", default=None)
     ap.add_argument("--out", required=True)
     ap.add_argument("--commit", required=True)
+    ap.add_argument("--resume", action="store_true",
+                    help="skip injections already present in committed outputs of this mode/engine (all shards)")
     a = ap.parse_args()
     import b2_seeds as B2
     CACHE = str(B2.find_cache(a.cache))
@@ -126,6 +149,10 @@ def main():
         load[k] += c
     mine = inj[inj["tic"].map(owner) == a.shard]
     tag = f"{a.mode}{'_' + a.engine if a.engine else ''}_{a.shard}of{a.nshards}"
+    if a.resume:
+        done = done_ids(f"results/kaggle/b1/*/b1/b1_{a.mode}{'_' + a.engine if a.engine else ''}_*.jsonl.gz")
+        mine = inj[~inj["inj_id"].isin(done)]  # every unfinished injection, whatever its original shard
+        tag += "_resume"
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     path = out / f"b1_{tag}.jsonl.gz"

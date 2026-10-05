@@ -74,10 +74,15 @@ def n_epochs(row, starts):
 
 def score(pattern, inj, lc, thr, starts):
     rows = []
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from b1_run import read_records
+    seen = set()
     for p in sorted(glob.glob(str(ROOT / pattern))):
-        with gzip.open(p, "rt") as fh:
-            for line in fh:
-                r = json.loads(line)
+        if True:
+            for r in read_records(p):
+                if r["inj_id"] in seen:
+                    continue
+                seen.add(r["inj_id"])
                 if inj.loc[r["inj_id"], "split"] != "test":
                     continue
                 t = inj.loc[r["inj_id"]]
