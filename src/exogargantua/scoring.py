@@ -12,6 +12,8 @@ from pathlib import Path
 
 FROZEN_TAG = "resolver-frozen-v1"
 FROZEN_PATHS = ("src/exogargantua/resolver", "models/resolver")  # resolver code and trained combiner + thresholds
+FROZEN_TAG_V2 = "resolver-frozen-v2"
+FROZEN_PATHS_V2 = FROZEN_PATHS + ("models/resolver_v2",)  # v2 = v1 + recalibration (decision V2-a)
 ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -23,8 +25,9 @@ def _git(*args, cwd=ROOT):
     return subprocess.run(["git", *args], capture_output=True, text=True, cwd=cwd)
 
 
-def require_frozen_resolver(repo: Path = ROOT) -> str:
-    """Refuse unless tag `resolver-frozen-v1` exists and is an ancestor of HEAD. Returns the tag's commit."""
+def require_frozen_resolver(repo: Path = ROOT, tag_name: str = FROZEN_TAG, paths=FROZEN_PATHS) -> str:
+    """Refuse unless the tag exists, is an ancestor of HEAD, and `paths` are unchanged since it. Returns its commit."""
+    FROZEN_TAG, FROZEN_PATHS = tag_name, paths  # noqa: N806 (local names keep the messages below)
     tag = _git("rev-parse", "--verify", "--quiet", f"refs/tags/{FROZEN_TAG}^{{commit}}", cwd=repo)
     if tag.returncode != 0 or not tag.stdout.strip():
         raise HoldoutSealed(f"holdout is sealed (A4): git tag {FROZEN_TAG!r} does not exist")
