@@ -132,14 +132,17 @@ def main():
     ap.add_argument("--cache", default=None)
     ap.add_argument("--out", required=True)
     ap.add_argument("--commit", required=True)
+    ap.add_argument("--inj-file", default="data/b1_injections.csv", help="injection table (v2 calibration: data/v2_calib_injections.csv)")
+    ap.add_argument("--subsample-file", default="data/b1_search_subsample.csv", help="search mode: restrict to these ids ('' = all)")
+    ap.add_argument("--prefix", default="b1", help="output file prefix")
     ap.add_argument("--resume", action="store_true",
                     help="skip injections already present in committed outputs of this mode/engine (all shards)")
     a = ap.parse_args()
     import b2_seeds as B2
     CACHE = str(B2.find_cache(a.cache))
-    inj = pd.read_csv(ROOT / "data" / "b1_injections.csv")
-    if a.mode == "search":
-        inj = inj[inj["inj_id"].isin(pd.read_csv(ROOT / "data" / "b1_search_subsample.csv")["inj_id"])]
+    inj = pd.read_csv(ROOT / a.inj_file)
+    if a.mode == "search" and a.subsample_file:
+        inj = inj[inj["inj_id"].isin(pd.read_csv(ROOT / a.subsample_file)["inj_id"])]
     # shard by host (each host's light curve is read once), longest-processing-time on total sectors
     cost = inj.groupby("tic")["n_sectors"].sum().sort_values(ascending=False, kind="stable")
     load, owner = np.zeros(a.nshards), {}
@@ -150,12 +153,12 @@ def main():
     mine = inj[inj["tic"].map(owner) == a.shard]
     tag = f"{a.mode}{'_' + a.engine if a.engine else ''}_{a.shard}of{a.nshards}"
     if a.resume:
-        done = done_ids(f"results/kaggle/b1/*/b1/b1_{a.mode}{'_' + a.engine if a.engine else ''}_*.jsonl.gz")
+        done = done_ids(f"results/kaggle/{a.prefix}/*/{a.prefix}/{a.prefix}_{a.mode}{'_' + a.engine if a.engine else ''}_*.jsonl.gz")
         mine = inj[~inj["inj_id"].isin(done)]  # every unfinished injection, whatever its original shard
         tag += "_resume"
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    path = out / f"b1_{tag}.jsonl.gz"
+    path = out / f"{a.prefix}_{tag}.jsonl.gz"
     jobs = [(int(t), g.to_dict("records"), a.mode, a.engine, a.device) for t, g in mine.groupby("tic", sort=False)]
     print(f"{tag}: {len(mine)} injections on {len(jobs)} hosts, cache {CACHE}", flush=True)
     t0, n = time.time(), 0
