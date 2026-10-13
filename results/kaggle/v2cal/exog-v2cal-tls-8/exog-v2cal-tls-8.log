@@ -1,0 +1,1178 @@
+[{"stream_name":"stdout","time":18.913719321,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.9/18.9 MB 50.8 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":350.25623365,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.1/62.1 kB 2.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":352.112037711,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 80.3/80.3 kB 3.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":354.437612836,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 41.2/41.2 kB 1.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":356.335729518,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.5/10.5 MB 87.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":356.531356232,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.1/11.1 MB 61.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":356.57709774,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 243.4/243.4 kB 9.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":356.62514289,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 377.7/377.7 kB 12.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":356.671735905,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 261.1/261.1 kB 10.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":356.788633853,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.9/9.9 MB 100.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":356.832431097,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 155.6/155.6 kB 6.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":356.947706557,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.1/9.1 MB 94.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":357.28009352,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.2/35.2 MB 59.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":357.322793882,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 47.5/47.5 kB 1.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":357.424160855,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 36.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":357.465669557,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 60.1/60.1 kB 2.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stderr","time":419.417761454,"data":"ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n"}
+,{"stream_name":"stderr","time":419.417806439,"data":"bigframes 2.48.0 requires google-cloud-bigquery-storage\u003c3.0.0,\u003e=2.30.0, which is not installed.\n"}
+,{"stream_name":"stderr","time":419.417815216,"data":"ydata-profiling 4.18.4 requires matplotlib\u003c=3.10,\u003e=3.5, but you have matplotlib 3.11.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":419.417837229,"data":"ydata-profiling 4.18.4 requires scipy\u003c1.17,\u003e=1.8, but you have scipy 1.17.1 which is incompatible.\n"}
+,{"stream_name":"stderr","time":419.417843212,"data":"mne 1.13.2 requires numpy\u003c3,\u003e=2.1, but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":419.417848496,"data":"bayesian-optimization 3.3.0 requires numpy\u003e=2.1.3; python_full_version \u003e= \"3.13\", but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":419.417853948,"data":"google-colab 1.0.0 requires jupyter-server==2.20.0, but you have jupyter-server 2.12.5 which is incompatible.\n"}
+,{"stream_name":"stderr","time":419.417858905,"data":"google-colab 1.0.0 requires pandas==2.2.3, but you have pandas 2.3.3 which is incompatible.\n"}
+,{"stream_name":"stderr","time":419.417863745,"data":"google-colab 1.0.0 requires requests==2.32.4, but you have requests 2.34.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":419.417868497,"data":"dopamine-rl 4.1.2 requires gym\u003c=0.25.2, but you have gym 0.26.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":419.417873339,"data":"moviepy 1.0.3 requires decorator\u003c5.0,\u003e=4.0.2, but you have decorator 5.3.1 which is incompatible.\n"}
+,{"stream_name":"stderr","time":419.417878439,"data":"ml-dtypes 0.6.0 requires numpy\u003e=2.1.0; python_version \u003e= \"3.13\", but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":419.41788263,"data":"jax 0.11.1 requires numpy\u003e=2.1, but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":419.417885867,"data":"dm-tree 0.1.10 requires numpy\u003e=2.1.0; python_version \u003e= \"3.13\", but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":419.417889182,"data":"tifffile 2026.8.23 requires numpy\u003e=2.1, but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stdout","time":422.180584379,"data":"search_tls_8of10: 202 injections on 102 hosts, cache /kaggle/input/datasets/srijeetbanerjee/exog-lc-cache-v1/cache\n"}
+,{"stream_name":"stdout","time":443.340839797,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":443.378826089,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":443.480959537,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":443.49268917,"data":"Searching 2429 data points, 3270 periods from 0.5 to 12.83 days\n"}
+,{"stream_name":"stdout","time":443.492923189,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":443.518943324,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":443.530347313,"data":"Searching 3212 data points, 3158 periods from 0.5 to 12.118 days\n"}
+,{"stream_name":"stdout","time":443.53076097,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":445.200349769,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":445.353413249,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":445.369278617,"data":"Searching 8869 data points, 7689 periods from 0.959 to 29.99 days\n"}
+,{"stream_name":"stdout","time":445.369596543,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":445.834158476,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":445.987113519,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":446.005182263,"data":"Searching 9787 data points, 18419 periods from 0.5 to 29.995 days\n"}
+,{"stream_name":"stdout","time":446.005630257,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":472.418188735,"data":"Searching for best T0 for period 2.61275 days\n"}
+,{"stream_name":"stdout","time":475.709202749,"data":"Searching for best T0 for period 0.84181 days\n"}
+,{"stream_name":"stderr","time":476.317924546,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 11 of 31 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":476.31800139,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":477.593541729,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":477.595725408,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":477.607555963,"data":"Searching 3212 data points, 3158 periods from 0.5 to 12.118 days\n"}
+,{"stream_name":"stdout","time":477.607876476,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":480.685137847,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":480.688761851,"data":"Creating model cache for 42 durations\n"}
+,{"stream_name":"stdout","time":480.703008721,"data":"Searching 5876 data points, 7258 periods from 0.5 to 25.744 days\n"}
+,{"stream_name":"stdout","time":480.703208903,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":517.647562125,"data":"Searching for best T0 for period 0.78996 days\n"}
+,{"stream_name":"stdout","time":522.174199228,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":522.176509527,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":522.187839459,"data":"Searching 3212 data points, 3158 periods from 0.5 to 12.118 days\n"}
+,{"stream_name":"stdout","time":522.188426241,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":558.878155394,"data":"Searching for best T0 for period 0.50506 days\n"}
+,{"stream_name":"stdout","time":563.643211222,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":563.645772286,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":563.656270613,"data":"Searching 3212 data points, 3158 periods from 0.5 to 12.118 days\n"}
+,{"stream_name":"stdout","time":563.656432067,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":589.6860495,"data":"Searching for best T0 for period 2.71693 days\n"}
+,{"stream_name":"stdout","time":594.220316833,"data":"Searching for best T0 for period 2.00462 days\n"}
+,{"stream_name":"stdout","time":594.259483678,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":594.261715387,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":594.27377985,"data":"Searching 3212 data points, 3158 periods from 0.5 to 12.118 days\n"}
+,{"stream_name":"stdout","time":594.274125728,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":594.950766636,"data":"Searching for best T0 for period 16.02167 days\n"}
+,{"stream_name":"stderr","time":598.653738133,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 4 of 8 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":598.653783597,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":602.053153366,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":602.056570864,"data":"Creating model cache for 42 durations\n"}
+,{"stream_name":"stdout","time":602.071141527,"data":"Searching 5876 data points, 7258 periods from 0.5 to 25.744 days\n"}
+,{"stream_name":"stdout","time":602.071397188,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":604.606452923,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":604.607299508,"data":"Creating model cache for 36 durations\n"}
+,{"stream_name":"stdout","time":604.617895286,"data":"Searching 2937 data points, 1069 periods from 0.959 to 10.884 days\n"}
+,{"stream_name":"stdout","time":604.618145438,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":615.45646345,"data":"Searching for best T0 for period 2.12892 days\n"}
+,{"stream_name":"stdout","time":615.590080411,"data":"Searching for best T0 for period 3.18646 days\n"}
+,{"stream_name":"stdout","time":620.928127708,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":620.932083839,"data":"Creating model cache for 42 durations\n"}
+,{"stream_name":"stdout","time":620.94312357,"data":"Searching 6164 data points, 2781 periods from 0.959 to 23.905 days\n"}
+,{"stream_name":"stdout","time":620.943383345,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":625.69628115,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":625.700310538,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":625.720135422,"data":"Searching 20642 data points, 8307 periods from 1.239 to 29.995 days\n"}
+,{"stream_name":"stdout","time":625.720193907,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":662.547086893,"data":"Searching for best T0 for period 19.56279 days\n"}
+,{"stream_name":"stdout","time":669.052999013,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":669.054650028,"data":"Creating model cache for 36 durations\n"}
+,{"stream_name":"stdout","time":669.065397205,"data":"Searching 2937 data points, 1069 periods from 0.959 to 10.884 days\n"}
+,{"stream_name":"stdout","time":669.065818319,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":677.729378863,"data":"Searching for best T0 for period 8.59894 days\n"}
+,{"stream_name":"stdout","time":689.434541089,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":689.442859732,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":689.463343991,"data":"Searching 23486 data points, 19535 periods from 1.031 to 29.995 days\n"}
+,{"stream_name":"stdout","time":689.46346794,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":695.303294683,"data":"Searching for best T0 for period 0.95175 days\n"}
+,{"stream_name":"stdout","time":703.999532955,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":704.004044292,"data":"Creating model cache for 42 durations\n"}
+,{"stream_name":"stdout","time":704.017341284,"data":"Searching 5876 data points, 7258 periods from 0.5 to 25.744 days\n"}
+,{"stream_name":"stdout","time":704.017510514,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":807.218848298,"data":"Searching for best T0 for period 0.51225 days\n"}
+,{"stream_name":"stdout","time":816.560931069,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":816.564821887,"data":"Creating model cache for 42 durations\n"}
+,{"stream_name":"stdout","time":816.582136204,"data":"Searching 5876 data points, 7258 periods from 0.5 to 25.744 days\n"}
+,{"stream_name":"stdout","time":816.582175063,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":834.752940977,"data":"Searching for best T0 for period 0.76298 days\n"}
+,{"stream_name":"stdout","time":855.317053668,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":855.348383112,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":855.386106668,"data":"Searching 28426 data points, 63306 periods from 0.5 to 30.0 days\n"}
+,{"stream_name":"stdout","time":855.386166078,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":968.807516848,"data":"Searching for best T0 for period 1.00193 days\n"}
+,{"stream_name":"stdout","time":980.159835464,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":980.170098636,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":980.185411425,"data":"Searching 14237 data points, 16581 periods from 0.5 to 29.992 days\n"}
+,{"stream_name":"stdout","time":980.185604015,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":1200.151137381,"data":"Searching for best T0 for period 2.46378 days\n"}
+,{"stream_name":"stdout","time":1226.025853014,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":1226.029888784,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":1226.046630271,"data":"Searching 20642 data points, 8307 periods from 1.239 to 29.995 days\n"}
+,{"stream_name":"stdout","time":1226.046802391,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":1458.925123731,"data":"Searching for best T0 for period 1.90539 days\n"}
+,{"stream_name":"stdout","time":1487.940009447,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":1487.944419059,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":1487.961148161,"data":"Searching 24391 data points, 9603 periods from 1.239 to 29.982 days\n"}
+,{"stream_name":"stdout","time":1487.961270158,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":1611.550248284,"data":"Searching for best T0 for period 0.71018 days\n"}
+,{"stream_name":"stderr","time":1617.907034663,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/stats.py:458: RuntimeWarning: divide by zero encountered in scalar divide\n"}
+,{"stream_name":"stderr","time":1617.907079798,"data":"  snr_pink_per_transit[i] = (1 - mean_flux) / pinknoise\n"}
+,{"stream_name":"stdout","time":1637.137815026,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":1637.147418371,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":1637.166338523,"data":"Searching 14237 data points, 16581 periods from 0.5 to 29.992 days\n"}
+,{"stream_name":"stdout","time":1637.166524325,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":1790.599688482,"data":"Searching for best T0 for period 15.22522 days\n"}
+,{"stream_name":"stdout","time":1811.779282142,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":1811.781219754,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":1811.795101911,"data":"Searching 2824 data points, 2596 periods from 0.563 to 13.24 days\n"}
+,{"stream_name":"stdout","time":1811.795159586,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":1833.466851359,"data":"Searching for best T0 for period 1.21716 days\n"}
+,{"stream_name":"stderr","time":1834.107146111,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/stats.py:458: RuntimeWarning: divide by zero encountered in scalar divide\n"}
+,{"stream_name":"stderr","time":1834.107195503,"data":"  snr_pink_per_transit[i] = (1 - mean_flux) / pinknoise\n"}
+,{"stream_name":"stdout","time":1837.677905346,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":1837.679520956,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":1837.692053712,"data":"Searching 2824 data points, 2596 periods from 0.563 to 13.24 days\n"}
+,{"stream_name":"stdout","time":1837.692226202,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":1859.326333859,"data":"Searching for best T0 for period 1.03809 days\n"}
+,{"stream_name":"stdout","time":1865.031047603,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":1865.031131947,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":1865.043480463,"data":"Searching 2824 data points, 2596 periods from 0.563 to 13.24 days\n"}
+,{"stream_name":"stdout","time":1865.043690632,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":1893.820327836,"data":"Searching for best T0 for period 0.75445 days\n"}
+,{"stream_name":"stdout","time":1898.228540683,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":1898.230239378,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":1898.240827447,"data":"Searching 2824 data points, 2596 periods from 0.563 to 13.24 days\n"}
+,{"stream_name":"stdout","time":1898.24110966,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":1919.889760237,"data":"Searching for best T0 for period 1.21716 days\n"}
+,{"stream_name":"stdout","time":1925.244169583,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":1925.247800087,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":1925.262507919,"data":"Searching 6842 data points, 7660 periods from 0.5 to 28.107 days\n"}
+,{"stream_name":"stdout","time":1925.262638756,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2089.275179084,"data":"Searching for best T0 for period 3.56600 days\n"}
+,{"stream_name":"stdout","time":2097.452121656,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2097.455714601,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":2097.471273027,"data":"Searching 6842 data points, 7660 periods from 0.5 to 28.107 days\n"}
+,{"stream_name":"stdout","time":2097.471451014,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2227.111741727,"data":"Searching for best T0 for period 1.18062 days\n"}
+,{"stream_name":"stdout","time":2238.205146594,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2238.210084997,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":2238.22708199,"data":"Searching 9796 data points, 10838 periods from 0.5 to 29.983 days\n"}
+,{"stream_name":"stdout","time":2238.227309018,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2263.05710625,"data":"Searching for best T0 for period 1.27289 days\n"}
+,{"stream_name":"stderr","time":2268.466229542,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 144 of 276 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":2268.466275331,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":2290.848170993,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2290.849672553,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":2290.860436151,"data":"Searching 3727 data points, 1473 periods from 0.934 to 13.701 days\n"}
+,{"stream_name":"stdout","time":2290.860785182,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2303.96628073,"data":"Searching for best T0 for period 1.03791 days\n"}
+,{"stream_name":"stdout","time":2317.12683664,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2317.135068004,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":2317.15496021,"data":"Searching 25168 data points, 17251 periods from 0.833 to 29.995 days\n"}
+,{"stream_name":"stdout","time":2317.155306708,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2415.410315999,"data":"Searching for best T0 for period 0.86382 days\n"}
+,{"stream_name":"stdout","time":2440.712643125,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2440.724251305,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":2440.74764654,"data":"Searching 24732 data points, 27420 periods from 0.5 to 29.992 days\n"}
+,{"stream_name":"stdout","time":2440.74776698,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2509.512199791,"data":"Searching for best T0 for period 1.11140 days\n"}
+,{"stream_name":"stdout","time":2520.900443386,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2520.902509255,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":2520.914484342,"data":"Searching 3731 data points, 3305 periods from 0.5 to 13.423 days\n"}
+,{"stream_name":"stdout","time":2520.914676789,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2552.913727891,"data":"Searching for best T0 for period 1.88506 days\n"}
+,{"stream_name":"stdout","time":2557.807112705,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2557.808552601,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":2557.822102661,"data":"Searching 3756 data points, 2338 periods from 0.648 to 13.938 days\n"}
+,{"stream_name":"stdout","time":2557.822138693,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2587.261233964,"data":"Searching for best T0 for period 3.96394 days\n"}
+,{"stream_name":"stdout","time":2592.306670013,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2592.307841907,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":2592.31903825,"data":"Searching 3756 data points, 2338 periods from 0.648 to 13.938 days\n"}
+,{"stream_name":"stdout","time":2592.319101814,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2616.390864931,"data":"Searching for best T0 for period 5.46038 days\n"}
+,{"stream_name":"stdout","time":2621.702367903,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2621.704086353,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":2621.716261004,"data":"Searching 3681 data points, 3373 periods from 0.5 to 13.24 days\n"}
+,{"stream_name":"stdout","time":2621.716297529,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2649.794857499,"data":"Searching for best T0 for period 0.71248 days\n"}
+,{"stream_name":"stdout","time":2656.932443678,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2656.935984761,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":2656.952558081,"data":"Searching 7193 data points, 7533 periods from 0.5 to 26.753 days\n"}
+,{"stream_name":"stdout","time":2656.952654014,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2839.049011125,"data":"Searching for best T0 for period 1.78416 days\n"}
+,{"stream_name":"stdout","time":2847.872270086,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2847.876159298,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":2847.891650767,"data":"Searching 7193 data points, 7533 periods from 0.5 to 26.753 days\n"}
+,{"stream_name":"stdout","time":2847.891870352,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2908.212169402,"data":"Searching for best T0 for period 8.17050 days\n"}
+,{"stream_name":"stdout","time":2935.077063051,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2935.083100795,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":2935.100672318,"data":"Searching 18268 data points, 11141 periods from 0.833 to 29.995 days\n"}
+,{"stream_name":"stdout","time":2935.10105934,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":2947.156579261,"data":"Searching for best T0 for period 0.73646 days\n"}
+,{"stream_name":"stdout","time":2962.734232609,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":2962.742107533,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":2962.756575285,"data":"Searching 25124 data points, 11466 periods from 1.283 to 29.987 days\n"}
+,{"stream_name":"stdout","time":2962.756716364,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":3636.289748163,"data":"Searching for best T0 for period 2.71183 days\n"}
+,{"stream_name":"stdout","time":3653.578453671,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":3653.581098308,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":3653.592303743,"data":"Searching 3578 data points, 1652 periods from 0.833 to 13.423 days\n"}
+,{"stream_name":"stdout","time":3653.592544443,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":3675.854281645,"data":"Searching for best T0 for period 1.17749 days\n"}
+,{"stream_name":"stdout","time":3691.918332383,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":3691.927227664,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":3691.948461647,"data":"Searching 32008 data points, 21209 periods from 0.833 to 29.991 days\n"}
+,{"stream_name":"stdout","time":3691.948583168,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":3884.577261391,"data":"Searching for best T0 for period 5.04682 days\n"}
+,{"stream_name":"stdout","time":3915.89381979,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":3915.899148356,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":3915.918464811,"data":"Searching 25124 data points, 11466 periods from 1.283 to 29.987 days\n"}
+,{"stream_name":"stdout","time":3915.918821008,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":4560.63980261,"data":"Searching for best T0 for period 1.71241 days\n"}
+,{"stream_name":"stderr","time":4564.375393417,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 52 of 156 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":4564.37545684,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":4626.331146555,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":4626.333142747,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":4626.344941908,"data":"Searching 3730 data points, 2357 periods from 0.62 to 13.423 days\n"}
+,{"stream_name":"stdout","time":4626.345272781,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":4627.730145823,"data":"Searching for best T0 for period 0.51358 days\n"}
+,{"stream_name":"stdout","time":4655.607782765,"data":"Searching for best T0 for period 3.43501 days\n"}
+,{"stream_name":"stdout","time":4660.978996216,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":4660.980647219,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":4660.992114738,"data":"Searching 3730 data points, 2357 periods from 0.62 to 13.423 days\n"}
+,{"stream_name":"stdout","time":4660.992260443,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":4667.247472719,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":4667.261583403,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":4667.287082485,"data":"Searching 24732 data points, 27420 periods from 0.5 to 29.992 days\n"}
+,{"stream_name":"stdout","time":4667.287442079,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":4682.496365216,"data":"Searching for best T0 for period 1.71085 days\n"}
+,{"stream_name":"stdout","time":4688.780296528,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":4688.782154809,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":4688.793933766,"data":"Searching 3730 data points, 2357 periods from 0.62 to 13.423 days\n"}
+,{"stream_name":"stdout","time":4688.794263936,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":4710.334472916,"data":"Searching for best T0 for period 2.17664 days\n"}
+,{"stream_name":"stdout","time":4720.437028566,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":4720.445414256,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":4720.470098968,"data":"Searching 15056 data points, 17761 periods from 0.5 to 29.993 days\n"}
+,{"stream_name":"stdout","time":4720.470156359,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":4764.611419837,"data":"Searching for best T0 for period 6.60521 days\n"}
+,{"stream_name":"stdout","time":4794.845700152,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":4794.847864419,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":4794.860483197,"data":"Searching 6939 data points, 3777 periods from 0.833 to 27.026 days\n"}
+,{"stream_name":"stdout","time":4794.860674618,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":4842.459179482,"data":"Searching for best T0 for period 1.68546 days\n"}
+,{"stream_name":"stdout","time":4854.056532849,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":4854.061228763,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":4854.077641792,"data":"Searching 12880 data points, 10594 periods from 0.619 to 29.988 days\n"}
+,{"stream_name":"stdout","time":4854.077752456,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":4965.230128201,"data":"Searching for best T0 for period 2.55773 days\n"}
+,{"stream_name":"stdout","time":4994.942619306,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":4994.951067463,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":4994.96958959,"data":"Searching 6106 data points, 19048 periods from 0.765 to 29.997 days\n"}
+,{"stream_name":"stdout","time":4994.972118753,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":5246.281275304,"data":"Searching for best T0 for period 5.72031 days\n"}
+,{"stream_name":"stderr","time":5247.961524473,"data":"/usr/local/lib/python3.13/dist-packages/numpy/_core/_methods.py:218: RuntimeWarning: Degrees of freedom \u003c= 0 for slice\n"}
+,{"stream_name":"stderr","time":5247.96156599,"data":"  ret = _var(a, axis=axis, dtype=dtype, out=out, ddof=ddof,\n"}
+,{"stream_name":"stderr","time":5247.961822777,"data":"/usr/local/lib/python3.13/dist-packages/numpy/_core/_methods.py:175: RuntimeWarning: invalid value encountered in divide\n"}
+,{"stream_name":"stderr","time":5247.961841426,"data":"  arrmean = um.true_divide(arrmean, div, out=arrmean,\n"}
+,{"stream_name":"stderr","time":5247.961985114,"data":"/usr/local/lib/python3.13/dist-packages/numpy/_core/_methods.py:210: RuntimeWarning: invalid value encountered in scalar divide\n"}
+,{"stream_name":"stderr","time":5247.962000946,"data":"  ret = ret.dtype.type(ret / rcount)\n"}
+,{"stream_name":"stderr","time":5248.360146465,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 35 of 43 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":5248.360185485,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":5256.240129203,"data":"Searching for best T0 for period 24.28804 days\n"}
+,{"stream_name":"stdout","time":5256.30646721,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":5256.316100682,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":5256.337496637,"data":"Searching 12843 data points, 23180 periods from 0.765 to 29.993 days\n"}
+,{"stream_name":"stdout","time":5256.337645744,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":5279.067493028,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":5279.076443551,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":5279.096196247,"data":"Searching 18178 data points, 21348 periods from 0.5 to 29.993 days\n"}
+,{"stream_name":"stdout","time":5279.096308708,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":5313.794197807,"data":"Searching for best T0 for period 0.70109 days\n"}
+,{"stream_name":"stdout","time":5331.196360048,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":5331.201267237,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":5331.217882946,"data":"Searching 12880 data points, 10594 periods from 0.619 to 29.988 days\n"}
+,{"stream_name":"stdout","time":5331.218023161,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":5607.951029037,"data":"Searching for best T0 for period 0.86835 days\n"}
+,{"stream_name":"stdout","time":5627.102200914,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":5627.107191889,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":5627.123215011,"data":"Searching 12880 data points, 10594 periods from 0.619 to 29.988 days\n"}
+,{"stream_name":"stdout","time":5627.12340496,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":5820.894954613,"data":"Searching for best T0 for period 11.71104 days\n"}
+,{"stream_name":"stderr","time":5827.274811335,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/stats.py:458: RuntimeWarning: divide by zero encountered in scalar divide\n"}
+,{"stream_name":"stderr","time":5827.274897936,"data":"  snr_pink_per_transit[i] = (1 - mean_flux) / pinknoise\n"}
+,{"stream_name":"stderr","time":5827.391915192,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 18 of 26 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":5827.391949707,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":5835.132521862,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":5835.133610248,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":5835.144713355,"data":"Searching 3727 data points, 2147 periods from 0.684 to 13.701 days\n"}
+,{"stream_name":"stdout","time":5835.144938588,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":5855.307412328,"data":"Searching for best T0 for period 8.90858 days\n"}
+,{"stream_name":"stdout","time":5860.084612038,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":5860.085947887,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":5860.096856169,"data":"Searching 3727 data points, 2147 periods from 0.684 to 13.701 days\n"}
+,{"stream_name":"stdout","time":5860.097014907,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":5886.409038825,"data":"Searching for best T0 for period 2.24521 days\n"}
+,{"stream_name":"stdout","time":5892.800092637,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":5892.8071776,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":5892.827380667,"data":"Searching 7315 data points, 22762 periods from 0.589 to 29.997 days\n"}
+,{"stream_name":"stdout","time":5892.827573148,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":6035.862692057,"data":"Searching for best T0 for period 6.26837 days\n"}
+,{"stream_name":"stdout","time":6047.197089226,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":6047.198138927,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":6047.209099966,"data":"Searching 3103 data points, 2372 periods from 0.548 to 11.934 days\n"}
+,{"stream_name":"stdout","time":6047.209440016,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":6067.792793243,"data":"Searching for best T0 for period 2.68482 days\n"}
+,{"stream_name":"stdout","time":6072.2553611,"data":"Searching for best T0 for period 15.51906 days\n"}
+,{"stream_name":"stdout","time":6074.757060616,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":6074.770318287,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":6074.793367211,"data":"Searching 9731 data points, 33802 periods from 0.548 to 29.995 days\n"}
+,{"stream_name":"stdout","time":6074.793424274,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stderr","time":6086.53975434,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 4 of 10 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":6086.539801743,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":6096.723268725,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":6096.726064949,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":6096.735262935,"data":"Searching 3199 data points, 1826 periods from 0.753 to 13.173 days\n"}
+,{"stream_name":"stdout","time":6096.735448965,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":6109.146091816,"data":"Searching for best T0 for period 3.13299 days\n"}
+,{"stream_name":"stdout","time":6115.086904949,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":6115.090157601,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":6115.104540801,"data":"Searching 7193 data points, 7111 periods from 0.5 to 26.753 days\n"}
+,{"stream_name":"stdout","time":6115.104674945,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":6245.772089434,"data":"Searching for best T0 for period 12.29346 days\n"}
+,{"stream_name":"stdout","time":6254.643221428,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":6254.646624381,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":6254.661991792,"data":"Searching 7193 data points, 7111 periods from 0.5 to 26.753 days\n"}
+,{"stream_name":"stdout","time":6254.662154367,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":6279.214117852,"data":"Searching for best T0 for period 11.00072 days\n"}
+,{"stream_name":"stderr","time":6281.633841454,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 16 of 20 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":6281.63388431,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":6289.99687879,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":6290.007497657,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":6290.028250566,"data":"Searching 10394 data points, 25818 periods from 0.589 to 29.992 days\n"}
+,{"stream_name":"stdout","time":6290.028399359,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":6376.577433962,"data":"Searching for best T0 for period 1.47470 days\n"}
+,{"stream_name":"stdout","time":6410.907070967,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":6410.916846655,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":6410.939002396,"data":"Searching 28704 data points, 23531 periods from 0.634 to 29.99 days\n"}
+,{"stream_name":"stdout","time":6410.939146902,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":6431.969023135,"data":"Searching for best T0 for period 1.40463 days\n"}
+,{"stream_name":"stdout","time":6442.378325114,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":6442.38156398,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":6442.396686199,"data":"Searching 7193 data points, 7111 periods from 0.5 to 26.753 days\n"}
+,{"stream_name":"stdout","time":6442.396883911,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":6632.848616241,"data":"Searching for best T0 for period 0.66266 days\n"}
+,{"stream_name":"stdout","time":6644.312307032,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":6644.318114794,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":6644.332435655,"data":"Searching 9886 data points, 8546 periods from 0.587 to 29.972 days\n"}
+,{"stream_name":"stdout","time":6644.332834887,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":6813.458266672,"data":"Searching for best T0 for period 1.70981 days\n"}
+,{"stream_name":"stderr","time":6814.639541414,"data":"/usr/local/lib/python3.13/dist-packages/numpy/_core/_methods.py:218: RuntimeWarning: Degrees of freedom \u003c= 0 for slice\n"}
+,{"stream_name":"stderr","time":6814.639617964,"data":"  ret = _var(a, axis=axis, dtype=dtype, out=out, ddof=ddof,\n"}
+,{"stream_name":"stderr","time":6814.639646396,"data":"/usr/local/lib/python3.13/dist-packages/numpy/_core/_methods.py:175: RuntimeWarning: invalid value encountered in divide\n"}
+,{"stream_name":"stderr","time":6814.639651624,"data":"  arrmean = um.true_divide(arrmean, div, out=arrmean,\n"}
+,{"stream_name":"stderr","time":6814.639755708,"data":"/usr/local/lib/python3.13/dist-packages/numpy/_core/_methods.py:210: RuntimeWarning: invalid value encountered in scalar divide\n"}
+,{"stream_name":"stderr","time":6814.639761641,"data":"  ret = ret.dtype.type(ret / rcount)\n"}
+,{"stream_name":"stderr","time":6815.68641691,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 136 of 174 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":6815.6864558,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":6827.547160192,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":6827.561798318,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":6827.587120612,"data":"Searching 9731 data points, 33802 periods from 0.548 to 29.995 days\n"}
+,{"stream_name":"stdout","time":6827.587410623,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":6837.361605376,"data":"Searching for best T0 for period 2.23351 days\n"}
+,{"stream_name":"stdout","time":6849.447143569,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":6849.450475809,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":6849.465392446,"data":"Searching 7339 data points, 5890 periods from 0.587 to 28.107 days\n"}
+,{"stream_name":"stdout","time":6849.465510022,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":6945.405161888,"data":"Searching for best T0 for period 1.08265 days\n"}
+,{"stream_name":"stdout","time":6957.628093916,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":6957.632315783,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":6957.647536375,"data":"Searching 9886 data points, 8546 periods from 0.587 to 29.972 days\n"}
+,{"stream_name":"stdout","time":6957.647715453,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":7171.932188887,"data":"Searching for best T0 for period 2.61686 days\n"}
+,{"stream_name":"stderr","time":7173.918849538,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 65 of 94 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":7173.918895453,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":7190.584823525,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":7190.592545799,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":7190.61514796,"data":"Searching 29053 data points, 17806 periods from 1.131 to 29.99 days\n"}
+,{"stream_name":"stdout","time":7190.615188076,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":7206.865364674,"data":"Searching for best T0 for period 4.32905 days\n"}
+,{"stream_name":"stdout","time":7225.619497056,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":7225.633987951,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":7225.659544739,"data":"Searching 30944 data points, 32749 periods from 0.568 to 29.993 days\n"}
+,{"stream_name":"stdout","time":7225.659907623,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":7444.235739024,"data":"Searching for best T0 for period 8.71957 days\n"}
+,{"stream_name":"stdout","time":7470.914851192,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":7470.917171007,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":7470.930464786,"data":"Searching 6342 data points, 4962 periods from 0.634 to 26.1 days\n"}
+,{"stream_name":"stdout","time":7470.93062302,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":7533.504128604,"data":"Searching for best T0 for period 6.70465 days\n"}
+,{"stream_name":"stdout","time":7541.835089295,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":7541.838462104,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":7541.855097513,"data":"Searching 7100 data points, 6585 periods from 0.531 to 28.107 days\n"}
+,{"stream_name":"stdout","time":7541.855132505,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":7651.802917701,"data":"Searching for best T0 for period 1.01287 days\n"}
+,{"stream_name":"stderr","time":7654.236120981,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 225 of 293 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":7654.236166406,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":7667.981662822,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":7667.995421496,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":7668.021727983,"data":"Searching 9731 data points, 33802 periods from 0.548 to 29.995 days\n"}
+,{"stream_name":"stdout","time":7668.021872996,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":7672.017067287,"data":"Searching for best T0 for period 11.11840 days\n"}
+,{"stream_name":"stdout","time":7685.667479733,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":7685.673881251,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":7685.692774597,"data":"Searching 19019 data points, 14751 periods from 0.856 to 29.995 days\n"}
+,{"stream_name":"stdout","time":7685.69298661,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":7983.598840253,"data":"Searching for best T0 for period 16.43035 days\n"}
+,{"stream_name":"stderr","time":7993.119721483,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 8 of 22 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":7993.119792497,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":8015.536145363,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":8015.539334133,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":8015.55826312,"data":"Searching 22332 data points, 13484 periods from 1.131 to 29.993 days\n"}
+,{"stream_name":"stdout","time":8015.558350567,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":8291.760209006,"data":"Searching for best T0 for period 4.06474 days\n"}
+,{"stream_name":"stderr","time":8296.343801485,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 22 of 52 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":8296.343880548,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":8314.870135984,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":8314.878686701,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":8314.899472707,"data":"Searching 13039 data points, 19594 periods from 0.5 to 29.998 days\n"}
+,{"stream_name":"stdout","time":8314.899658615,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":8744.548449404,"data":"Searching for best T0 for period 1.04351 days\n"}
+,{"stream_name":"stdout","time":8780.460630947,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":8780.464935627,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":8780.480335783,"data":"Searching 7727 data points, 8548 periods from 0.568 to 29.981 days\n"}
+,{"stream_name":"stdout","time":8780.483172375,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":8807.82702883,"data":"Searching for best T0 for period 0.69110 days\n"}
+,{"stream_name":"stderr","time":8810.376278619,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 331 of 429 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":8810.376322258,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":8822.983559939,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":8822.993818083,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":8823.01437689,"data":"Searching 8754 data points, 23458 periods from 0.637 to 29.998 days\n"}
+,{"stream_name":"stdout","time":8823.014810879,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":8855.363439781,"data":"Searching for best T0 for period 16.30384 days\n"}
+,{"stream_name":"stdout","time":8870.766175419,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":8870.768470761,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":8870.781467673,"data":"Searching 5932 data points, 4206 periods from 0.751 to 26.753 days\n"}
+,{"stream_name":"stdout","time":8870.781652235,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":8872.966525841,"data":"Searching for best T0 for period 23.46368 days\n"}
+,{"stream_name":"stderr","time":8880.60668645,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 4 of 12 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":8880.606755576,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":8892.847682917,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":8892.849472258,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":8892.865125358,"data":"Searching 6396 data points, 2276 periods from 1.238 to 26.051 days\n"}
+,{"stream_name":"stdout","time":8892.865181495,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":8916.126122743,"data":"Searching for best T0 for period 3.58481 days\n"}
+,{"stream_name":"stdout","time":8931.402058152,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":8931.410866266,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":8931.43160569,"data":"Searching 28647 data points, 14444 periods from 1.066 to 29.988 days\n"}
+,{"stream_name":"stdout","time":8931.431667653,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":8932.618214584,"data":"Searching for best T0 for period 1.59335 days\n"}
+,{"stream_name":"stdout","time":8943.330458554,"data":"Searching for best T0 for period 2.42785 days\n"}
+,{"stream_name":"stdout","time":8949.098363829,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":8949.106649381,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":8949.1287996,"data":"Searching 24963 data points, 17705 periods from 0.883 to 29.995 days\n"}
+,{"stream_name":"stdout","time":8949.12905849,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":8953.344603922,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":8953.348317565,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":8953.363360059,"data":"Searching 10339 data points, 7139 periods from 0.68 to 29.996 days\n"}
+,{"stream_name":"stdout","time":8953.363718625,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":9150.339593489,"data":"Searching for best T0 for period 12.67745 days\n"}
+,{"stream_name":"stdout","time":9165.203495501,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":9165.207817046,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":9165.224715085,"data":"Searching 13050 data points, 9455 periods from 0.68 to 29.986 days\n"}
+,{"stream_name":"stdout","time":9165.224858399,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":9181.163133237,"data":"Searching for best T0 for period 4.61035 days\n"}
+,{"stream_name":"stderr","time":9184.190777542,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 41 of 53 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":9184.190824395,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":9192.314029933,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":9192.317680736,"data":"Creating model cache for 42 durations\n"}
+,{"stream_name":"stdout","time":9192.332593978,"data":"Searching 5164 data points, 6938 periods from 0.5 to 25.541 days\n"}
+,{"stream_name":"stdout","time":9192.332782364,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":9277.167582806,"data":"Searching for best T0 for period 0.84226 days\n"}
+,{"stream_name":"stdout","time":9289.053744097,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":9289.06453972,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":9289.086354466,"data":"Searching 17703 data points, 25672 periods from 0.5 to 29.993 days\n"}
+,{"stream_name":"stdout","time":9289.08659158,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":9547.809881095,"data":"Searching for best T0 for period 4.61921 days\n"}
+,{"stream_name":"stdout","time":9567.881082074,"data":"Searching for best T0 for period 0.90488 days\n"}
+,{"stream_name":"stdout","time":9573.670505859,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":9573.672075201,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":9573.683664055,"data":"Searching 2621 data points, 1676 periods from 0.74 to 12.076 days\n"}
+,{"stream_name":"stdout","time":9573.684026191,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":9587.063110599,"data":"Searching for best T0 for period 5.75039 days\n"}
+,{"stream_name":"stdout","time":9589.232581641,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":9589.239758999,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":9589.259360069,"data":"Searching 15456 data points, 17224 periods from 0.5 to 29.987 days\n"}
+,{"stream_name":"stdout","time":9589.259472962,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":9590.367521487,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":9590.371053697,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":9590.379472173,"data":"Searching 2621 data points, 1676 periods from 0.74 to 12.076 days\n"}
+,{"stream_name":"stdout","time":9590.379640915,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":9607.724403087,"data":"Searching for best T0 for period 0.86636 days\n"}
+,{"stream_name":"stdout","time":9620.172354514,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":9620.199045034,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":9620.230449307,"data":"Searching 25041 data points, 56089 periods from 0.5 to 29.998 days\n"}
+,{"stream_name":"stdout","time":9620.230639971,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":10054.930531193,"data":"Searching for best T0 for period 1.28350 days\n"}
+,{"stream_name":"stderr","time":10059.214626556,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 49 of 145 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":10059.214670339,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":10083.350493612,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":10083.367130161,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":10083.394174931,"data":"Searching 27975 data points, 37584 periods from 0.5 to 29.997 days\n"}
+,{"stream_name":"stdout","time":10083.39455801,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":10110.575068106,"data":"Searching for best T0 for period 15.26758 days\n"}
+,{"stream_name":"stdout","time":10137.812684949,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":10137.814272432,"data":"Creating model cache for 36 durations\n"}
+,{"stream_name":"stdout","time":10137.825192809,"data":"Searching 2603 data points, 2508 periods from 0.5 to 10.138 days\n"}
+,{"stream_name":"stdout","time":10137.8253355,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":10164.506665961,"data":"Searching for best T0 for period 0.83623 days\n"}
+,{"stream_name":"stdout","time":10169.008608061,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":10169.010047324,"data":"Creating model cache for 36 durations\n"}
+,{"stream_name":"stdout","time":10169.02148921,"data":"Searching 2603 data points, 2508 periods from 0.5 to 10.138 days\n"}
+,{"stream_name":"stdout","time":10169.021605088,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":10172.781170601,"data":"Searching for best T0 for period 2.16957 days\n"}
+,{"stream_name":"stdout","time":10189.309675661,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":10189.311436517,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":10189.324082882,"data":"Searching 3730 data points, 3177 periods from 0.5 to 13.423 days\n"}
+,{"stream_name":"stdout","time":10189.32425174,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":10190.646821534,"data":"Searching for best T0 for period 8.58079 days\n"}
+,{"stream_name":"stdout","time":10195.135780476,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":10195.141468418,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":10195.157281656,"data":"Searching 6348 data points, 10396 periods from 1.034 to 29.997 days\n"}
+,{"stream_name":"stdout","time":10195.157660602,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":10222.179207301,"data":"Searching for best T0 for period 8.02339 days\n"}
+,{"stream_name":"stderr","time":10223.004730876,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 1 of 3 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":10223.004768203,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":10235.131760912,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":10235.148172035,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":10235.173606158,"data":"Searching 25675 data points, 32157 periods from 0.5 to 29.994 days\n"}
+,{"stream_name":"stdout","time":10235.17377886,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":10393.222229159,"data":"Searching for best T0 for period 3.12694 days\n"}
+,{"stream_name":"stderr","time":10394.077198461,"data":"/usr/local/lib/python3.13/dist-packages/numpy/_core/_methods.py:218: RuntimeWarning: Degrees of freedom \u003c= 0 for slice\n"}
+,{"stream_name":"stderr","time":10394.077265099,"data":"  ret = _var(a, axis=axis, dtype=dtype, out=out, ddof=ddof,\n"}
+,{"stream_name":"stderr","time":10394.077346857,"data":"/usr/local/lib/python3.13/dist-packages/numpy/_core/_methods.py:175: RuntimeWarning: invalid value encountered in divide\n"}
+,{"stream_name":"stderr","time":10394.077356564,"data":"  arrmean = um.true_divide(arrmean, div, out=arrmean,\n"}
+,{"stream_name":"stderr","time":10394.077559553,"data":"/usr/local/lib/python3.13/dist-packages/numpy/_core/_methods.py:210: RuntimeWarning: invalid value encountered in scalar divide\n"}
+,{"stream_name":"stderr","time":10394.077588201,"data":"  ret = ret.dtype.type(ret / rcount)\n"}
+,{"stream_name":"stderr","time":10394.518664982,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 46 of 60 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":10394.518709451,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":10400.406877117,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":10400.411744707,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":10400.427262366,"data":"Searching 6348 data points, 10396 periods from 1.034 to 29.997 days\n"}
+,{"stream_name":"stdout","time":10400.427518628,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":10557.599710878,"data":"Searching for best T0 for period 4.15716 days\n"}
+,{"stream_name":"stderr","time":10558.794509116,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 34 of 45 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":10558.794549624,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":10565.633926986,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":10565.638656775,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":10565.654857372,"data":"Searching 6348 data points, 10396 periods from 1.034 to 29.997 days\n"}
+,{"stream_name":"stdout","time":10565.655045742,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":10737.968091734,"data":"Searching for best T0 for period 16.30545 days\n"}
+,{"stream_name":"stderr","time":10739.377020279,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 8 of 12 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":10739.377103231,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":10744.010891159,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":10744.012508118,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":10744.024448482,"data":"Searching 3558 data points, 2468 periods from 0.572 to 12.891 days\n"}
+,{"stream_name":"stdout","time":10744.024803685,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":10766.179009791,"data":"Searching for best T0 for period 2.46252 days\n"}
+,{"stream_name":"stdout","time":10772.44612257,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":10772.448791777,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":10772.46330761,"data":"Searching 6583 data points, 5571 periods from 0.573 to 26.106 days\n"}
+,{"stream_name":"stdout","time":10772.465108971,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":10849.085380419,"data":"Searching for best T0 for period 2.57811 days\n"}
+,{"stream_name":"stdout","time":10858.19330089,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":10858.196224135,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":10858.210058754,"data":"Searching 6430 data points, 5988 periods from 0.556 to 27.027 days\n"}
+,{"stream_name":"stdout","time":10858.210168099,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":10956.026379989,"data":"Searching for best T0 for period 0.94304 days\n"}
+,{"stream_name":"stdout","time":10966.969139282,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":10966.974089325,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":10966.985884751,"data":"Searching 6430 data points, 5988 periods from 0.556 to 27.027 days\n"}
+,{"stream_name":"stdout","time":10966.986044721,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":11065.47806021,"data":"Searching for best T0 for period 19.05916 days\n"}
+,{"stream_name":"stdout","time":11072.090772257,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":11072.091982128,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":11072.102729176,"data":"Searching 3095 data points, 2485 periods from 0.556 to 12.593 days\n"}
+,{"stream_name":"stdout","time":11072.102851985,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":11094.688116988,"data":"Searching for best T0 for period 1.78175 days\n"}
+,{"stream_name":"stdout","time":11101.182754078,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":11101.185829701,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":11101.200531209,"data":"Searching 6430 data points, 5988 periods from 0.556 to 27.027 days\n"}
+,{"stream_name":"stdout","time":11101.200700155,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":11202.673853396,"data":"Searching for best T0 for period 22.93789 days\n"}
+,{"stream_name":"stdout","time":11210.101902615,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":11210.104506244,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":11210.122414245,"data":"Searching 6413 data points, 4533 periods from 0.694 to 26.382 days\n"}
+,{"stream_name":"stdout","time":11210.122607952,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":11274.644601755,"data":"Searching for best T0 for period 1.93782 days\n"}
+,{"stream_name":"stdout","time":11283.824436889,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":11283.826986331,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":11283.841491417,"data":"Searching 6413 data points, 4533 periods from 0.694 to 26.382 days\n"}
+,{"stream_name":"stdout","time":11283.841682238,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":11348.579589832,"data":"Searching for best T0 for period 16.45194 days\n"}
+,{"stream_name":"stderr","time":11350.551752421,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 1 of 3 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":11350.551792844,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":11355.55823633,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":11355.562110126,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":11355.572104617,"data":"Searching 2959 data points, 1933 periods from 0.694 to 12.729 days\n"}
+,{"stream_name":"stdout","time":11355.572500907,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":11373.761269174,"data":"Searching for best T0 for period 7.85475 days\n"}
+,{"stream_name":"stdout","time":11378.246059445,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":11378.247243247,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":11378.258022357,"data":"Searching 3353 data points, 1447 periods from 0.845 to 12.218 days\n"}
+,{"stream_name":"stdout","time":11378.258182943,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":11391.691926982,"data":"Searching for best T0 for period 8.42008 days\n"}
+,{"stream_name":"stdout","time":11396.100213884,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":11396.101169451,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":11396.114106522,"data":"Searching 3353 data points, 1447 periods from 0.845 to 12.218 days\n"}
+,{"stream_name":"stdout","time":11396.114142628,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":11406.917378692,"data":"Searching for best T0 for period 7.27327 days\n"}
+,{"stream_name":"stdout","time":11411.661146027,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":11411.662293323,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":11411.672812576,"data":"Searching 3353 data points, 1447 periods from 0.845 to 12.218 days\n"}
+,{"stream_name":"stdout","time":11411.673025124,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":11426.080034217,"data":"Searching for best T0 for period 6.65444 days\n"}
+,{"stream_name":"stdout","time":11438.660076904,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":11438.6751331,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":11438.698348165,"data":"Searching 29077 data points, 27430 periods from 0.61 to 29.991 days\n"}
+,{"stream_name":"stdout","time":11438.698655427,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":12550.289903686,"data":"Searching for best T0 for period 29.80723 days\n"}
+,{"stream_name":"stderr","time":12575.380147551,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 6 of 13 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":12575.380199202,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":12596.242483926,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":12596.265411172,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":12596.29839196,"data":"Searching 25041 data points, 56089 periods from 0.5 to 29.998 days\n"}
+,{"stream_name":"stdout","time":12596.298461498,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":12655.920724182,"data":"Searching for best T0 for period 15.18151 days\n"}
+,{"stream_name":"stdout","time":12691.118751038,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":12691.122329902,"data":"Creating model cache for 42 durations\n"}
+,{"stream_name":"stdout","time":12691.136495078,"data":"Searching 5164 data points, 6938 periods from 0.5 to 25.541 days\n"}
+,{"stream_name":"stdout","time":12691.136819806,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":12755.350321195,"data":"Searching for best T0 for period 1.33757 days\n"}
+,{"stream_name":"stdout","time":12787.761045389,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":12787.764221261,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":12787.782810941,"data":"Searching 12753 data points, 14338 periods from 0.586 to 29.985 days\n"}
+,{"stream_name":"stdout","time":12787.782920105,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":12788.322692322,"data":"Searching for best T0 for period 11.91127 days\n"}
+,{"stream_name":"stderr","time":12789.687277166,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 2 of 4 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":12789.687317813,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":12794.352309134,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":12794.354323513,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":12794.365813796,"data":"Searching 3338 data points, 2397 periods from 0.599 to 13.156 days\n"}
+,{"stream_name":"stdout","time":12794.366266035,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":12820.124258958,"data":"Searching for best T0 for period 4.91398 days\n"}
+,{"stream_name":"stdout","time":12824.400249901,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":12824.401779458,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":12824.413799941,"data":"Searching 3338 data points, 2397 periods from 0.599 to 13.156 days\n"}
+,{"stream_name":"stdout","time":12824.414088151,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":12844.866172575,"data":"Searching for best T0 for period 4.61548 days\n"}
+,{"stream_name":"stdout","time":12849.378458601,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":12849.380030551,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":12849.392012398,"data":"Searching 3338 data points, 2397 periods from 0.599 to 13.156 days\n"}
+,{"stream_name":"stdout","time":12849.392190196,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":12869.407309481,"data":"Searching for best T0 for period 9.66606 days\n"}
+,{"stream_name":"stderr","time":12870.084593533,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 1 of 3 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":12870.084634868,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":12873.680520073,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":12873.682392961,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":12873.694896269,"data":"Searching 3338 data points, 2397 periods from 0.599 to 13.156 days\n"}
+,{"stream_name":"stdout","time":12873.695233556,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":12902.02160988,"data":"Searching for best T0 for period 3.79041 days\n"}
+,{"stream_name":"stdout","time":12907.77267622,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":12907.774855838,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":12907.788068028,"data":"Searching 6425 data points, 2847 periods from 1.037 to 26.368 days\n"}
+,{"stream_name":"stdout","time":12907.788326881,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":12955.467250282,"data":"Searching for best T0 for period 5.81398 days\n"}
+,{"stream_name":"stdout","time":12963.075307661,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":12963.076695918,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":12963.090136547,"data":"Searching 2975 data points, 1183 periods from 1.037 to 12.753 days\n"}
+,{"stream_name":"stdout","time":12963.090193474,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":12975.78051936,"data":"Searching for best T0 for period 1.31796 days\n"}
+,{"stream_name":"stdout","time":12988.188259767,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":12988.19757909,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":12988.219992267,"data":"Searching 24488 data points, 19585 periods from 1.095 to 29.993 days\n"}
+,{"stream_name":"stdout","time":12988.220408478,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":13174.117636132,"data":"Searching for best T0 for period 1.76279 days\n"}
+,{"stream_name":"stderr","time":13176.235200413,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 28 of 77 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":13176.235244712,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":13190.912909664,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":13190.919780306,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":13190.937743592,"data":"Searching 12753 data points, 14338 periods from 0.586 to 29.985 days\n"}
+,{"stream_name":"stdout","time":13190.937980562,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":13574.368559563,"data":"Searching for best T0 for period 16.62088 days\n"}
+,{"stream_name":"stdout","time":13587.912735155,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":13587.91463057,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":13587.926377401,"data":"Searching 2996 data points, 2856 periods from 0.502 to 12.788 days\n"}
+,{"stream_name":"stdout","time":13587.926490696,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":13610.223763429,"data":"Searching for best T0 for period 10.04751 days\n"}
+,{"stream_name":"stdout","time":13614.489162666,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":13614.489222743,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":13614.49894917,"data":"Searching 2996 data points, 2856 periods from 0.502 to 12.788 days\n"}
+,{"stream_name":"stdout","time":13614.499265757,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":13636.790698352,"data":"Searching for best T0 for period 9.82373 days\n"}
+,{"stream_name":"stdout","time":13640.632924422,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":13640.63463384,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":13640.646085124,"data":"Searching 2996 data points, 2856 periods from 0.502 to 12.788 days\n"}
+,{"stream_name":"stdout","time":13640.646232229,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":13665.667093419,"data":"Searching for best T0 for period 5.14499 days\n"}
+,{"stream_name":"stdout","time":13669.903207019,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":13669.90486051,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":13669.915994358,"data":"Searching 2996 data points, 2856 periods from 0.502 to 12.788 days\n"}
+,{"stream_name":"stdout","time":13669.916152094,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":13693.822150238,"data":"Searching for best T0 for period 5.94864 days\n"}
+,{"stream_name":"stdout","time":13699.933720176,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":13699.946920686,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":13699.972135592,"data":"Searching 9268 data points, 31401 periods from 0.5 to 29.995 days\n"}
+,{"stream_name":"stdout","time":13699.972197606,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":13883.414276183,"data":"Searching for best T0 for period 1.14016 days\n"}
+,{"stream_name":"stdout","time":13901.187385118,"data":"Searching for best T0 for period 7.11762 days\n"}
+,{"stream_name":"stderr","time":13907.592081286,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 32 of 53 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":13907.592125696,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":13917.440678882,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":13917.443960381,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":13917.461048583,"data":"Searching 6532 data points, 6858 periods from 0.5 to 26.083 days\n"}
+,{"stream_name":"stdout","time":13917.461085581,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":13923.403575134,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":13923.405730046,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":13923.417345737,"data":"Searching 3753 data points, 3471 periods from 0.5 to 13.938 days\n"}
+,{"stream_name":"stdout","time":13923.417522282,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":13959.95370034,"data":"Searching for best T0 for period 13.27400 days\n"}
+,{"stream_name":"stdout","time":13966.395221146,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":13966.399737973,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":13966.415461237,"data":"Searching 9277 data points, 10251 periods from 1.169 to 29.997 days\n"}
+,{"stream_name":"stdout","time":13966.415623836,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":14065.369497447,"data":"Searching for best T0 for period 1.44065 days\n"}
+,{"stream_name":"stdout","time":14075.939461137,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":14075.948403318,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":14075.967485827,"data":"Searching 13156 data points, 20189 periods from 0.73 to 29.989 days\n"}
+,{"stream_name":"stdout","time":14075.967564365,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":14198.391815225,"data":"Searching for best T0 for period 2.03447 days\n"}
+,{"stream_name":"stderr","time":14199.549019708,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/stats.py:458: RuntimeWarning: divide by zero encountered in scalar divide\n"}
+,{"stream_name":"stderr","time":14199.549061389,"data":"  snr_pink_per_transit[i] = (1 - mean_flux) / pinknoise\n"}
+,{"stream_name":"stderr","time":14199.891492816,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 73 of 105 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":14199.891533945,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":14212.255728981,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":14212.260604718,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":14212.278098365,"data":"Searching 9277 data points, 10251 periods from 1.169 to 29.997 days\n"}
+,{"stream_name":"stdout","time":14212.278133952,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":14294.483139911,"data":"Searching for best T0 for period 26.06733 days\n"}
+,{"stream_name":"stderr","time":14298.423324034,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 5 of 8 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":14298.423391634,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":14306.245600514,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":14306.259378955,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":14306.283367742,"data":"Searching 9268 data points, 31401 periods from 0.5 to 29.995 days\n"}
+,{"stream_name":"stdout","time":14306.283558891,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":14455.316510267,"data":"Searching for best T0 for period 12.58923 days\n"}
+,{"stream_name":"stderr","time":14459.568236191,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 16 of 17 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":14459.568280809,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":14468.57775519,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":14468.582393113,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":14468.599760172,"data":"Searching 12179 data points, 11505 periods from 1.169 to 29.998 days\n"}
+,{"stream_name":"stdout","time":14468.599880539,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":14489.846638245,"data":"Searching for best T0 for period 1.34947 days\n"}
+,{"stream_name":"stderr","time":14492.468697211,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 113 of 181 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":14492.468738892,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":14510.001427389,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":14510.006431556,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":14510.024133021,"data":"Searching 8820 data points, 7064 periods from 0.663 to 29.97 days\n"}
+,{"stream_name":"stdout","time":14510.024605403,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":14737.86118258,"data":"Searching for best T0 for period 1.21648 days\n"}
+,{"stream_name":"stdout","time":14749.038157085,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":14749.041530138,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":14749.056106153,"data":"Searching 8820 data points, 7064 periods from 0.663 to 29.97 days\n"}
+,{"stream_name":"stdout","time":14749.056291504,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":14800.8762254,"data":"Searching for best T0 for period 19.76150 days\n"}
+,{"stream_name":"stderr","time":14807.089618551,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 9 of 12 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":14807.089659846,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":14816.867938885,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":14816.873684635,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":14816.890490354,"data":"Searching 12179 data points, 11505 periods from 1.169 to 29.998 days\n"}
+,{"stream_name":"stdout","time":14816.890810107,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":14890.827011613,"data":"Searching for best T0 for period 20.80624 days\n"}
+,{"stream_name":"stderr","time":14894.49711528,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 7 of 10 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":14894.497157265,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":14900.952826174,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":14900.955067746,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":14900.96865843,"data":"Searching 6330 data points, 4589 periods from 0.694 to 26.681 days\n"}
+,{"stream_name":"stdout","time":14900.968841018,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":14974.31202258,"data":"Searching for best T0 for period 0.76184 days\n"}
+,{"stream_name":"stdout","time":14987.744990986,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":14987.748737653,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":14987.766101356,"data":"Searching 8820 data points, 7064 periods from 0.663 to 29.97 days\n"}
+,{"stream_name":"stdout","time":14987.766158594,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":14995.22326482,"data":"Searching for best T0 for period 3.13143 days\n"}
+,{"stream_name":"stdout","time":15001.557390347,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15001.558446404,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":15001.568939422,"data":"Searching 2854 data points, 2134 periods from 0.694 to 13.83 days\n"}
+,{"stream_name":"stdout","time":15001.568995527,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15025.406490501,"data":"Searching for best T0 for period 0.95406 days\n"}
+,{"stream_name":"stdout","time":15029.606804035,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15029.608087673,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":15029.61900104,"data":"Searching 3181 data points, 1942 periods from 0.719 to 13.24 days\n"}
+,{"stream_name":"stdout","time":15029.62007089,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15053.028315915,"data":"Searching for best T0 for period 1.93704 days\n"}
+,{"stream_name":"stdout","time":15058.141994779,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15058.146049086,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":15058.158452547,"data":"Searching 5712 data points, 4423 periods from 0.719 to 26.753 days\n"}
+,{"stream_name":"stdout","time":15058.158622055,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15105.048133394,"data":"Searching for best T0 for period 6.66534 days\n"}
+,{"stream_name":"stderr","time":15106.711088174,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 3 of 8 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":15106.711159202,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":15111.681151615,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15111.682161062,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":15111.692895042,"data":"Searching 3181 data points, 1942 periods from 0.719 to 13.24 days\n"}
+,{"stream_name":"stdout","time":15111.692928242,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15127.969064676,"data":"Searching for best T0 for period 9.00859 days\n"}
+,{"stream_name":"stdout","time":15132.795640756,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15132.797072801,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":15132.809594297,"data":"Searching 6336 data points, 2260 periods from 1.313 to 27.466 days\n"}
+,{"stream_name":"stdout","time":15132.809789297,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15143.401664406,"data":"Searching for best T0 for period 1.61884 days\n"}
+,{"stream_name":"stderr","time":15145.289940796,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 93 of 148 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":15145.290011216,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":15162.213307892,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15162.218479162,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":15162.234981057,"data":"Searching 12179 data points, 11505 periods from 1.169 to 29.998 days\n"}
+,{"stream_name":"stdout","time":15162.235098983,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15188.362205267,"data":"Searching for best T0 for period 1.57316 days\n"}
+,{"stream_name":"stdout","time":15199.660038914,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15199.667748185,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":15199.685956196,"data":"Searching 12868 data points, 17576 periods from 0.5 to 29.99 days\n"}
+,{"stream_name":"stdout","time":15199.686142782,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15200.476094762,"data":"Searching for best T0 for period 1.46682 days\n"}
+,{"stream_name":"stdout","time":15212.230709571,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15212.233908652,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":15212.248523558,"data":"Searching 10103 data points, 6552 periods from 0.727 to 29.987 days\n"}
+,{"stream_name":"stdout","time":15212.248721485,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15357.245959063,"data":"Searching for best T0 for period 5.37058 days\n"}
+,{"stream_name":"stdout","time":15373.142602405,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15373.149343436,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":15373.167956007,"data":"Searching 22571 data points, 15365 periods from 0.727 to 29.99 days\n"}
+,{"stream_name":"stdout","time":15373.168103232,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15461.714918647,"data":"Searching for best T0 for period 2.78580 days\n"}
+,{"stream_name":"stderr","time":15468.912708329,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 72 of 136 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":15468.912775227,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":15484.930104583,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15484.935301952,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":15484.951807861,"data":"Searching 13713 data points, 11696 periods from 1.05 to 29.995 days\n"}
+,{"stream_name":"stdout","time":15484.951939413,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15684.263081318,"data":"Searching for best T0 for period 1.21962 days\n"}
+,{"stream_name":"stderr","time":15686.559464087,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 125 of 197 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":15686.559505385,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":15699.95921327,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15699.964350227,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":15699.982068686,"data":"Searching 9242 data points, 10369 periods from 0.502 to 29.976 days\n"}
+,{"stream_name":"stdout","time":15699.982128627,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15811.624475333,"data":"Searching for best T0 for period 1.89690 days\n"}
+,{"stream_name":"stdout","time":15824.634091586,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15824.63543904,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":15824.646258918,"data":"Searching 3342 data points, 1775 periods from 0.759 to 12.983 days\n"}
+,{"stream_name":"stdout","time":15824.64647705,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15845.047122412,"data":"Searching for best T0 for period 4.27819 days\n"}
+,{"stream_name":"stdout","time":15852.17395181,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15852.179820521,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":15852.197303131,"data":"Searching 10081 data points, 13595 periods from 0.5 to 29.99 days\n"}
+,{"stream_name":"stdout","time":15852.197419726,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15929.824684101,"data":"Searching for best T0 for period 23.70430 days\n"}
+,{"stream_name":"stdout","time":15941.310020863,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15941.314846189,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":15941.354473224,"data":"Searching 9242 data points, 10369 periods from 0.502 to 29.976 days\n"}
+,{"stream_name":"stdout","time":15941.35480021,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":15981.348494086,"data":"Searching for best T0 for period 4.30425 days\n"}
+,{"stream_name":"stderr","time":15984.239043661,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 27 of 50 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":15984.239119653,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":15997.193615883,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":15997.199330762,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":15997.215827113,"data":"Searching 13713 data points, 11696 periods from 1.05 to 29.995 days\n"}
+,{"stream_name":"stdout","time":15997.216040528,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16155.163378323,"data":"Searching for best T0 for period 3.62558 days\n"}
+,{"stream_name":"stdout","time":16167.419336133,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16167.423991491,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16167.439577542,"data":"Searching 9561 data points, 10408 periods from 0.5 to 29.994 days\n"}
+,{"stream_name":"stdout","time":16167.442051212,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16277.932206396,"data":"Searching for best T0 for period 0.57882 days\n"}
+,{"stream_name":"stdout","time":16289.542790813,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16289.546080164,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16289.560839366,"data":"Searching 6930 data points, 6919 periods from 0.5 to 26.367 days\n"}
+,{"stream_name":"stdout","time":16289.561089071,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16337.280785123,"data":"Searching for best T0 for period 7.25797 days\n"}
+,{"stream_name":"stdout","time":16357.581861359,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16357.583049949,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":16357.593902201,"data":"Searching 3629 data points, 1927 periods from 0.705 to 12.909 days\n"}
+,{"stream_name":"stdout","time":16357.594059191,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16377.696124169,"data":"Searching for best T0 for period 3.96357 days\n"}
+,{"stream_name":"stdout","time":16383.662131785,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16383.663992623,"data":"Creating model cache for 42 durations\n"}
+,{"stream_name":"stdout","time":16383.675211026,"data":"Searching 6346 data points, 4873 periods from 0.633 to 25.662 days\n"}
+,{"stream_name":"stdout","time":16383.675365286,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16394.681937273,"data":"Searching for best T0 for period 0.62573 days\n"}
+,{"stream_name":"stdout","time":16405.168516752,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16405.171698461,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16405.190031901,"data":"Searching 6930 data points, 6919 periods from 0.5 to 26.367 days\n"}
+,{"stream_name":"stdout","time":16405.19008999,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16457.008706402,"data":"Searching for best T0 for period 1.81699 days\n"}
+,{"stream_name":"stdout","time":16469.810707517,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16469.818102537,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16469.831062485,"data":"Searching 9561 data points, 10408 periods from 0.5 to 29.994 days\n"}
+,{"stream_name":"stdout","time":16469.831263185,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16487.650143702,"data":"Searching for best T0 for period 2.12918 days\n"}
+,{"stream_name":"stdout","time":16498.274836008,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16498.282544,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16498.301821528,"data":"Searching 16428 data points, 18491 periods from 0.864 to 29.994 days\n"}
+,{"stream_name":"stdout","time":16498.301942193,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16517.795814538,"data":"Searching for best T0 for period 9.20620 days\n"}
+,{"stream_name":"stdout","time":16525.053009169,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16525.054619488,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":16525.065641938,"data":"Searching 3362 data points, 2916 periods from 0.5 to 12.399 days\n"}
+,{"stream_name":"stdout","time":16525.065802703,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16548.053769364,"data":"Searching for best T0 for period 8.92797 days\n"}
+,{"stream_name":"stdout","time":16552.362633406,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16552.363530553,"data":"Creating model cache for 36 durations\n"}
+,{"stream_name":"stdout","time":16552.375122589,"data":"Searching 2599 data points, 845 periods from 1.073 to 10.136 days\n"}
+,{"stream_name":"stdout","time":16552.375157872,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16559.341792072,"data":"Searching for best T0 for period 9.12550 days\n"}
+,{"stream_name":"stdout","time":16562.884794174,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16562.885270115,"data":"Creating model cache for 36 durations\n"}
+,{"stream_name":"stdout","time":16562.894980555,"data":"Searching 2599 data points, 845 periods from 1.073 to 10.136 days\n"}
+,{"stream_name":"stdout","time":16562.895110539,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16564.261860306,"data":"Searching for best T0 for period 1.06541 days\n"}
+,{"stream_name":"stderr","time":16566.580301357,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 114 of 202 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":16566.580345395,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":16571.381581379,"data":"Searching for best T0 for period 1.58095 days\n"}
+,{"stream_name":"stdout","time":16575.633623237,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16575.634990455,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":16575.647142801,"data":"Searching 3013 data points, 2535 periods from 0.556 to 12.815 days\n"}
+,{"stream_name":"stdout","time":16575.647217591,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16582.425797831,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16582.427583316,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16582.44109874,"data":"Searching 7395 data points, 2956 periods from 1.006 to 26.43 days\n"}
+,{"stream_name":"stdout","time":16582.441274518,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16595.753600998,"data":"Searching for best T0 for period 0.67562 days\n"}
+,{"stream_name":"stdout","time":16600.656281701,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16600.657647852,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":16600.66848147,"data":"Searching 3013 data points, 2535 periods from 0.556 to 12.815 days\n"}
+,{"stream_name":"stdout","time":16600.668592167,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16627.712225119,"data":"Searching for best T0 for period 2.21226 days\n"}
+,{"stream_name":"stdout","time":16631.98642945,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16631.987719261,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":16631.999171576,"data":"Searching 2828 data points, 2677 periods from 0.556 to 13.423 days\n"}
+,{"stream_name":"stdout","time":16631.999682432,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16652.746049144,"data":"Searching for best T0 for period 1.00122 days\n"}
+,{"stream_name":"stdout","time":16658.045163999,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16658.052061614,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16658.066673231,"data":"Searching 5565 data points, 11662 periods from 0.556 to 29.998 days\n"}
+,{"stream_name":"stdout","time":16658.066856,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16658.068914868,"data":"Searching for best T0 for period 2.40231 days\n"}
+,{"stream_name":"stdout","time":16666.87639565,"data":"Searching for best T0 for period 0.56565 days\n"}
+,{"stream_name":"stdout","time":16667.60674021,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16667.610666225,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16667.626308251,"data":"Searching 7435 data points, 8586 periods from 0.5 to 27.951 days\n"}
+,{"stream_name":"stdout","time":16667.626489442,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16687.228673273,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16687.251317498,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16687.279094495,"data":"Searching 22678 data points, 41783 periods from 0.5 to 29.996 days\n"}
+,{"stream_name":"stdout","time":16687.279221636,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16801.062323383,"data":"Searching for best T0 for period 1.65763 days\n"}
+,{"stream_name":"stdout","time":16801.929647799,"data":"Searching for best T0 for period 1.23283 days\n"}
+,{"stream_name":"stderr","time":16802.084707939,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 39 of 63 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":16802.084787284,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":16810.583003241,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16810.584945619,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16810.598518353,"data":"Searching 9726 data points, 3916 periods from 1.133 to 29.96 days\n"}
+,{"stream_name":"stdout","time":16810.598628821,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16811.532791168,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16811.536042538,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16811.550281977,"data":"Searching 5454 data points, 7175 periods from 0.5 to 26.375 days\n"}
+,{"stream_name":"stdout","time":16811.550527111,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16882.487021219,"data":"Searching for best T0 for period 8.23660 days\n"}
+,{"stream_name":"stdout","time":16890.644359867,"data":"Searching for best T0 for period 23.72777 days\n"}
+,{"stream_name":"stderr","time":16901.336911723,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 7 of 11 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":16901.33695176,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":16901.523146383,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16901.528782968,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16901.549285141,"data":"Searching 29523 data points, 13506 periods from 1.133 to 29.993 days\n"}
+,{"stream_name":"stdout","time":16901.549447577,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16911.456700082,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16911.462207767,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16911.47909456,"data":"Searching 10581 data points, 9832 periods from 0.535 to 29.994 days\n"}
+,{"stream_name":"stdout","time":16911.47916726,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":16928.255557595,"data":"Searching for best T0 for period 1.37225 days\n"}
+,{"stream_name":"stdout","time":16936.126783955,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":16936.130187801,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":16936.144567906,"data":"Searching 5454 data points, 7175 periods from 0.5 to 26.375 days\n"}
+,{"stream_name":"stdout","time":16936.14474607,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":17071.684593969,"data":"Searching for best T0 for period 1.91806 days\n"}
+,{"stream_name":"stdout","time":17077.661185271,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":17077.66278289,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":17077.674680286,"data":"Searching 2751 data points, 2916 periods from 0.5 to 12.27 days\n"}
+,{"stream_name":"stdout","time":17077.674843466,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":17096.559270822,"data":"Searching for best T0 for period 0.84931 days\n"}
+,{"stream_name":"stdout","time":17106.71809226,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":17106.728030139,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":17106.746176044,"data":"Searching 21808 data points, 17546 periods from 0.735 to 30.0 days\n"}
+,{"stream_name":"stdout","time":17106.746384794,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":17258.666540385,"data":"Searching for best T0 for period 1.51716 days\n"}
+,{"stream_name":"stdout","time":17273.858884363,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":17273.863493082,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":17273.879788504,"data":"Searching 12531 data points, 9622 periods from 0.667 to 29.978 days\n"}
+,{"stream_name":"stdout","time":17273.880074831,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":17527.645853505,"data":"Searching for best T0 for period 2.15354 days\n"}
+,{"stream_name":"stdout","time":17542.540206901,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":17542.544734299,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":17542.561071056,"data":"Searching 10467 data points, 9392 periods from 0.671 to 29.994 days\n"}
+,{"stream_name":"stdout","time":17542.561550779,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":17697.796645953,"data":"Searching for best T0 for period 1.15707 days\n"}
+,{"stream_name":"stdout","time":17718.923613729,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":17718.925366684,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":17718.939178735,"data":"Searching 2616 data points, 1922 periods from 0.735 to 13.423 days\n"}
+,{"stream_name":"stdout","time":17718.939240064,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":17731.988772548,"data":"Searching for best T0 for period 10.50770 days\n"}
+,{"stream_name":"stderr","time":17732.450245308,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 2 of 3 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":17732.450285033,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":17737.863089403,"data":"Searching for best T0 for period 5.78403 days\n"}
+,{"stream_name":"stdout","time":17737.969458739,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":17737.974025946,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":17737.990885328,"data":"Searching 11567 data points, 10174 periods from 0.629 to 29.993 days\n"}
+,{"stream_name":"stdout","time":17737.991004935,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stderr","time":17740.143996859,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 7 of 18 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":17740.144038287,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":17757.063766904,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":17757.07419115,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":17757.097627217,"data":"Searching 29986 data points, 24668 periods from 0.671 to 29.994 days\n"}
+,{"stream_name":"stdout","time":17757.097746633,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":17940.992864147,"data":"Searching for best T0 for period 7.58584 days\n"}
+,{"stream_name":"stdout","time":17956.972559722,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":17956.979702256,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":17956.999082276,"data":"Searching 14939 data points, 16262 periods from 0.507 to 29.987 days\n"}
+,{"stream_name":"stdout","time":17956.999116453,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":18077.181365476,"data":"Searching for best T0 for period 4.73345 days\n"}
+,{"stream_name":"stdout","time":18108.814642462,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":18108.826621668,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":18108.850335208,"data":"Searching 16697 data points, 26109 periods from 0.581 to 29.999 days\n"}
+,{"stream_name":"stdout","time":18108.850525957,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":18450.986737824,"data":"Searching for best T0 for period 0.89641 days\n"}
+,{"stream_name":"stdout","time":18469.131840866,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":18469.134258492,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":18469.146165648,"data":"Searching 3731 data points, 2988 periods from 0.507 to 13.423 days\n"}
+,{"stream_name":"stdout","time":18469.14646723,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":18500.997588796,"data":"Searching for best T0 for period 9.51913 days\n"}
+,{"stream_name":"stdout","time":18508.28406082,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":18508.294299002,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":18508.317905598,"data":"Searching 9365 data points, 25965 periods from 0.808 to 29.997 days\n"}
+,{"stream_name":"stdout","time":18508.318161175,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":18632.211297368,"data":"Searching for best T0 for period 12.02192 days\n"}
+,{"stream_name":"stdout","time":18665.663619442,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":18665.671143053,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":18665.69108946,"data":"Searching 24689 data points, 16702 periods from 0.857 to 29.998 days\n"}
+,{"stream_name":"stdout","time":18665.691285559,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":18779.397326285,"data":"Searching for best T0 for period 8.46401 days\n"}
+,{"stream_name":"stderr","time":18784.007522572,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 16 of 29 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":18784.007564798,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":18793.975174649,"data":"Searching for best T0 for period 18.15689 days\n"}
+,{"stream_name":"stdout","time":18795.12798806,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":18795.129479632,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":18795.140088718,"data":"Searching 3446 data points, 2124 periods from 0.626 to 12.431 days\n"}
+,{"stream_name":"stdout","time":18795.140411048,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":18815.983141511,"data":"Searching for best T0 for period 6.48673 days\n"}
+,{"stream_name":"stdout","time":18820.040988107,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":18820.042421944,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":18820.05340433,"data":"Searching 2974 data points, 2664 periods from 0.531 to 12.75 days\n"}
+,{"stream_name":"stdout","time":18820.053565609,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":18832.446015625,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":18832.454566139,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":18832.479281185,"data":"Searching 31019 data points, 20394 periods from 0.788 to 29.999 days\n"}
+,{"stream_name":"stdout","time":18832.479425119,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":18842.251208438,"data":"Searching for best T0 for period 0.83444 days\n"}
+,{"stream_name":"stderr","time":18842.990259872,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 14 of 30 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":18842.990299997,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":18849.546211785,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":18849.554521968,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":18849.572889994,"data":"Searching 8917 data points, 17729 periods from 0.5 to 29.988 days\n"}
+,{"stream_name":"stdout","time":18849.573237655,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":19242.497093728,"data":"Searching for best T0 for period 29.34702 days\n"}
+,{"stream_name":"stdout","time":19251.075151007,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":19251.075194321,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":19251.085921544,"data":"Searching 3011 data points, 3181 periods from 0.5 to 12.813 days\n"}
+,{"stream_name":"stdout","time":19251.086147106,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":19284.374091339,"data":"Searching for best T0 for period 0.83821 days\n"}
+,{"stream_name":"stdout","time":19289.643084875,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":19289.64575789,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":19289.657550384,"data":"Searching 3269 data points, 4303 periods from 0.5 to 13.24 days\n"}
+,{"stream_name":"stdout","time":19289.657818801,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":19329.311531065,"data":"Searching for best T0 for period 0.84935 days\n"}
+,{"stream_name":"stderr","time":19330.013656593,"data":"/usr/local/lib/python3.13/dist-packages/numpy/_core/_methods.py:218: RuntimeWarning: Degrees of freedom \u003c= 0 for slice\n"}
+,{"stream_name":"stderr","time":19330.013695233,"data":"  ret = _var(a, axis=axis, dtype=dtype, out=out, ddof=ddof,\n"}
+,{"stream_name":"stderr","time":19330.013815965,"data":"/usr/local/lib/python3.13/dist-packages/numpy/_core/_methods.py:175: RuntimeWarning: invalid value encountered in divide\n"}
+,{"stream_name":"stderr","time":19330.013831331,"data":"  arrmean = um.true_divide(arrmean, div, out=arrmean,\n"}
+,{"stream_name":"stderr","time":19330.014078556,"data":"/usr/local/lib/python3.13/dist-packages/numpy/_core/_methods.py:210: RuntimeWarning: invalid value encountered in scalar divide\n"}
+,{"stream_name":"stderr","time":19330.014095237,"data":"  ret = ret.dtype.type(ret / rcount)\n"}
+,{"stream_name":"stderr","time":19331.732599562,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 339 of 416 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":19331.732642511,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":19334.739040491,"data":"Searching for best T0 for period 4.48414 days\n"}
+,{"stream_name":"stdout","time":19340.105232473,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":19340.105280607,"data":"Creating model cache for 42 durations\n"}
+,{"stream_name":"stdout","time":19340.12009529,"data":"Searching 6242 data points, 4969 periods from 0.58 to 23.905 days\n"}
+,{"stream_name":"stdout","time":19340.12027868,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":19344.771632997,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":19344.783217069,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":19344.804036003,"data":"Searching 9365 data points, 25965 periods from 0.808 to 29.997 days\n"}
+,{"stream_name":"stdout","time":19344.804416408,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":19421.827408214,"data":"Searching for best T0 for period 1.78889 days\n"}
+,{"stream_name":"stdout","time":19429.556189176,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":19429.557391907,"data":"Creating model cache for 38 durations\n"}
+,{"stream_name":"stdout","time":19429.568084541,"data":"Searching 3090 data points, 1854 periods from 0.721 to 12.771 days\n"}
+,{"stream_name":"stdout","time":19429.568269951,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":19450.670506694,"data":"Searching for best T0 for period 1.20167 days\n"}
+,{"stream_name":"stdout","time":19455.827667163,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":19455.829653672,"data":"Creating model cache for 37 durations\n"}
+,{"stream_name":"stdout","time":19455.840548503,"data":"Searching 3132 data points, 2959 periods from 0.5 to 12.35 days\n"}
+,{"stream_name":"stdout","time":19455.840699729,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":19486.222775226,"data":"Searching for best T0 for period 2.79368 days\n"}
+,{"stream_name":"stdout","time":19491.377046634,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":19491.381002341,"data":"Creating model cache for 42 durations\n"}
+,{"stream_name":"stdout","time":19491.398884578,"data":"Searching 5837 data points, 5263 periods from 0.578 to 25.063 days\n"}
+,{"stream_name":"stdout","time":19491.399138301,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":19597.735612657,"data":"Searching for best T0 for period 1.07363 days\n"}
+,{"stream_name":"stdout","time":19609.719748444,"data":"Transit Least Squares TLS 1.32 (5 Apr 2024)\n"}
+,{"stream_name":"stdout","time":19609.73822489,"data":"Creating model cache for 43 durations\n"}
+,{"stream_name":"stdout","time":19609.765960164,"data":"Searching 14444 data points, 41960 periods from 0.562 to 29.998 days\n"}
+,{"stream_name":"stdout","time":19609.766310071,"data":"Using 1 of 4 CPU threads\n"}
+,{"stream_name":"stdout","time":19849.947450792,"data":"Searching for best T0 for period 1.10333 days\n"}
+,{"stream_name":"stdout","time":19939.980613926,"data":"Searching for best T0 for period 3.19284 days\n"}
+,{"stream_name":"stdout","time":20046.953822087,"data":"Searching for best T0 for period 3.46168 days\n"}
+,{"stream_name":"stderr","time":20047.851989659,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 83 of 102 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":20047.852027824,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stdout","time":20052.489468126,"data":"200/202 19630s\n"}
+,{"stream_name":"stdout","time":20427.963401547,"data":"Searching for best T0 for period 0.95658 days\n"}
+,{"stream_name":"stderr","time":20429.718813946,"data":"/usr/local/lib/python3.13/dist-packages/transitleastsquares/main.py:411: UserWarning: 291 of 396 transits without data. The true period may be twice the given period.\n"}
+,{"stream_name":"stderr","time":20429.718863921,"data":"  warnings.warn(text)\n"}
+,{"stream_name":"stderr","time":20442.079794577,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":20442.07983812,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":20442.4248535,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":20442.424893293,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":20443.416841913,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":20444.753730652,"data":"[NbConvertApp] Writing 276494 bytes to __results__.html\n"}
+]
