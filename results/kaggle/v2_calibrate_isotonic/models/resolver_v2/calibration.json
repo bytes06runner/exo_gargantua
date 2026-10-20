@@ -1,0 +1,15 @@
+{
+ "version": "v2",
+ "decision": "V2-f",
+ "map": "isotonic on max probability (v1 classifier + v1 temperature)",
+ "base_classifier": "models/resolver/learned.pkl (v1, unchanged)",
+ "base_temperature": 1.4569544670706165,
+ "abstain_threshold": {
+  "learned": 0.71,
+  "principled": 0.99
+ },
+ "threshold_rule": "smallest t in 0.50..0.99 with accuracy >= 0.95 (0.99 if none)",
+ "fitted_on": "all v2 calibration runs, BLS + TLS seeds pooled",
+ "n_runs": 3994,
+ "fitted_at_commit": "ab44b958ec5410d41965d820fa52e81b381ee2a0"
+}

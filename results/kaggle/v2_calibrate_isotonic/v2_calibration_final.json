@@ -1,0 +1,36 @@
+{
+ "git_commit": "ab44b958ec5410d41965d820fa52e81b381ee2a0",
+ "n_runs": 3994,
+ "errors_excluded": 6,
+ "abstain_threshold": {
+  "learned": 0.71,
+  "principled": 0.99
+ },
+ "in_sample": {
+  "all": {
+   "n": 3994,
+   "accuracy": 0.7811717576364546,
+   "ece_v1": 0.09514595832905531,
+   "ece_v2": 3.192516634406591e-17,
+   "coverage_at_v2_threshold": 0.7401101652478718,
+   "accuracy_at_v2_threshold": 0.956359945872801
+  },
+  "bls": {
+   "n": 2000,
+   "accuracy": 0.768,
+   "ece_v1": 0.09791705734451239,
+   "ece_v2": 0.006540944537585298,
+   "coverage_at_v2_threshold": 0.737,
+   "accuracy_at_v2_threshold": 0.9579375848032564
+  },
+  "tls": {
+   "n": 1994,
+   "accuracy": 0.794383149448345,
+   "ece_v1": 0.09236652100161567,
+   "ece_v2": 0.006560626416835842,
+   "coverage_at_v2_threshold": 0.7432296890672017,
+   "accuracy_at_v2_threshold": 0.9547908232118758
+  }
+ },
+ "note": "In-sample (fit data). Out-of-sample estimate from host-split CV: results/v2_calibration_diagnostic.json."
+}
