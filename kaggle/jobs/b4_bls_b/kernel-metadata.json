@@ -1,0 +1,23 @@
+{
+  "compute": "gpu",
+  "id": "srijeetbanerjee/exog-b4-bls-b",
+  "title": "exog-b4-bls-b",
+  "code_file": "job.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "dataset_sources": [],
+  "kernel_sources": [
+    "srijeetbanerjee/exog-b4-cache-3",
+    "srijeetbanerjee/exog-b4-cache-4"
+  ],
+  "competition_sources": [],
+  "enable_gpu": true,
+  "machine_shape": "NvidiaTeslaT4",
+  "after": [
+    "srijeetbanerjee/exog-b4-cache-3",
+    "srijeetbanerjee/exog-b4-cache-4"
+  ]
+}

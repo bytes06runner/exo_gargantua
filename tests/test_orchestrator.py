@@ -29,3 +29,11 @@ def test_screen_jobs_declare_estimates():
     for k in range(1, plan["n_sessions"] + 1):
         m = json.loads((ROOT / "kaggle" / "jobs" / f"p08_screen_gpu_{k}" / "kernel-metadata.json").read_text())
         assert m["compute"] == "gpu" and m["est_quota_h"] > 0
+
+
+def test_dependencies_block_push(monkeypatch, tmp_path):
+    st = {"exog-a": "RUNNING", "exog-b": "absent"}
+    monkeypatch.setattr(orch, "status", lambda k: st.get(k.split("/")[-1], "absent"))
+    jobs = [{"name": "b", "id": "u/exog-b", "compute": "cpu", "est_quota_h": None, "after": ["u/exog-a"]}]
+    dep = {a: orch.status(a) for j in jobs for a in j["after"]}
+    assert dep == {"u/exog-a": "RUNNING"}

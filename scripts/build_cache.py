@@ -41,11 +41,11 @@ def say(m):
     print(f"[{dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds')}] {m}", flush=True)
 
 
-def chunk_files(pins: pd.DataFrame, k: int) -> pd.DataFrame:
+def chunk_files(pins: pd.DataFrame, k: int, n_chunks: int = N_CHUNKS) -> pd.DataFrame:
     """Contiguous TIC blocks with ~equal file counts; deterministic."""
     counts = pins.groupby("tic").size().sort_index()
-    target = counts.sum() / N_CHUNKS
-    block = np.minimum((counts.cumsum() - 1) // target, N_CHUNKS - 1).astype(int) + 1
+    target = counts.sum() / n_chunks
+    block = np.minimum((counts.cumsum() - 1) // target, n_chunks - 1).astype(int) + 1
     tics = set(block[block == k].index)
     return pins[pins["tic"].isin(tics)].sort_values(["tic", "sector"])
 
@@ -96,6 +96,9 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--commit", required=True)
     ap.add_argument("--limit-tics", type=int, default=0, help="debug only")
+    ap.add_argument("--pins", default="data/pinned_products.csv", help="pinned-file table (needs tic, sector, filename, role, url)")
+    ap.add_argument("--n-chunks", type=int, default=N_CHUNKS)
+    ap.add_argument("--no-prev", action="store_true", help="do not copy an attached previous cache (independent chunks)")
     args = ap.parse_args()
     t_start = time.time()
     out = Path(args.out)
@@ -103,7 +106,7 @@ def main():
     raw = Path("/tmp/exog_raw") if Path("/tmp").exists() else out / "_raw"
     raw.mkdir(parents=True, exist_ok=True)
 
-    prev = find_prev_cache()
+    prev = None if args.no_prev else find_prev_cache()
     if prev is not None and prev.resolve() != out.resolve():
         t0 = time.time()
         shutil.copytree(prev / "lc", out / "lc", dirs_exist_ok=True)
@@ -114,8 +117,8 @@ def main():
     man_path = out / "manifest.csv"
     done = set(pd.read_csv(man_path)["filename"]) if man_path.exists() else set()
 
-    pins = pd.read_csv(ROOT / "data" / "pinned_products.csv")
-    todo = chunk_files(pins, args.chunk)
+    pins = pd.read_csv(ROOT / args.pins)
+    todo = chunk_files(pins, args.chunk, args.n_chunks)
     if args.limit_tics:
         todo = todo[todo["tic"].isin(sorted(todo["tic"].unique())[:args.limit_tics])]
     todo = todo[~todo["filename"].isin(done)]

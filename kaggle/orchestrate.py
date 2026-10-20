@@ -10,6 +10,8 @@ Guards (same as the local launchers):
   * capacity: at most 5 concurrent CPU sessions (measured, G2-m) and at most 1 GPU session;
   * push timeout 300 s, and after a timeout the kernel status is checked before anything is retried;
   * compute tag enforcement (G2) and commit pinning come from kaggle/push_job.py;
+  * dependencies: a job whose kernel-metadata.json lists `after` (kernel ids) is pushed only when all of them
+    are COMPLETE;
   * GPU quota guard: a GPU job that declares `est_quota_h` in its kernel-metadata.json is pushed only if the
     weekly GPU quota left (`kaggle quota`) is at least QUOTA_FACTOR * est_quota_h + QUOTA_MARGIN_H; otherwise it
     waits for a later round (e.g. after the weekly reset). If the quota cannot be read, no GPU job is pushed.
@@ -81,7 +83,8 @@ def main():
     jobs = []
     for name in queue["jobs"]:
         meta = json.loads((ROOT / "kaggle" / "jobs" / name / "kernel-metadata.json").read_text())
-        jobs.append({"name": name, "id": meta["id"], "compute": meta["compute"], "est_quota_h": meta.get("est_quota_h")})
+        jobs.append({"name": name, "id": meta["id"], "compute": meta["compute"], "est_quota_h": meta.get("est_quota_h"),
+                     "after": meta.get("after", [])})
     for j in jobs:
         j["status"] = status(j["id"])
         note(f"status {j['name']} ({j['compute']}): {j['status']}")
@@ -94,7 +97,17 @@ def main():
     if any(j["compute"] == "gpu" and j["status"] == "absent" and j["est_quota_h"] for j in jobs):
         gpu_left = gpu_quota_left()
         note(f"GPU quota left: {gpu_left} h")
+    dep_status = {}
     for j in jobs:
+        for a in j["after"]:
+            if a not in dep_status:
+                dep_status[a] = status(a)
+    for j in jobs:
+        if j["status"] == "absent" and j["after"]:
+            waiting = {a: dep_status[a] for a in j["after"] if dep_status[a] != "COMPLETE"}
+            if waiting:
+                note(f"skip {j['name']}: waiting for dependencies {waiting}")
+                continue
         if j["status"] != "absent":
             note(f"skip {j['name']}: already on Kaggle ({j['status']}); never re-pushed")
             continue
