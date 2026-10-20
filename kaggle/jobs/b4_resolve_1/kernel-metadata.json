@@ -1,0 +1,21 @@
+{
+  "compute": "cpu",
+  "id": "srijeetbanerjee/exog-b4-resolve-1",
+  "title": "exog-b4-resolve-1",
+  "code_file": "job.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "dataset_sources": [],
+  "kernel_sources": [
+    "srijeetbanerjee/exog-b4-cache-1",
+    "srijeetbanerjee/exog-b4-bls-a"
+  ],
+  "competition_sources": [],
+  "after": [
+    "srijeetbanerjee/exog-b4-bls-a"
+  ]
+}
