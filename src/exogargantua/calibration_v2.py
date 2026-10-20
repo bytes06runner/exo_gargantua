@@ -1,6 +1,8 @@
 """Resolver v2 calibration map (decision V2-f): isotonic regression of the maximum alias probability of the v1
 learned combiner (v1 classifier and temperature, unchanged), fitted on all v2 calibration runs. The other aliases
-keep their relative v1 probabilities, rescaled to sum to 1 - calibrated maximum."""
+keep their relative v1 probabilities, rescaled to share 1 - calibrated maximum, each capped at the calibrated maximum
+so the chosen alias never changes (V2-f.1); mass removed by the cap is left unassigned ("none of the candidates"),
+so the alias probabilities may sum to less than 1."""
 
 from __future__ import annotations
 
@@ -17,5 +19,6 @@ class IsotonicTopCalibrated:
         top = float(np.clip(self.iso.predict([p[i]])[0], 0.0, 1.0))
         rest = p.sum() - p[i]
         out = p * ((1.0 - top) / rest) if rest > 0 else np.zeros_like(p)
+        out = np.minimum(out, top)
         out[i] = top
         return out
