@@ -21,6 +21,7 @@ def test_map_normalised_and_argmax_kept():
         assert out.sum() <= 1 + 1e-12 and out.max() == out[i]          # normalised or sub-normalised; MAP unchanged
         assert abs(out[i] - iso.predict([max(p)])[0]) < 1e-12
         rest, prest = np.delete(out, i), np.delete(np.asarray(p), i)
-        if np.all(rest < out[i]):                                     # no cap active: proportional, sums to 1
+        uncapped = prest * (1 - out[i]) / prest.sum()
+        if np.all(uncapped < out[i]):                                 # no cap active: proportional, sums to 1
             np.testing.assert_allclose(rest / rest.sum(), prest / prest.sum())
             assert abs(out.sum() - 1) < 1e-12
