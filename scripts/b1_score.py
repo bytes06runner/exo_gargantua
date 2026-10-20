@@ -28,6 +28,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from exogargantua import sample as S, scoring  # noqa: E402
 from exogargantua.resolver import combine as C  # noqa: E402
+sys.path.insert(0, str(ROOT / "scripts"))
+import resolver_models as RM  # noqa: E402
 
 SECTOR_DAYS = 27.4
 
@@ -97,9 +99,9 @@ def score(pattern, inj, lc, thr, starts):
                 base["oracle_ok"] = bool(ok.any())
                 pa = r["summary"]["p_alias"]
                 p_pr = np.array([pa[x["r"]] for x in r["rows"]])
-                p_le = lc.predict([(x["r"], x["P"], x["x"]) for x in r["rows"]])
+                i_le, c_le = RM.decide(lc, [(x["r"], x["P"], x["x"]) for x in r["rows"]])
                 rows.append({**base, "pr_conf": float(p_pr.max()), "pr_ok": bool(ok[int(np.argmax(p_pr))]),
-                             "le_conf": float(p_le.max()), "le_ok": bool(ok[int(np.argmax(p_le))])})
+                             "le_conf": c_le, "le_ok": bool(ok[i_le])})
     d = pd.DataFrame(rows)
     if d.empty:
         return None
