@@ -89,3 +89,33 @@ p < 0.01.**
 - v1.
 - Tier B-amb separately.
 - Breakdown by early-sector stratum and by period range (< 1, 1–3, 3–10, > 10 d).
+
+## 6. Secondary: catalog-truth audit (added 2026-10-20, owner instruction, before any B5 download)
+
+Reported separately as **"catalog-truth audit"**. It never changes the primary result: the success criterion
+(§4) stays exactly as committed and is scored against the catalog period.
+
+- **Targets.** Every scored B5 target (H3 pass; Tier B and Tier B-amb, reported separately) where v2's answer
+  differs from the catalog period by more than 0.1 %. v2's answer is the primary run: TLS-seeded, MAP alias,
+  whatever its confidence.
+- **Data.** The target's pinned **later** sectors L (outside the early window). They are downloaded only for these
+  targets, after the primary runs, with the same X10/X11 rules and the same compact cache format.
+- **Model.** Fitted on the later light curve, detrended with wotan biweight, window max(0.75 d, 3 T), where T is
+  v2's fitted duration. The same eclipsing-binary model is fitted separately for each candidate period
+  P ∈ {P_catalog, P_v2}:
+  - a primary trapezoid eclipse (free depth, duration, ingress, epoch; period refined within ±T·P/span);
+  - plus a secondary trapezoid at a free phase (grid over all phases outside the primary, then refined;
+    depth ≥ 0; same duration and ingress as the primary).
+  - Both models have the same number of parameters.
+- **Statistic.** Δχ² = χ²(P_catalog model) − χ²(P_v2 model), with errors from the robust white-noise scatter
+  times the red-noise factor, as in the resolver.
+- **Verdict per target:**
+  - "later data support v2" if Δχ² > 10;
+  - "later data support the catalog" if Δχ² < −10;
+  - "inconclusive" otherwise;
+  - "insufficient" if either period predicts fewer than 2 primary eclipses with ≥ 50 % coverage in L.
+- **Reported:** counts and fractions of each verdict (Wilson 95 %), by tier and by period ratio P_v2 / P_catalog.
+  Equal-depth twins can make P and P/2 indistinguishable; those cases are expected to be inconclusive and are
+  reported as such.
+- **Script:** `scripts/b5_audit.py`. Its fitting uses the resolver's model functions as tools only. It does not
+  run the resolver's decision.
