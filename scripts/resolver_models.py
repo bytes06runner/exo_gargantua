@@ -20,3 +20,16 @@ def load(version: str):
         iso = pickle.load(fh)
     meta = json.loads((ROOT / "models" / "resolver_v2" / "calibration.json").read_text())
     return IsotonicTopCalibrated(lc, iso), meta["abstain_threshold"]
+
+
+def decide(model, group):
+    """(chosen alias index, its probability). The chosen alias is always the classifier's own (v1) choice; a v2
+    model only changes the probability (decision V2-f.1). Avoids argmax over v2 outputs, which can be all-zero
+    when the isotonic map sends a low top probability to 0."""
+    import numpy as np
+    if hasattr(model, "base"):
+        i = int(np.argmax(model.base.predict(group)))
+        return i, float(model.predict(group)[i])
+    p = model.predict(group)
+    i = int(np.argmax(p))
+    return i, float(p[i])

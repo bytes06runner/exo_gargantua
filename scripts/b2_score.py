@@ -93,11 +93,12 @@ def main():
             row[f"ceil_{src}"] = bool(ok.any())
             g = [(x["r"], x["P"], x["x"]) for x in run["rows"]]
             pa = run["summary"]["p_alias"]
-            for v, p, thr in (("v1", lc["v1"][0].predict(g), lc["v1"][1]["learned"]),
-                              ("v2", lc["v2"][0].predict(g), lc["v2"][1]["learned"]),
-                              ("pr", np.array([pa[x["r"]] for x in run["rows"]]), lc["v2"][1]["principled"])):
-                row[f"{v}_ok_{src}"], row[f"{v}_conf_{src}"] = bool(ok[int(np.argmax(p))]), float(p.max())
-                row[f"{v}_abst_{src}"] = bool(p.max() < thr)
+            p_pr = np.array([pa[x["r"]] for x in run["rows"]])
+            for v, (i, c), thr in (("v1", RM.decide(lc["v1"][0], g), lc["v1"][1]["learned"]),
+                                   ("v2", RM.decide(lc["v2"][0], g), lc["v2"][1]["learned"]),
+                                   ("pr", (int(np.argmax(p_pr)), float(p_pr.max())), lc["v2"][1]["principled"])):
+                row[f"{v}_ok_{src}"], row[f"{v}_conf_{src}"] = bool(ok[i]), c
+                row[f"{v}_abst_{src}"] = bool(c < thr)
         rows.append(row)
     d = pd.DataFrame(rows)
 
