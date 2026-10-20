@@ -13,7 +13,7 @@ from pathlib import Path
 FROZEN_TAG = "resolver-frozen-v1"
 FROZEN_PATHS = ("src/exogargantua/resolver", "models/resolver")  # resolver code and trained combiner + thresholds
 FROZEN_TAG_V2 = "resolver-frozen-v2"
-FROZEN_PATHS_V2 = FROZEN_PATHS + ("models/resolver_v2",)  # v2 = v1 + recalibration (decision V2-a)
+FROZEN_PATHS_V2 = FROZEN_PATHS + ("models/resolver_v2", "src/exogargantua/calibration_v2.py")  # v2 = v1 + recalibration (V2-f)
 ROOT = Path(__file__).resolve().parents[2]
 
 
