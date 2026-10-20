@@ -45,8 +45,9 @@ def main():
             out.append(np.exp(zz - np.logaddexp.reduce(zz)))
         return out
 
-    def conf_corr(P):
-        return np.array([p.max() for p in P]), np.array([l[int(np.argmax(p))] for p, l in zip(P, L)])
+    def conf_corr(P, idx=None):
+        idx = range(len(P)) if idx is None else idx
+        return np.array([p.max() for p in P]), np.array([L[i][int(np.argmax(p))] for p, i in zip(P, idx)])
 
     def fit_T(idx, all_runs):
         grid = np.exp(np.linspace(np.log(0.05), np.log(20), 200))
@@ -78,11 +79,13 @@ def main():
         tri, tei = np.where(tr)[0], np.where(te)[0]
         for key, allr in (("V2-a_temperature_truth_in_candidates", False), ("temperature_all_runs", True)):
             T = fit_T(tri, allr)
-            c, k = conf_corr([probs(T)[i] for i in tei])
+            PT = probs(T)
+            c, k = conf_corr([PT[i] for i in tei], tei)
             res[key].append(C.ece(c, k))
-        ctr, ktr = conf_corr([probs(lc.temperature)[i] for i in tri])
+        P1 = probs(lc.temperature)
+        ctr, ktr = conf_corr([P1[i] for i in tri], tri)
         iso = IsotonicRegression(y_min=0, y_max=1, out_of_bounds="clip").fit(ctr, ktr.astype(float))
-        cte, kte = conf_corr([probs(lc.temperature)[i] for i in tei])
+        cte, kte = conf_corr([P1[i] for i in tei], tei)
         res["isotonic_pmax_all_runs"].append(C.ece(iso.predict(cte), kte))
     out["cross_validated_ece"] = {k: {"folds": v, "mean": float(np.mean(v))} for k, v in res.items()}
     (ROOT / "results" / "v2_calibration_diagnostic.json").write_text(json.dumps(out, indent=1))
