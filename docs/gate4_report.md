@@ -105,3 +105,14 @@ These stratum tests are exploratory, not pre-registered, so the 1-sector result 
 - Diagnostic label alignment.
 
 Not started, as instructed: B3 audit, false-alarm runs, B4 runtime, paper writing.
+
+## Post-Gate-4 results summary (post hoc unless stated; `results/b2_posthoc_report.json`)
+
+- **Risk-coverage, stated plainly:** ranking raw TLS periods by TLS's own SDE nearly matches our risk-coverage
+  curve on B2 (accuracy at 73.5 % coverage: ours 0.953, TLS-by-SDE 0.949; area under the accuracy-coverage curve
+  0.956 vs 0.950). Our remaining advantage is **calibrated alias probabilities and an abstain decision**, not a better
+  ranking of which TLS periods to trust.
+- Selective accuracy on the 859 TOIs v2 answers: ours 0.953, raw TLS 0.912 (McNemar p = 6e-5), raw BLS 0.948 (p = 0.56).
+- B1(ii) and B2 differ: B2 seeds are already right far more often (raw TLS 0.81 vs 0.61), with fewer EBs (9 % vs 40 %),
+  a narrower period range and more single-sector targets.
+- B3 dropped (decision B3-nogo).
