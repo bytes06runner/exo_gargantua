@@ -19,6 +19,6 @@ class IsotonicTopCalibrated:
         top = float(np.clip(self.iso.predict([p[i]])[0], 0.0, 1.0))
         rest = p.sum() - p[i]
         out = p * ((1.0 - top) / rest) if rest > 0 else np.zeros_like(p)
-        out = np.minimum(out, top)
+        out = np.minimum(out, np.nextafter(top, 0.0))  # strictly below: no ties with the chosen alias
         out[i] = top
         return out
