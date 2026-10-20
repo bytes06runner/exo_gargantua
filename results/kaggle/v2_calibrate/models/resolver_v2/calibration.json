@@ -1,0 +1,13 @@
+{
+ "version": "v2",
+ "base_classifier": "models/resolver/learned.pkl (v1, unchanged)",
+ "temperature": 1.5014872811125803,
+ "abstain_threshold": {
+  "learned": 0.86,
+  "principled": 0.99
+ },
+ "threshold_rule": "smallest t in 0.50..0.99 with calib accuracy >= 0.95",
+ "fitted_on": "v2 calibration runs (BLS + TLS seeds pooled)",
+ "fitted_at_commit": "69374fea38c9c8c6a4be98516f167f631ad5dac0",
+ "n_runs": 3994
+}
