@@ -32,6 +32,7 @@ jobs:
           bibtex ms
           pdflatex -interaction=nonstopmode -halt-on-error ms.tex
           pdflatex -interaction=nonstopmode -halt-on-error ms.tex
+          pdflatex -interaction=nonstopmode -halt-on-error ms.tex
           grep -E "Warning|undefined" ms.log | sort | uniq -c | sort -rn | head -40 || true
       - uses: actions/upload-artifact@v4
         if: always()
