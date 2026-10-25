@@ -1,0 +1,43 @@
+name: paper
+# Builds paper/ms.pdf from the committed sources (generated macros, tables, figures) with AASTeX 7.0.1 from CTAN.
+# The PDF is uploaded as a workflow artifact only; nothing is released or submitted.
+on:
+  push:
+    branches: [v2-alias-resolver]
+    paths: ["paper/**", ".github/workflows/paper.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends texlive-latex-base texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-recommended texlive-fonts-extra texlive-science texlive-publishers texlive-bibtex-extra lmodern unzip
+      - name: AASTeX 7.0.1 from CTAN
+        run: |
+          curl -sSL -o /tmp/aastex.zip https://mirrors.ctan.org/macros/latex/contrib/aastex.zip
+          unzip -q /tmp/aastex.zip -d /tmp/aastex
+          find /tmp/aastex -type f | sort
+          cp $(find /tmp/aastex -name 'aastex701.cls') paper/
+          cp $(find /tmp/aastex -name 'aasjournalv7.bst') paper/
+      - name: Build
+        working-directory: paper
+        run: |
+          pdflatex -interaction=nonstopmode -halt-on-error ms.tex
+          bibtex ms
+          pdflatex -interaction=nonstopmode -halt-on-error ms.tex
+          pdflatex -interaction=nonstopmode -halt-on-error ms.tex
+          grep -E "Warning|undefined" ms.log | sort | uniq -c | sort -rn | head -40 || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paper-pdf
+          path: |
+            paper/ms.pdf
+            paper/ms.log
+            paper/ms.blg

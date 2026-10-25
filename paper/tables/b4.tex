@@ -1,0 +1,13 @@
+\begin{deluxetable*}{lccl}
+\tablecaption{B4: processing time per light curve, TESS Sector 49. \label{tab:b4}}
+\tablewidth{0pt}
+\tablehead{\colhead{Stage} & \colhead{Median (s)} & \colhead{95th percentile (s)} & \colhead{Hardware}}
+\startdata
+Read light curve & 0.09 & 0.18 & GPU session host \\
+Detrend and bin & 0.39 & 0.53 & GPU session host \\
+BLS seed search & 1.01 & 1.09 & Tesla T4 \\
+Alias resolver (v2) & 3.12 & 5.47 & CPU session \\
+Total & 4.56 & 6.98 & \nodata
+\enddata
+\tablecomments{19{,}997 light curves. GPU session: one process per NVIDIA Tesla T4; CPU session: 4 vCPU (Intel(R) Xeon(R) CPU @ 2.20GHz), four worker processes with one BLAS thread each.}
+\end{deluxetable*}
