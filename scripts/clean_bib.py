@@ -53,6 +53,11 @@ def main():
         e = re.sub(r"\s*\n\s*", " ", e.strip())
         e = e.replace("&amp;", "\\&").replace("&lt;", "<").replace("&gt;", ">")
         e = re.sub(r"(?<!\\)&(?!amp;)", r"\\&", e)
+        e = re.sub(r",\s*month=[A-Za-z]+", "", e)  # unbraced month strings are undefined in aasjournalv7.bst; months are not printed
+        e = e.replace("author={ and Vallenari", "author={{Gaia Collaboration} and Vallenari")
+        e = e.replace("author={The Astropy Collaboration and", "author={{Astropy Collaboration} and")
+        if m.group(2) == "Ricker2015":  # Crossref gives the online date and an article page count; ADS 2015JATIS...1a4003R
+            e = re.sub(r"pages={[^}]*}", "pages={014003}", e.replace("year={2014}", "year={2015}"))
         dropped |= {c for c in e if ord(c) >= 128 and c not in PUNCT and c not in SPECIAL
                     and not (len(unicodedata.normalize("NFD", c)) > 1 and unicodedata.normalize("NFD", c)[0].isascii())}
         out.append(latexify(e))
