@@ -1,0 +1,291 @@
+{
+ "git_commit": "a26067a09b01f39cadc92a9da6ec96d0dcb9e31f",
+ "run_commit": "7689b8c7249bc457b0aa1c1d2f363578a7c58b36",
+ "label": "SECONDARY: catalog-truth audit (does not change the primary B5 result)",
+ "errors": 0,
+ "all": {
+  "n": 319,
+  "later data support v2": {
+   "count": 74,
+   "fraction": 0.23197492163009403,
+   "ci95": [
+    0.18901028696286815,
+    0.2813181961074673
+   ]
+  },
+  "later data support the catalog": {
+   "count": 44,
+   "fraction": 0.13793103448275862,
+   "ci95": [
+    0.10437828490504393,
+    0.18010054310225132
+   ]
+  },
+  "inconclusive": {
+   "count": 190,
+   "fraction": 0.5956112852664577,
+   "ci95": [
+    0.5409259333409926,
+    0.6480212159730983
+   ]
+  },
+  "insufficient": {
+   "count": 11,
+   "fraction": 0.034482758620689655,
+   "ci95": [
+    0.019361581614610927,
+    0.06068262582334006
+   ]
+  }
+ },
+ "by_tier": {
+  "B": {
+   "n": 249,
+   "later data support v2": {
+    "count": 71,
+    "fraction": 0.285140562248996,
+    "ci95": [
+     0.23265857719212438,
+     0.34415156797386104
+    ]
+   },
+   "later data support the catalog": {
+    "count": 39,
+    "fraction": 0.1566265060240964,
+    "ci95": [
+     0.11674123740344727,
+     0.20694600393658535
+    ]
+   },
+   "inconclusive": {
+    "count": 128,
+    "fraction": 0.5140562248995983,
+    "ci95": [
+     0.4522352789452824,
+     0.575450038660681
+    ]
+   },
+   "insufficient": {
+    "count": 11,
+    "fraction": 0.04417670682730924,
+    "ci95": [
+     0.0248436274710145,
+     0.07736107302130954
+    ]
+   }
+  },
+  "B-amb": {
+   "n": 70,
+   "later data support v2": {
+    "count": 3,
+    "fraction": 0.04285714285714286,
+    "ci95": [
+     0.014681274851143573,
+     0.11859861074180134
+    ]
+   },
+   "later data support the catalog": {
+    "count": 5,
+    "fraction": 0.07142857142857142,
+    "ci95": [
+     0.030893761510293508,
+     0.1565561312330923
+    ]
+   },
+   "inconclusive": {
+    "count": 62,
+    "fraction": 0.8857142857142857,
+    "ci95": [
+     0.7903556803979788,
+     0.9409394161329738
+    ]
+   },
+   "insufficient": {
+    "count": 0,
+    "fraction": 0.0,
+    "ci95": [
+     0.0,
+     0.05202487486728348
+    ]
+   }
+  }
+ },
+ "by_ratio": {
+  "1/2": {
+   "n": 160,
+   "later data support v2": {
+    "count": 9,
+    "fraction": 0.05625,
+    "ci95": [
+     0.029871962307707264,
+     0.10343728271919676
+    ]
+   },
+   "later data support the catalog": {
+    "count": 19,
+    "fraction": 0.11875,
+    "ci95": [
+     0.077354257102703,
+     0.1780241083429469
+    ]
+   },
+   "inconclusive": {
+    "count": 132,
+    "fraction": 0.825,
+    "ci95": [
+     0.7587006308791613,
+     0.8760587952983172
+    ]
+   },
+   "insufficient": {
+    "count": 0,
+    "fraction": 0.0,
+    "ci95": [
+     -1.734723475976807e-18,
+     0.023447036650032713
+    ]
+   }
+  },
+  "2": {
+   "n": 65,
+   "later data support v2": {
+    "count": 24,
+    "fraction": 0.36923076923076925,
+    "ci95": [
+     0.26229222189067253,
+     0.49076406965397484
+    ]
+   },
+   "later data support the catalog": {
+    "count": 7,
+    "fraction": 0.1076923076923077,
+    "ci95": [
+     0.05315354431925605,
+     0.20601533031468616
+    ]
+   },
+   "inconclusive": {
+    "count": 32,
+    "fraction": 0.49230769230769234,
+    "ci95": [
+     0.37463636042469284,
+     0.6108375390779336
+    ]
+   },
+   "insufficient": {
+    "count": 2,
+    "fraction": 0.03076923076923077,
+    "ci95": [
+     0.008478819400945352,
+     0.10542905025926008
+    ]
+   }
+  },
+  "3": {
+   "n": 1,
+   "later data support v2": {
+    "count": 0,
+    "fraction": 0.0,
+    "ci95": [
+     0.0,
+     0.7934567085261071
+    ]
+   },
+   "later data support the catalog": {
+    "count": 1,
+    "fraction": 1.0,
+    "ci95": [
+     0.20654329147389294,
+     1.0
+    ]
+   },
+   "inconclusive": {
+    "count": 0,
+    "fraction": 0.0,
+    "ci95": [
+     0.0,
+     0.7934567085261071
+    ]
+   },
+   "insufficient": {
+    "count": 0,
+    "fraction": 0.0,
+    "ci95": [
+     0.0,
+     0.7934567085261071
+    ]
+   }
+  },
+  "4": {
+   "n": 1,
+   "later data support v2": {
+    "count": 0,
+    "fraction": 0.0,
+    "ci95": [
+     0.0,
+     0.7934567085261071
+    ]
+   },
+   "later data support the catalog": {
+    "count": 0,
+    "fraction": 0.0,
+    "ci95": [
+     0.0,
+     0.7934567085261071
+    ]
+   },
+   "inconclusive": {
+    "count": 1,
+    "fraction": 1.0,
+    "ci95": [
+     0.20654329147389294,
+     1.0
+    ]
+   },
+   "insufficient": {
+    "count": 0,
+    "fraction": 0.0,
+    "ci95": [
+     0.0,
+     0.7934567085261071
+    ]
+   }
+  },
+  "non-alias": {
+   "n": 92,
+   "later data support v2": {
+    "count": 41,
+    "fraction": 0.44565217391304346,
+    "ci95": [
+     0.34829640062529765,
+     0.5473647736455826
+    ]
+   },
+   "later data support the catalog": {
+    "count": 17,
+    "fraction": 0.18478260869565216,
+    "ci95": [
+     0.11869236960805385,
+     0.27614244116305176
+    ]
+   },
+   "inconclusive": {
+    "count": 25,
+    "fraction": 0.2717391304347826,
+    "ci95": [
+     0.19135648353357726,
+     0.3704204484041199
+    ]
+   },
+   "insufficient": {
+    "count": 9,
+    "fraction": 0.09782608695652174,
+    "ci95": [
+     0.05232316443197395,
+     0.17556952517254015
+    ]
+   }
+  }
+ },
+ "delta_chi2_median": -1.987037477846343e-05
+}
