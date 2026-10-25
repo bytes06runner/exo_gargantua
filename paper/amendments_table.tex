@@ -1,0 +1,43 @@
+%% Hand-written summary of docs/decisions.md (protocol amendments and operational decisions). No result numbers.
+\startlongtable
+\begin{deluxetable*}{llp{2.3cm}p{10.2cm}}
+\tablecaption{Protocol amendments and recorded decisions, from \texttt{docs/decisions.md}. \label{tab:amend}}
+\tablewidth{0pt}
+\tablehead{\colhead{ID} & \colhead{Date} & \colhead{Timing} & \colhead{Change}}
+\startdata
+\multicolumn{4}{l}{\emph{Changes to what is measured or how}} \\
+A1 & 2026-09-30 & before data & Seed BLS searches run four targets in parallel; configuration unchanged and parallel output tested identical to serial. \\
+A2 & 2026-09-30 & before data & B1 split into wrong-alias seeds on all injections, B1(i), and full BLS and TLS searches on a subsample drawn in advance, B1(ii), reported separately, because full searches of every injection were too costly; GPU BLS allowed only if it reproduces astropy peak periods within one grid step. \\
+A3 & 2026-09-30 & before data & TOIs dispositioned as confirmed or known planets take truth only from the NASA Exoplanet Archive, never from the EB catalog; TOIs 143.01, 1165.01, 1422.01, 1779.01, 2119.01 and 4495.01 moved from EB truth to catalog reference and left B2. \\
+A4 & 2026-09-30 & before data & B2 seeds computed but no comparison with truth allowed until the resolver is frozen; enforced in code. \\
+A5 & 2026-10-01 & before data & Pre-search screen of injection hosts applied to the data window the injections use rather than to all sectors, because the literal rule could not be completed within session limits. \\
+V1 & 2026-10-01 & before data & Screen SDE defined on the raw BLS spectrum; GPU and astropy implementations validated on a pre-drawn set of pool stars. \\
+A6 & 2026-10-01 & before data & Screen SDE recomputed with TLS's own statistics code on the exact BLS $\chi^2$ spectrum read at TLS's trial periods, replacing V1 for the decision; V1 still computed and reported; threshold, search and no-replacement rule unchanged. \\
+F1 & 2026-10-04 & before data & Resolver trained and thresholds chosen on the B1 training split only, then frozen by a git tag; scoring code refuses to run without it. \\
+R1 & 2026-10-04 & before data & Refinement fix found on synthetic data: tie-break toward the seed-derived period and period held fixed when fewer than two events are covered. \\
+A7 & 2026-10-04 & before data & B1 hosts are the screened pool as it fell, ten injections each; hosts split by star into fit, calibration and test; B1(ii) drawn from test injections only. \\
+V2-a & 2026-10-06 & after B1 test & Second resolver version changes only its calibration map and abstain thresholds; features, candidates and classifier unchanged. \\
+V2-b & 2026-10-06 & after B1 test & Calibration data for the second version: new injections on training-split hosts only, searched with BLS and TLS. \\
+V2-c & 2026-10-06 & after B1 test & Second version reported on B1(ii) as post hoc; both versions scored on B2, the second as primary. \\
+V2-d & 2026-10-06 & after B1 test & Cases where no alias candidate contains the true period are not addressed; reported as a limitation. \\
+V2-e & 2026-10-06 & before B2 & B2 primary comparison fixed: TLS-seeded second version, top-1 alias, against every baseline with exact McNemar tests. \\
+V2-f & 2026-10-20 & before B2 & Temperature recalibration replaced by isotonic regression of the top alias probability, chosen by host-split cross-validation on calibration data. \\
+V2-f.1 & 2026-10-20 & before B2 & Other alias probabilities capped below the calibrated top probability so the map never changes the chosen alias. \\
+V2-final & 2026-10-20 & before B2 & No further changes to the resolver after the second freeze, whatever B2 shows. \\
+V2-score & 2026-10-20 & before B2 & Scoring takes the chosen alias from the first version's classifier and only the probability from the second, as V2-f.1 specifies. \\
+FA1 & 2026-10-20 & before data & False-alarm test design: inverted and scrambled early-window light curves of the B2 targets, BLS seed, confidence at each version's threshold. \\
+B5 & 2026-10-20 & before data & Eclipsing-binary benchmark specified after B1 and B2 results were known, with its own sample, truth and success criterion. \\
+B5-audit & 2026-10-20 & before data & Secondary catalog-truth audit of B5 disagreements on later sectors, specified before any B5 light curve was downloaded. \\
+B4 & 2026-10-20 & before data & Run-time protocol on Sector 49; TLS not run, its time quoted from earlier runs. \\
+B3-nogo & 2026-10-20 & post hoc & Planned audit of the TOI catalog dropped after the post hoc check of Section~\ref{sec:b2}. \\
+FA-ctx & 2026-10-26 & post hoc & Detection statistics of TLS and BLS recorded on the false-alarm light curves. \\
+\multicolumn{4}{l}{\emph{Operational decisions (no effect on any measured quantity)}} \\
+Gate 1 & 2026-09-30 & before data & Rule-based correction of \citet{Tschudi2026a} added as a B2 baseline. \\
+Freeze & 2026-09-30 & before data & Exact product files pinned per target; first freeze run voided because of an identifier-parsing bug, selection rules unchanged. \\
+G1, G2 & 2026-09-30 & before data & GPU sessions for GPU work only; CPU-bound work on CPU sessions. \\
+G2-m & 2026-09-30 & before data & Concurrent CPU-session limit measured. \\
+D1 & 2026-09-30 & before data & Light-curve download in four chunks to a compact cache. \\
+O1, O2 & 2026-10-01 & before data & Job orchestration moved to a scheduled workflow; its skip guard tested. \\
+V2-tag & 2026-10-20 & before B2 & Second freeze tag created after fitting the isotonic map.
+\enddata
+\end{deluxetable*}

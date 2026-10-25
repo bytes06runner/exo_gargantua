@@ -1,0 +1,70 @@
+{
+ "git_commit": "b4bcebd8db0caf34e13584d57878c39475e7c0ca",
+ "criterion": "confident resolution on scrambled light curves < 5 % (pre-registered)",
+ "variants": {
+  "scrambled": {
+   "n": 1198,
+   "errors": 0,
+   "v2": {
+    "confident": 446,
+    "rate": 0.3722871452420701,
+    "ci95": [
+     0.34536154411475467,
+     0.40002919622906447
+    ],
+    "meets_criterion": false
+   },
+   "v1": {
+    "confident": 803,
+    "rate": 0.6702838063439065,
+    "ci95": [
+     0.643155342485443,
+     0.6963236703894649
+    ],
+    "meets_criterion": false
+   },
+   "principled": {
+    "confident": 523,
+    "rate": 0.4365609348914858,
+    "ci95": [
+     0.4087229569201565,
+     0.4648044696558582
+    ],
+    "meets_criterion": false
+   },
+   "seed_periods_median_d": 12.170163073606645
+  },
+  "inverted": {
+   "n": 1198,
+   "errors": 0,
+   "v2": {
+    "confident": 48,
+    "rate": 0.04006677796327212,
+    "ci95": [
+     0.030352087283584475,
+     0.05272175539252194
+    ],
+    "meets_criterion": null
+   },
+   "v1": {
+    "confident": 223,
+    "rate": 0.18614357262103506,
+    "ci95": [
+     0.1651184795505157,
+     0.20917510456239904
+    ],
+    "meets_criterion": null
+   },
+   "principled": {
+    "confident": 90,
+    "rate": 0.07512520868113523,
+    "ci95": [
+     0.06151877537156028,
+     0.09144780524938015
+    ],
+    "meets_criterion": null
+   },
+   "seed_periods_median_d": 0.557737478781217
+  }
+ }
+}

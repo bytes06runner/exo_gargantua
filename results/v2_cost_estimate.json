@@ -1,0 +1,26 @@
+{
+ "git_commit": "cae07d1dbb24155e011d0fc5b7828b48a9c18fad",
+ "basis": {
+  "tls_runs": 2000,
+  "tls_wall_s_median": 144.31014370918274,
+  "tls_wall_s_p99": 2692.575557620525,
+  "bls_sessions": 2,
+  "bls_session_wall_h": [
+   7.58,
+   7.51
+  ]
+ },
+ "n_injections": 2000,
+ "tls": {
+  "core_hours": 232.3345354860359,
+  "shards": 7,
+  "planned_h_per_shard": 8.297661981644138,
+  "waves_of_5_sessions": 2,
+  "wall_h": 16.595323963288276
+ },
+ "gpu_bls": {
+  "gpu_quota_h": 7.580940507451693,
+  "wall_h": 7.580940507451693
+ },
+ "note": "TLS and GPU BLS run in parallel; total wall ~ max of the two. CPU sessions have no quota; GPU quota 30 h/week."
+}

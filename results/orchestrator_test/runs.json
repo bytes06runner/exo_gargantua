@@ -1,0 +1,45 @@
+{
+ "test": "GitHub Actions orchestrator: launch, then skip while RUNNING",
+ "runs": [
+  {
+   "role": "launch",
+   "run_id": 36827603777,
+   "event": "push",
+   "head_sha": "c9535794470eb94fd4bb54413a60c5f0191dff00",
+   "created_utc": "2026-10-01T06:57:44Z",
+   "conclusion": "success",
+   "html_url": "https://github.com/bytes06runner/exo_gargantua/actions/runs/36827603777",
+   "decisions": [
+    "round done: pushed=['orchestrator_smoke', 'p08_validate_cpu_1', 'p08_validate_cpu_2'] running={'cpu': 3, 'gpu': 0}",
+    "PUSHED p08_validate_cpu_2: Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/***/exog-p08-validate-cpu-2",
+    "PUSHED p08_validate_cpu_1: Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/***/exog-p08-validate-cpu-1",
+    "skip p08_validate_gpu: already on Kaggle (COMPLETE); never re-pushed",
+    "PUSHED orchestrator_smoke: Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/***/exog-orchestrator-smoke",
+    "status p08_validate_cpu_2 (cpu): absent",
+    "status p08_validate_cpu_1 (cpu): absent",
+    "status p08_validate_gpu (gpu): COMPLETE",
+    "status orchestrator_smoke (cpu): absent"
+   ]
+  },
+  {
+   "role": "skip_while_running",
+   "run_id": 36827899550,
+   "event": "workflow_dispatch",
+   "head_sha": "1e91c08108038e206aefb942fd2109836934aaef",
+   "created_utc": "2026-10-01T07:00:49Z",
+   "conclusion": "success",
+   "html_url": "https://github.com/bytes06runner/exo_gargantua/actions/runs/36827899550",
+   "decisions": [
+    "round done: pushed=[] running={'cpu': 3, 'gpu': 0}",
+    "skip p08_validate_cpu_2: already on Kaggle (RUNNING); never re-pushed",
+    "skip p08_validate_cpu_1: already on Kaggle (RUNNING); never re-pushed",
+    "skip p08_validate_gpu: already on Kaggle (COMPLETE); never re-pushed",
+    "skip orchestrator_smoke: already on Kaggle (RUNNING); never re-pushed",
+    "status p08_validate_cpu_2 (cpu): RUNNING",
+    "status p08_validate_cpu_1 (cpu): RUNNING",
+    "status p08_validate_gpu (gpu): COMPLETE",
+    "status orchestrator_smoke (cpu): RUNNING"
+   ]
+  }
+ ]
+}

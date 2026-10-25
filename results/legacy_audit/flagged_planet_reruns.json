@@ -1,0 +1,87 @@
+{
+ "code_commit": "ac43691",
+ "runner": "scripts/legacy_audit/rerun_legacy_target.py",
+ "run_date": "2026-09-30",
+ "note": "MAST light curves not pinned; data downloaded on run_date",
+ "targets": [
+  {
+   "tic": "TIC 406941612",
+   "period": 4.678022453423758,
+   "power": 591.680961144757,
+   "lines": [
+    "Using 8 unique sector light curves (de-duplicated).",
+    "Bidirectional Validator: P=2.33907d -> Adopting P=4.67802d (multiplier 2.0)",
+    "[OVERRIDE] Secondary eclipse too strong (3.1 sigma > 3.0) -> Reclassifying as FALSE_POSITIVE"
+   ],
+   "disp": "FALSE_POSITIVE",
+   "legacy_period": 4.678022453423758,
+   "legacy_power": 591.6809629485928,
+   "catalog_period": 4.6780659,
+   "reproduced_exactly": true,
+   "override": "[OVERRIDE] Secondary eclipse too strong (3.1 sigma > 3.0) -> Reclassifying as FALSE_POSITIVE"
+  },
+  {
+   "tic": "TIC 237222864",
+   "period": 9.370094320276444,
+   "power": 76.21050203234715,
+   "lines": [
+    "Using 39 unique sector light curves (de-duplicated).",
+    "Bidirectional Validator: P=18.73785d -> Adopting P=9.37009d (multiplier 0.5)",
+    "[OVERRIDE] No hard physical vetoes triggered."
+   ],
+   "disp": null,
+   "legacy_period": 4.115632803976344,
+   "legacy_power": 36.64293332182618,
+   "catalog_period": 10.288886,
+   "reproduced_exactly": false,
+   "override": "[OVERRIDE] No hard physical vetoes triggered."
+  },
+  {
+   "tic": "TIC 120317234",
+   "period": 7.597691842049833,
+   "power": 80.85884896477921,
+   "lines": [
+    "Using 7 unique sector light curves (de-duplicated).",
+    "Bidirectional Validator: P=3.79837d -> Adopting P=7.59769d (multiplier 2.0)",
+    "[OVERRIDE] Secondary eclipse too strong (3.8 sigma > 3.0) -> Reclassifying as FALSE_POSITIVE"
+   ],
+   "disp": "FALSE_POSITIVE",
+   "legacy_period": 7.597691842049833,
+   "legacy_power": 80.85884604765572,
+   "catalog_period": 6.8834027,
+   "reproduced_exactly": true,
+   "override": "[OVERRIDE] Secondary eclipse too strong (3.8 sigma > 3.0) -> Reclassifying as FALSE_POSITIVE"
+  },
+  {
+   "tic": "TIC 36724087",
+   "period": 18.670994647493124,
+   "power": 228.73512652209408,
+   "lines": [
+    "Using 5 unique sector light curves (de-duplicated).",
+    "[OVERRIDE] Secondary eclipse too strong (4.8 sigma > 3.0) -> Reclassifying as FALSE_POSITIVE"
+   ],
+   "disp": "FALSE_POSITIVE",
+   "legacy_period": 18.670994647493124,
+   "legacy_power": 228.7351277283187,
+   "catalog_period": 0.7683904,
+   "reproduced_exactly": true,
+   "override": "[OVERRIDE] Secondary eclipse too strong (4.8 sigma > 3.0) -> Reclassifying as FALSE_POSITIVE"
+  },
+  {
+   "tic": "TIC 321669174",
+   "period": 20.00525618405554,
+   "power": 92.24062310404409,
+   "lines": [
+    "Using 26 unique sector light curves (de-duplicated).",
+    "Bidirectional Validator: P=6.38892d -> Adopting P=20.00526d (multiplier 3.0)",
+    "[OVERRIDE] No hard physical vetoes triggered."
+   ],
+   "disp": null,
+   "legacy_period": 5.320699784321495,
+   "legacy_power": 61.03033114394045,
+   "catalog_period": 10.5054362,
+   "reproduced_exactly": false,
+   "override": "[OVERRIDE] No hard physical vetoes triggered."
+  }
+ ]
+}

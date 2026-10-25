@@ -1,0 +1,78 @@
+{
+ "git_commit": "a633074796be8fc3130a3d32b037395284fb5143",
+ "seeds": {
+  "injections": 20260930,
+  "split": 20261004,
+  "subsample": 20260930
+ },
+ "hosts": 2155,
+ "injections": 21550,
+ "hosts_by_split": {
+  "fit": 969,
+  "test": 862,
+  "calib": 324
+ },
+ "hosts_by_split_and_stratum": {
+  "13-inf": {
+   "calib": 79,
+   "fit": 236,
+   "test": 210
+  },
+  "2-3": {
+   "calib": 88,
+   "fit": 264,
+   "test": 235
+  },
+  "4-6": {
+   "calib": 82,
+   "fit": 244,
+   "test": 217
+  },
+  "7-12": {
+   "calib": 75,
+   "fit": 225,
+   "test": 200
+  }
+ },
+ "injections_by_split": {
+  "fit": 9690,
+  "test": 8620,
+  "calib": 3240
+ },
+ "injections_by_class": {
+  "planet": 12876,
+  "eb_unequal": 3274,
+  "eb_twin": 3263,
+  "eb_ecc": 2137
+ },
+ "injections_by_seed_r": {
+  "1/5": 1960,
+  "3": 1959,
+  "3/2": 1959,
+  "5": 1959,
+  "1/4": 1959,
+  "4": 1959,
+  "1/2": 1959,
+  "2/3": 1959,
+  "2": 1959,
+  "1": 1959,
+  "1/3": 1959
+ },
+ "injections_by_n_sectors": {
+  "1": 5800,
+  "2": 5783,
+  "3": 2841,
+  "4": 2162,
+  "5": 1107,
+  "6": 966,
+  "7": 953,
+  "8": 793,
+  "9": 615,
+  "10": 530
+ },
+ "no_host_in_two_splits": true,
+ "subsample": {
+  "n": 2000,
+  "all_test": true
+ }
+}

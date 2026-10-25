@@ -1,0 +1,81 @@
+{
+ "git_commit": "5e9c9b0878fc20917f260443679eae7fad435dea",
+ "sample": "TESS Sector 49, all SPOC 120-s light curves in the frozen listing",
+ "pinned": 19999,
+ "light_curves_with_bls": 19997,
+ "light_curves_with_resolver": 19997,
+ "complete_pipeline": 19997,
+ "failures": {
+  "bls_stage": 0,
+  "resolver_stage": 0
+ },
+ "per_light_curve": {
+  "load": {
+   "n": 19997,
+   "median_s": 0.08699297904968262,
+   "p95_s": 0.18114514350891114,
+   "max_s": 7.046154022216797
+  },
+  "prepare": {
+   "n": 19997,
+   "median_s": 0.3882458209991455,
+   "p95_s": 0.5335844993591309,
+   "max_s": 9.971014738082886
+  },
+  "gpu_bls": {
+   "n": 19997,
+   "median_s": 1.013845443725586,
+   "p95_s": 1.0932721138000487,
+   "max_s": 2.5710747241973877
+  },
+  "resolver": {
+   "n": 19997,
+   "median_s": 3.120073080062866,
+   "p95_s": 5.465617513656616,
+   "max_s": 25.223236560821533
+  },
+  "total": {
+   "n": 19997,
+   "median_s": 4.558391094207764,
+   "p95_s": 6.983494138717652,
+   "max_s": 37.933475971221924
+  }
+ },
+ "hardware": {
+  "resolver": {
+   "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+   "cpu": "x86_64",
+   "cpu_count": 4,
+   "cpu_model": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+  },
+  "bls": {
+   "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+   "cpu": "x86_64",
+   "cpu_count": 4,
+   "cpu_model": "Intel(R) Xeon(R) CPU @ 2.00GHz",
+   "gpu": "Tesla T4"
+  }
+ },
+ "workers": {
+  "resolver": 4,
+  "bls": 1
+ },
+ "stage_wall_h": {
+  "resolver_0": 1.27,
+  "bls_1": 2.1,
+  "bls_2": 2.1,
+  "resolver_3": 1.21,
+  "resolver_4": 1.16,
+  "bls_5": 1.86,
+  "bls_6": 1.87,
+  "resolver_7": 1.21
+ },
+ "tls_quoted_from_B2": {
+  "n": 1198,
+  "median_s": 11.840220332145691,
+  "p95_s": 390.20528441667494,
+  "max_s": 1767.2260959148407,
+  "hardware": "Kaggle CPU session, 4 cores, TLS use_threads=4",
+  "note": "early-sector B2 light curves (1-13 sectors), not Sector 49 single-sector light curves"
+ }
+}
