@@ -9,7 +9,8 @@
      accuracy; two-sample KS tests.
   D. B3 go/no-go: among B2 TOIs where v2 confidently disagrees (> 0.1 %) with a SPOC period (SPOC-1, SPOC-E,
      SPOC-hist) or with the current ExoFOP TOI period, how often is v2 right (n, precision, Wilson 95 %)?
-Guarded by both freeze tags. Output: results/b2_posthoc_report.json.
+Guarded by both freeze tags. Output: results/b2_posthoc_report.json and results/b2_per_target.csv (per TOI: sectors,
+seed and resolver periods, seed SNR and depth, correctness).
 """
 
 from __future__ import annotations
@@ -73,7 +74,8 @@ def main():
         Pt = float(log.loc[toi, "truth_period"])
         seeds = r["seeds"]
         run = r["runs"].get(f"{seeds['tls']:.10g}") if seeds.get("tls") else None
-        row = {"toi": toi, "tier": tier, "n_sectors": len(str(log.loc[toi, "sectors_early"]).split(";")), "P_true": Pt,
+        row = {"toi": toi, "tic": int(r["tic"]), "tier": tier, "sectors_early": str(log.loc[toi, "sectors_early"]),
+               "n_sectors": len(str(log.loc[toi, "sectors_early"]).split(";")), "P_true": Pt,
                "tls_sde": float(tls.loc[toi, "tls_sde"]) if toi in tls.index else np.nan,
                "bls_power": float(bls.loc[toi, "bls_power_max"]) if toi in bls.index else np.nan,
                "P_current": cur_period.get(round(float(toi), 2), np.nan)}
@@ -90,6 +92,9 @@ def main():
                         "snr_seed": seed_row["x"].get("snr_all"), "depth_seed": seed_row["x"].get("depth")})
         rows.append(row)
     d = pd.DataFrame(rows)
+    cols = ["toi", "tic", "tier", "sectors_early", "n_sectors", "P_true", "P_tls", "tls_sde", "P_bls", "P_spoc1", "P_spocE",
+            "P_spoc_hist", "P_current", "P_ours", "conf", "snr_seed", "depth_seed", "ok_tls", "ok_bls", "ok_spoc1", "ok_ours"]
+    d[cols].sort_values("toi", key=lambda c: c.astype(float)).to_csv(ROOT / "results" / "b2_per_target.csv", index=False)
     rep = {"label": "POST HOC (not pre-registered)", "resolver_frozen_v1": t1, "resolver_frozen_v2": t2, "n": int(len(d)),
            "v2_threshold": thr}
 
