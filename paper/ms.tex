@@ -1,0 +1,280 @@
+%% Exo-Gargantua v2 manuscript (AASTeX 7, AJ).
+%% Every result number is a macro from generated_macros.tex, written by scripts/make_paper_assets.py
+%% from the committed results/*.json files. Do not type result numbers into this file.
+\documentclass[linenumbers]{aastex701}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\input{generated_macros}
+
+\newcommand{\Pz}{P_0}
+\newcommand{\Vone}{v1}
+\newcommand{\Vtwo}{v2}
+
+\shorttitle{Calibrated Period-Alias Resolution for TESS}
+\shortauthors{Banerjee}
+
+\begin{document}
+
+\title{Resolving Orbital-Period Aliases in TESS Transit and Eclipse Signals with Calibrated Probabilities: Benchmarks on Eclipsing Binaries, Injections, and a TOI Temporal Holdout}
+
+\author[0009-0009-5889-9550]{Srijeet Prasad Banerjee}
+\email{srijeetprasadbanerjee006@gmail.com}
+\affiliation{Department of Information Technology, Guru Nanak Institute of Technology \\
+157/F Nilgunj Road, Panihati \\
+Kolkata, West Bengal 700114, India}
+
+\begin{abstract}
+Transit and eclipse searches of gapped TESS photometry sometimes return a period that is a simple multiple or fraction of the true one. Eclipsing binaries with similar primary and secondary eclipses are the most common case, because folding at half the orbital period stacks the two eclipses on top of each other. We present a resolver that takes a light curve and a seed period from any search, refines eleven alias hypotheses between $\Pz/5$ and $5\Pz$, scores each with six likelihood terms (predicted-epoch coverage, odd/even depth, a secondary eclipse at any phase, stellar density, ephemeris coherence, and the shape of alternating events), and returns calibrated alias probabilities with an option to abstain. The combiner was trained and calibrated on injected signals only, and every benchmark was specified before it was run and scored after the resolver was frozen. On \bFiveN\ eclipsing binaries from the TESS eclipsing-binary catalog, using only the first year of 2-minute data, the resolver seeded by Transit Least Squares (TLS) returns the catalog period for a fraction \bFiveAcc\ of systems, compared with \bFiveRawTls\ for the TLS peak and \bFiveRawBls\ for the Box Least Squares (BLS) peak (exact McNemar $p\bFiveMcTlsP$ and $p\bFiveMcBlsP$). Fits to later sectors of the \auditN\ binaries where the resolver and the catalog disagree favor the resolver period in \auditVtwo\ cases and the catalog period in \auditCat; we release both lists. On a temporal holdout of \bTwoN\ TESS Objects of Interest with independent truth, the resolver is comparable to TLS and BLS (\bTwoAcc\ against \bTwoRawTls\ and \bTwoRawBls) and misses its pre-registered criterion. On scrambled light curves it reports a confident period for \faScrVtwo\% of targets, so it is not a false-alarm filter and should follow signal vetting. A full sector of \bFourN\ light curves is processed at a median of \bFourTotalMed\,s per light curve.
+\end{abstract}
+
+\keywords{\uat{Exoplanet detection methods}{489}, \uat{Transit photometry}{1709}, \uat{Eclipsing binary stars}{444}, \uat{Astronomy data analysis}{1858}, \uat{Astrostatistics}{1882}}
+
+%% ======================================================================
+\section{Introduction} \label{sec:intro}
+
+The Transiting Exoplanet Survey Satellite \citep[TESS;][]{Ricker2015} observes most of the sky in 27-day sectors, each split into two spacecraft orbits by a data downlink. Periodic transit and eclipse signals in the 2-minute light curves are found by the Science Processing Operations Center (SPOC) pipeline \citep{Jenkins2016}, by the Quick-Look Pipeline \citep[QLP;][]{Huang2020a,Huang2020b} on full-frame images, and by many community searches. The period reported with a detection comes from the search: the trial period with the strongest box or transit-model response. When a target has been observed for only one or a few sectors, that period is often an alias of the true one. TOI periods are later revised as more sectors arrive \citep{Guerrero2021}, and the catalogs that collect ephemerides for follow-up have to track such revisions \citep{Dragomir2020,Kostov2025}.
+
+Period aliases in transit data have several origins. A planet observed in one sector may show two transits, which fix $P$ only up to the possibility that a third transit fell in the mid-sector gap ($P/2$). A search over a gapped baseline can lock onto $2P$ or $3P$ when the in-transit points at the true period are thin. An eclipsing binary (EB) whose primary and secondary eclipses have similar depths produces a single train of dips at half the orbital period; \citet{Twicken2018} note for Kepler Data Validation that the correct period of such a binary is twice the reported one. Visual inspection of TESS full-frame image candidates found that a substantial number of TOIs not recovered by an automated search were sitting at $2P$, $P/2$, $3P$ or $P/3$ of the catalog period \citep{Lafarga2026}. A wrong period wastes follow-up time on predicted transits that do not occur, puts an EB into the wrong period bin of population studies, and gives vetting classifiers mislabeled training examples \citep{Valizadegan2025}.
+
+Existing tools treat aliases with diagnostics and rules. SPOC Data Validation reports odd/even depth, weak-secondary and related statistics for every threshold-crossing event \citep{Twicken2018,Li2019}. The Kepler Robovetter flags period aliases \citep{Coughlin2016,Thompson2018}. \citet{Tschudi2026a} added a rule-based harmonic correction to a TLS search of M dwarfs that tests equal-depth secondaries, odd/even differences and transit counts and re-runs the search at shorter periods. For long periods with only two transits, alias sets are enumerated and ranked with stellar density and the observing window \citep{Cooke2021,Osborn2022,Hawthorn2024}. These methods decide or flag; they do not return a probability for each alias that has been checked against independent truth.
+
+This paper describes a resolver that does that for short-period signals ($0.5$--$30$\,d) with at least two observed events. Its input is a light curve and a seed period from any search. Its output is a probability for each member of a fixed alias family, the refined period of each member, and an abstain flag when no alias is probable enough. The individual tests it uses are standard and are cited where they are introduced (Section~\ref{sec:method}); what we add is their combination into calibrated alias probabilities and a set of benchmarks against independent truth. The resolver assumes that the signal it is given is a real periodic astrophysical signal. It does not test that assumption, and Section~\ref{sec:fa} shows that it should not be used for that purpose. In practice it would run after a search and after vetting tools such as LEO-Vetter \citep{Kunimoto2025leo} or ExoMiner++ \citep{Valizadegan2025}, as a check on the period of signals that have already been judged astrophysical. It works on signals that SPOC, QLP and other searches have already found and does not replace any part of those pipelines.
+
+We test the resolver on four benchmarks, each specified in a committed protocol before its data were analysed (Section~\ref{sec:prereg}): injected signals in real light curves (B1), TESS eclipsing binaries with catalog periods (B5), a temporal holdout of TOIs with periods from the NASA Exoplanet Archive or the EB catalog (B2), and inverted and scrambled light curves for false alarms. We also measure run time on a full sector (B4). The B5 criterion is met, the B1 calibration criterion is met for wrong-alias seeds but not for search seeds, and the B2 and false-alarm criteria are missed. All are reported. Section~\ref{sec:related} reviews related work, Section~\ref{sec:data} the data and samples, Section~\ref{sec:method} the resolver, Section~\ref{sec:bench} the benchmarks, and Section~\ref{sec:limits} the limitations. Appendix~\ref{app:amend} lists every change made to the protocol after it was first committed.
+
+%% ======================================================================
+\section{Related Work} \label{sec:related}
+
+\subsection{Searches and pipelines}
+
+SPOC light curves are corrected for instrumental systematics by Presearch Data Conditioning (PDC), which fits cotrending basis vectors derived from the ensemble of stars on each detector \citep{Smith2012,Stumpe2012}. The Transiting Planet Search module applies a noise-compensating adaptive matched filter to the PDC light curves of single sectors and of multi-sector stretches \citep{Jenkins2002,Jenkins2010,Jenkins2016}, and Data Validation fits a limb-darkened transit model to each threshold-crossing event (TCE) and computes diagnostics, including odd/even depth, weak-secondary, centroid and difference-image tests \citep{Twicken2018,Li2019}. QLP extracts photometry from full-frame images and searches it with BLS \citep{Huang2020a,Huang2020b,Kunimoto2021,Kunimoto2022}, with a GPU implementation of its search since Sector 59 \citep{Kunimoto2023qlp}. Before candidates are released as TOIs, the TESS Science Office triages QLP signals with neural-network classifiers of the AstroNet family \citep{Yu2019,Tey2023} and SPOC signals with the TESS Exoplanet Classifier, as described by \citet{Guerrero2021}.
+
+BLS \citep{Kovacs2002} fits a box-shaped dip at each trial period, phase and duration; TLS \citep{Hippke2019tls} replaces the box with a limb-darkened transit shape and normalizes its detection statistic, the signal detection efficiency (SDE), on a running-median-detrended spectrum. Both are time-domain searches over a grid of trial periods. We use them as seed generators and as baselines, together with the wotan detrending library \citep{Hippke2019wotan}.
+
+\subsection{Vetting and false alarms}
+
+Vetting decides whether a periodic signal is a planet, an astrophysical false positive, or a false alarm from noise or systematics. The Kepler Robovetter \citep{Coughlin2016,Thompson2018} measured its false-alarm rejection on inverted and scrambled light curves, a design we adopt in Section~\ref{sec:fa}. LEO-Vetter applies flux- and pixel-level tests to TESS candidates for occurrence-rate work \citep{Kunimoto2025leo}. ExoMiner and ExoMiner++ are deep-learning classifiers of SPOC TCEs \citep{Valizadegan2022,Valizadegan2025}, and ExoMiner++ 2.0 extends this to full-frame-image signals \citep{Martinho2026}. Other approaches include convolutional classifiers \citep{Shallue2018,Fiscale2025,DevoraPajares2025}, probabilistic validation \citep{Giacalone2021}, Bayesian classifiers trained on injected planets and false-positive scenarios \citep{Hadjigeorghiou2025}, centroid analysis \citep{Bryson2013,Kostov2019}, and independent searches with permutation-based false-alarm probabilities \citep{Ivashtenko2025,Robnik2026}. These tools answer whether a signal is a planet. The resolver answers a different question, which period a signal that is already accepted as real has, and its output can be passed to them.
+
+\subsection{Period aliases}
+
+The closest prior work is the harmonic correction of \citet{Tschudi2026a}, applied to TOI hosts by \citet{Tschudi2026b}. It tests specific alternatives ($2P$, $3P$, $P/2$) with fixed thresholds on equal-depth secondaries, odd/even differences and transit counts, plus an observed-minus-calculated coherence check, and was tuned for M dwarfs. We run it as a baseline (Section~\ref{sec:baselines}). For long-period signals with two transits separated by a large gap, the alias set is a list of $\sim$tens of discrete periods, and stellar density, the observing window and targeted follow-up are used to rank them \citep{Cooke2019,Cooke2021,Osborn2022,Hawthorn2024,Bass2025}; that regime is outside our period range. \citet{Prsa2022} describe TESS EBs whose period is ambiguous between $P$ and $P/2$ when the two eclipses are nearly identical, and \citet{Kostov2025} provide updated EB ephemerides. \citet{Lissauer2024} catalogued Kepler period accuracy, and \citet{Boyle2026} trained a classifier for half-period aliases in stellar rotation periods, a different signal class.
+
+\subsection{Calibration and abstention}
+
+A probability is calibrated if, among all cases assigned probability $p$, a fraction $p$ is correct. We use temperature scaling \citep{Guo2017} and isotonic regression \citep{Zadrozny2002}, measure calibration with the expected calibration error (ECE), and use a reject option \citep{Chow1970} so that the resolver can decline to choose. The learned combiner is a gradient-boosted tree ensemble \citep{Friedman2001,Pedregosa2011}.
+
+%% ======================================================================
+\section{Data and Samples} \label{sec:data}
+
+\subsection{Light curves and searches} \label{sec:lc}
+
+All benchmarks use SPOC 2-minute light curves \citep{Jenkins2016,TESSdataDOI}. We use the PDCSAP flux \citep{Smith2012,Stumpe2012}, remove cadences with the \texttt{lightkurve} \texttt{default} quality bitmask, and normalize each sector by its median. A sector is dropped if fewer than half of its cadences remain. The exact product files of every target were fixed by name before any light curve was downloaded and are listed in the released sample logs, so that later MAST reprocessing cannot change the input. Searches run on the light curve detrended with a wotan biweight filter of window 0.75\,d and break tolerance 0.5\,d \citep{Hippke2019wotan}, binned to 10 minutes, over periods from 0.5\,d to the smaller of 30\,d and 0.95 times the data span. BLS uses the \texttt{astropy} implementation \citep{Astropy2022} with the \texttt{autoperiod} frequency grid (at least two transits), durations from 0.04 to 0.30\,d and the likelihood objective; a GPU implementation that reproduces its peak periods within one grid step on the validation targets is used for the large runs (amendment A2). TLS 1.32 uses its default grid with stellar radius and mass from the TESS Input Catalog \citep[TIC;][]{Stassun2019}. The ``raw BLS peak'' and ``raw TLS peak'' are the periods these searches return.
+
+\subsection{Pre-registration and freezing} \label{sec:prereg}
+
+The sample rules, truth definitions, baselines, success criteria and analysis of each benchmark were committed to the public repository before the corresponding light curves were downloaded or scored. Selection scripts write every inclusion and exclusion, with its reason, time stamp and code version, to a log. The B1 test split and the B2 holdout were sealed until the resolver was frozen: the scoring code refuses to run unless a git tag marking the frozen resolver exists and the resolver files at that tag, at the current commit and in the working tree are identical. Two tags exist, \texttt{resolver-frozen-v1} and \texttt{resolver-frozen-v2} (Section~\ref{sec:calib}). The B5 benchmark and the false-alarm test were specified after the B1 and B2 results were known; they were pre-registered before their own data were analysed, and we say so wherever they are discussed. Every change to a protocol after its commit is listed in Appendix~\ref{app:amend}. Analyses not in a protocol are labeled post hoc. Table~\ref{tab:samples} summarizes the samples.
+
+\input{tables/samples}
+
+\subsection{B1: injections into quiet stars} \label{sec:b1data}
+
+Injection hosts are stars with 2-minute data in at least two sectors that are not TOI or community TOI hosts, have no SPOC TCE, are not in the EB catalogs of \citet{Prsa2022} or \citet{Kostov2025}, are not flagged as variable in Gaia DR3 and have RUWE below 1.4 \citep{GaiaDR3}, have $3200 \le T_{\rm eff} \le 7000$\,K, $\log g \ge 4.0$ and $7 \le T \le 13$ in the TIC, and have a crowding metric of at least 0.9 in every sector used. Of \poolFrozen\ stars drawn at random in four strata of sector count, \poolPseven\ failed the crowding rule. The remaining stars were searched without injections, and a star was excluded if the search gave SDE\,$\ge$\,9 on the data its injections would use. SDE was computed with TLS's own statistics code on the BLS $\chi^2$ spectrum read at TLS's trial periods (amendment A6). This left \poolScreened\ hosts; under the originally specified SDE of the raw BLS spectrum it would have left \poolScreenedRaw.
+
+Each host received 10 injections (\bOneInj\ in total) with period log-uniform in 0.5--30\,d, depth log-uniform in 200\,ppm--5\%, impact parameter uniform in 0--0.95 and one to ten sectors of data within one year. Sixty percent are planets modeled with \texttt{batman} \citep{Kreidberg2015} and quadratic limb darkening \citep{Claret2017}; the rest are EBs with equal eclipses at phases 0 and 0.5 (15\%), unequal eclipses (15\%), or eccentric orbits with displaced secondaries (10\%). Hosts were split, so that no star appears in two parts, into a fit set (\bOneHostsFit\ hosts, \bOneInjFit\ injections) for training the learned combiner, a calibration set (\bOneHostsCalib\ hosts, \bOneInjCalib\ injections) for its temperature and abstain threshold, and a test set (\bOneHostsTest\ hosts, \bOneInjTest\ injections). In B1(i) the resolver is seeded with a wrong period $r P_{\rm true}$, with $r$ drawn uniformly from the alias set of Section~\ref{sec:hyp} (including $r=1$). In B1(ii), 2{,}000 test injections drawn before any run were searched with BLS and TLS and the resolver was seeded with each search's peak.
+
+\subsection{B5: TESS eclipsing binaries} \label{sec:b5data}
+
+B5 uses the TESS EB catalog of \citet{Prsa2022} (\bFiveCatRows\ rows). An EB was eligible if it has 2-minute data in at least two sectors, a single catalog signal with $0.5 \le P \le 30$\,d, data both in its first year (the early window) and later, and is neither a B2 host nor an injection host; \bFiveCands\ EBs qualified and \bFiveIncluded\ were drawn at random, a cap fixed in the protocol. Only the early-window light curve is given to the searches and to the resolver. An EB is scored if the catalog ephemeris predicts at least two primary eclipses in the early window with at least half of their cadences present; \bFiveHthreeFail\ failed this check. The truth is the catalog period. Following our pre-registered proxy for the catalog's period ambiguity, EBs whose primary and secondary depths differ by less than 10\% with the secondary within 0.02 of phase 0.5 are set aside as ``B-amb'' (\bFiveAmbN\ systems) and reported separately; the primary sample is the remaining \bFiveN.
+
+\subsection{B2: TOI temporal holdout} \label{sec:b2data}
+
+B2 uses TOIs from the ExoFOP table of 2026 September 30 with 2-minute data in at least two sectors and $0.5 \le P \le 30$\,d. A TOI receives Tier~A truth if it matches a NASA Exoplanet Archive planet on the same star in period (up to an alias factor) and epoch and that planet's period has a fractional error below $10^{-3}$, and Tier~B truth if it matches an EB in the catalog of \citet{Prsa2022} in the same way. TOIs dispositioned as confirmed or known planets take truth from the Exoplanet Archive only (amendment A3), and B-amb EBs are excluded. Each TOI's input is its first year of pinned sectors; it is scored if the truth ephemeris predicts at least two transits there and later sectors exist. Of \bTwoCands\ candidates, \bTwoN\ form the primary sample (\bTwoNA\ planets, \bTwoNB\ EBs). The released per-target table (Appendix~\ref{app:data}) gives each TOI's early sectors, sector count, the signal-to-noise ratio of the seed signal as measured by the resolver, and every method's period.
+
+\subsection{Baselines} \label{sec:baselines}
+
+All methods are scored on the same targets and the same early-window data. Besides the raw BLS and TLS peaks we use: the harmonic correction of \citet{Tschudi2026a}, run through a thin adapter on the same TLS result, with its built-in list of known planets emptied and all thresholds at their M-dwarf defaults; the period of the SPOC TCE matched to the TOI from the single-sector search of its first early sector (SPOC-1) and from the longest multi-sector search inside its early window (SPOC-E); and the QLP and SPOC periods in the published TOI catalog of \citet{Guerrero2021} when that entry used only early-window sectors (QLP-hist, SPOC-hist). A method that gives no period for a target is counted as wrong; we also report its accuracy where it gives one.
+
+%% ======================================================================
+\section{Method} \label{sec:method}
+
+\subsection{Alias hypotheses} \label{sec:hyp}
+
+The alias set is $R = \{1/5, 1/4, 1/3, 1/2, 2/3, 1, 3/2, 2, 3, 4, 5\}$. For a seed period $\Pz$ and seed epoch $t_0$, a hypothesis $(r, j)$ with $r=a/b$ places events at
+\begin{equation}
+t_m = t_0 + j\,\Pz + m\,r\,\Pz, \qquad j = 0, \ldots, a-1,
+\end{equation}
+so that every hypothesis keeps the seed's reference event; for $r=2$, for example, the events are either the even or the odd seed events. This gives 24 hypotheses. When only $\Pz$ is given, $t_0$ and the duration $T$ come from a box matched filter at $\Pz$. Because a true period is rarely an exact rational multiple of a noisy seed, each hypothesis is refined: a grid search over period (within a phase drift of $T$ across the baseline) and epoch (within $T/2$), followed by a least-squares trapezoid fit with free depth, $T$, ingress time $\tau$, period and epoch. Among grid points within 0.5 in log-likelihood of the best, the one closest to $r\Pz$ is kept, and the period is held fixed when fewer than two events are covered (amendment R1).
+
+\subsection{Noise model}
+
+Inside the resolver the light curve is detrended with a wotan biweight of window $\max(0.75\,{\rm d}, 3T)$ so that the event is not absorbed. The white noise is $1.4826$ times the median absolute deviation, and a red-noise factor $\beta$ is estimated by binning on the event time scale \citep{Pont2006}, with the densest candidate ephemeris masked. Each event $n$ has a fitted depth $d_n$ with error
+\begin{equation}
+s_n^2 = \sigma_n^2 + (\epsilon \max(d_n,0))^2, \qquad \epsilon = 0.05,
+\end{equation}
+where $\sigma_n$ is the photometric error of the depth including $\beta$. The second term represents event-to-event variability and the mismatch between a trapezoid and a limb-darkened eclipse. Without it, at high signal-to-noise ratio, likelihood differences of order $10^5$ between nested models are driven by sub-percent fit differences, and equal-depth binaries switch between aliases with probability near one either way. Because the term scales with each event's own depth, it is the same for every hypothesis that predicts that event, and flat epochs keep their full precision. The value of $\epsilon$ was fixed before any benchmark was run.
+
+\subsection{Evidence terms} \label{sec:features}
+
+Each term is a log-likelihood ratio against a reference shared by all hypotheses of a target.
+
+\emph{F1, predicted-epoch coverage.} Every predicted event with at least half of its in-transit cadences present is fitted for depth with the hypothesis' shape fixed. With $S_g = \sum_{n\in g} d_n/s_n^2$ and $W_g = \sum_{n\in g} 1/s_n^2$ over the odd and even events $g$,
+\begin{equation}
+F_1 = \sum_{g} \tfrac{1}{2}\max(S_g,0)^2 / W_g ,
+\end{equation}
+the likelihood ratio of a non-negative depth at every predicted event against no events. A $P/k$ alias predicts events where the data are flat, which lowers $S_g/\sqrt{W_g}$; a $kP$ alias leaves real events unexplained.
+
+\emph{F2, odd/even depth.} $F_2 = \ell_{\rm common} - \ell_{\rm parity} \le 0$, the difference between the likelihood ratio with one common depth and with separate odd and even depths. $F_1+F_2$ is exactly the common-depth likelihood ratio, and $\sqrt{-2F_2}$ is the odd/even significance in the convention of SPOC DV \citep{Twicken2018}. This term separates $P/2$ from $P$ for binaries with unequal eclipses.
+
+\emph{F3, secondary eclipse.} After subtracting the primary model, the folded residuals outside the primary window are searched over all phases with durations $T/2$, $T$ and $2T$, and the strongest event is refined. Its Bayes factor $B$ combines the profile likelihood of a common secondary depth, an Occam factor for a uniform depth prior, and a phase prior that is half uniform and half concentrated near phase 0.5. The term is $F_3 = \ln(\tfrac{1}{2} + \tfrac{1}{2}B)$. Under a $2P$ hypothesis for an equal-depth binary seen at $P$, the alternate events appear as a secondary of equal depth at phase 0.5.
+
+\emph{F4, stellar density.} Monte Carlo draws of stellar density from the TIC (log-normal, with an error floor of 10\%), impact parameter, and eccentricity from the distribution of \citet{Kipping2013ecc} with uniform argument of periastron give predicted durations $T_{14}$ and ingress times for each hypothesis through Kepler's third law \citep{Seager2003,Winn2010,Kipping2010}. The term is the log of the mean over draws of $\mathcal{N}(T_{\rm obs}; T_{14}, \sigma_T)\,\mathcal{N}(\tau_{\rm obs}; \tau, \sigma_\tau)$. It is zero for all hypotheses when the TIC has no stellar parameters.
+
+\emph{F5, ephemeris coherence.} Mid-times of events detected individually at depth SNR\,$\ge$\,3 are measured by matched filter, with errors from \citet{Carter2008}, and fitted with a linear ephemeris; $F_5$ compares the residuals under a coherent ephemeris with those under an incoherent one of width $T/4$. It penalizes hypotheses whose events do not line up across sector gaps.
+
+\emph{F6, shape of alternating events.} Separate trapezoid fits to odd and even events give $F_6 = -\tfrac{1}{2}\chi^2$ of their differences in duration and $\tau/T$. It detects binaries whose alternating eclipses differ in shape even when their depths agree.
+
+\subsection{Combiners} \label{sec:combine}
+
+The principled combiner adds the six terms to a prior that is uniform over $r$ and then over the offsets $j$, and normalizes over hypotheses. F1 and F2 are an exact split of the per-event depth likelihood, and F3 uses data disjoint from them, but F4 and F6 share fitted shape parameters with the depth fit, so the terms are only approximately independent. For equal-depth binaries the photometric likelihoods of $\Pz$ and $2\Pz$ are nearly equal, and the depth prior of F3 then favors $\Pz$.
+
+The learned combiner is a gradient-boosted classifier \citep{Friedman2001} in \texttt{scikit-learn} \citep{Pedregosa2011} with fixed hyper-parameters and seed. It sees one row per alias (the most probable offset), with the six terms and the principled log-posterior relative to the target's best hypothesis, the descriptors behind each term (coverage, odd/even depths, secondary depth ratio, phase and duration ratio, implied density, timing scatter, shape ratios), and $\log_{10}P$. The seed-relative factor $r$ is withheld, so that the classifier cannot learn the seed distribution of its training data. The label is whether the refined period is within 0.1\% of the true period. Per-target probabilities are a softmax of the classifier scores divided by a temperature fitted on the calibration split \citep{Guo2017}, $T=\tempVone$. The combiner was trained on the \bOneInjFit\ fit injections only.
+
+\subsection{Calibration, abstention and the two frozen versions} \label{sec:calib}
+
+The resolver abstains when the largest alias probability is below a threshold. For each combiner the threshold is the smallest value in $0.50, 0.51, \ldots, 0.99$ at which the non-abstained calibration injections are at least 95\% correct (0.99 if none is). This gave \thrVoneLearned\ for the learned and \thrVonePrincipled\ for the principled combiner. This version (\Vone) was frozen before any test or holdout truth was read.
+
+On the B1 test split, \Vone\ was well calibrated with wrong-alias seeds but overconfident with real search seeds (Section~\ref{sec:b1}). Before the B2 holdout was opened, we therefore fitted a second calibration map (\Vtwo), changing nothing else. It was fitted on \vtwoCalRuns\ new resolver runs, seeded by BLS and TLS searches of fresh injections into training-split hosts. A diagnostic on these runs showed where the miscalibration came from. In \calTruthAbsentFrac\% of the runs none of the alias candidates contained the true period, because the search had locked onto an unrelated peak, and \Vone\ still gave a mean top probability of \calTruthAbsentConf\ there. Where the truth was among the candidates, the ECE of \Vone\ was \calEceTruthIn. A refitted temperature did not fix this. Two-fold cross-validation split by host gave a held-out ECE of \cvEceTempTruth\ for the temperature refit as originally specified, \cvEceTempAll\ for a temperature fitted on all runs, and \cvEceIso\ for isotonic regression of the top probability \citep{Zadrozny2002}. We adopted the isotonic map (amendment V2-f). The other aliases are rescaled and capped below the calibrated top probability, so that \Vtwo\ always chooses the same alias as \Vone\ and differs only in its stated confidence. The \Vtwo\ abstain threshold, chosen with the same rule, is \thrVtwoLearned. Because \Vtwo\ was defined after the B1 test results of \Vone\ were known, its B1 calibration is post hoc. It was frozen before B2, B5 and the false-alarm test were run, and it is the primary version for those benchmarks.
+
+%% ======================================================================
+\section{Benchmarks} \label{sec:bench}
+
+A period is correct if it is within 0.1\% of the true period; $2P$, $P/2$ and every other alias are wrong. Accuracy is the fraction of targets with a correct top-ranked period, with Wilson 95\% intervals \citep{Wilson1927}. Methods are compared on the same targets with the exact two-sided McNemar test \citep{McNemar1947}; we write the discordant pairs as $a/b$, where $a$ targets are correct only for the resolver and $b$ only for the other method. ECE uses ten equal-width bins of the top probability. Unless stated otherwise, ``the resolver'' is the learned combiner, accuracy is without abstention, and abstention is reported separately.
+
+\subsection{B1: injection recovery} \label{sec:b1}
+
+Table~\ref{tab:b1} gives the B1 test results. From wrong-alias seeds, of which only \bOneWSeed\ are already correct (the $r=1$ cases), the resolver recovers the true period for \bOneWAcc\ \bOneWAccCI\ of \bOneWN\ injections. Its \Vone\ ECE is \bOneWEceVone, which meets the pre-registered criterion of ECE\,$<$\,0.05, and its accuracy at 90\% coverage is \bOneWAccNinety. Accuracy varies between \bOneAliasMin\ and \bOneAliasMax\ across the eleven seed factors (Figure~\ref{fig:b1}). Equal-depth EB twins are the hardest class (\bOneTwinAcc, against \bOnePlanetAcc\ for planets); the principled combiner, which cannot separate twins (Section~\ref{sec:combine}), reaches \bOneTwinPr\ on them and \bOneWPr\ overall, and the learned combiner is better on the same injections with $p\bOneLearnVsPrP$. Accuracy also depends on the number of covered events: \bOneEpochFew\ with at most one event in the data and \bOneEpochMany\ with four or more.
+
+From real search seeds the picture is less favorable. The BLS and TLS peaks are correct for \bOneBSeed\ and \bOneTSeed\ of the 2{,}000 searched injections; the resolver raises this to \bOneBAcc\ \bOneBAccCI\ and \bOneTAcc\ \bOneTAccCI\ (discordant pairs \bOneBMcFix/\bOneBMcBreak\ and \bOneTMcFix/\bOneTMcBreak, $p\bOneBMcP$ and $p\bOneTMcP$). The ceiling, the fraction of injections where any of the refined candidates is correct, is \bOneBCeil\ and \bOneTCeil: in the remaining cases the search locked onto a period unrelated to the true one by any factor in $R$, and no choice among aliases can help. The \Vone\ ECE with search seeds is \bOneBEceVone\ (BLS) and \bOneTEceVone\ (TLS), so \Vone\ misses the ECE criterion there. The post hoc \Vtwo\ map gives \bOneBEceVtwo\ and \bOneTEceVtwo, abstains on \bOneBAbstVtwo\% and \bOneTAbstVtwo\% of these injections, and is \bOneBNaVtwo\ and \bOneTNaVtwo\ correct where it answers. On wrong-alias seeds, which are outside the data it was fitted on, \Vtwo\ has ECE \bOneWEceVtwo.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.62\textwidth]{figures/fig_b1_alias.pdf}
+\caption{B1(i): resolver accuracy on the \bOneWN\ test injections by the factor between the seed period and the true period, with Wilson 95\% intervals. The $r=1$ point is the case where the seed is already correct.}
+\label{fig:b1}
+\end{figure}
+
+\input{tables/b1}
+
+\subsection{B5: eclipsing binaries} \label{sec:b5}
+
+B5 is the main result of this paper. It was pre-registered after the B1 and B2 results were known, with the success criterion that the TLS-seeded \Vtwo\ resolver beat both the raw TLS and the raw BLS peak with McNemar $p<0.01$. Table~\ref{tab:b5} shows that the criterion is met. On the \bFiveN\ primary EBs the resolver returns the catalog period for \bFiveAcc\ \bFiveAccCI, compared with \bFiveRawTls\ \bFiveRawTlsCI\ for TLS and \bFiveRawBls\ \bFiveRawBlsCI\ for BLS. Against TLS it corrects \bFiveMcTlsFix\ periods and breaks \bFiveMcTlsBreak\ ($p\bFiveMcTlsP$); against BLS the counts are \bFiveMcBlsFix\ and \bFiveMcBlsBreak\ ($p\bFiveMcBlsP$). Seeded with the BLS peak, it reaches \bFiveAccBlsSeed. The ceiling is \bFiveCeil: for \bFiveCeilMiss\ of the binaries no candidate was correct, and for a further \bFiveChoiceErr\ the correct period was among the candidates but another was chosen.
+
+The gain depends on period (Figure~\ref{fig:b5}). For periods of 1--3\,d and 3--10\,d the resolver reaches \bFiveOneThreeAcc\ and \bFiveThreeTenAcc, where TLS reaches \bFiveOneThreeTls\ and \bFiveThreeTenTls\ and BLS \bFiveOneThreeBls\ and \bFiveThreeTenBls. Below 1\,d the BLS peak is already correct for \bFiveShortBls\ of the \bFiveShortN\ binaries and the resolver (\bFiveShortAcc) does not improve on it ($p\bFiveShortP$); above 10\,d (\bFiveLongN\ binaries) the resolver reaches \bFiveLongAcc\ against \bFiveLongBls\ for BLS ($p\bFiveLongP$). Gains are present for one early sector (\bFiveOneSecN\ binaries, \bFiveOneSecAcc) as well as for four (\bFiveFourSecAcc). The resolver is less well calibrated on binaries than on the injections it was calibrated on: its ECE is \bFiveEce. At the \Vtwo\ threshold it answers \bFiveCovered\% of the binaries and is \bFiveNa\ correct on those.
+
+The \bFiveAmbN\ B-amb binaries, whose eclipses the catalog depths suggest are nearly equal, are hard for every method: TLS and BLS are correct for \bFiveAmbTls\ and \bFiveAmbBls\ of them and the resolver for \bFiveAmbAcc, with an ECE of \bFiveAmbEce. For such binaries $P$ and $P/2$ often cannot be distinguished from photometry alone, and the catalog's own period may be the half period.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.62\textwidth]{figures/fig_b5_period.pdf}
+\caption{B5: fraction of primary-sample eclipsing binaries whose catalog period is recovered, by catalog period, for the raw TLS and BLS peaks and for the TLS-seeded \Vtwo\ resolver, with Wilson 95\% intervals. Numbers under each bin give the number of binaries.}
+\label{fig:b5}
+\end{figure}
+
+\input{tables/b5}
+
+\subsubsection{Catalog-truth audit} \label{sec:audit}
+
+B5 scores against the catalog period, which is itself derived from data and can be wrong. Before any B5 light curve was downloaded, we specified a secondary audit of every scored binary where the resolver's period differs from the catalog by more than 0.1\% (\auditN\ binaries, \auditBN\ in the primary sample and \auditAmbN\ B-amb). For each, the later-sector light curve, which neither method had seen, is fitted at both periods with the same EB model: a primary trapezoid and a secondary trapezoid at a free phase, with the period refined locally and the same number of parameters for both. A verdict requires $|\Delta\chi^2|>10$. Table~\ref{tab:audit} lists the outcomes by the ratio of the two periods. Later data favor the resolver period for \auditVtwo\ binaries (\auditVtwoPc\%) and the catalog period for \auditCat\ (\auditCatPc\%); \auditInc\ (\auditIncPc\%) are inconclusive and \auditIns\ have too few later eclipses. Where the resolver chose half the catalog period (\auditHalfN\ cases), the later data rarely decide (\auditHalfInc\ inconclusive), as expected for nearly equal eclipses. Where it chose twice the catalog period (\auditDoubleN), later data favor the resolver in \auditDoubleVtwo\ cases and the catalog in \auditDoubleCat. In \auditNonaliasN\ cases the two periods are not related by an alias factor; most of these are small differences in period, and later data favor the resolver in \auditNonaliasVtwo\ and the catalog in \auditNonaliasCat. The audit does not change the B5 result, which is scored against the catalog as specified. We release the decided cases as candidate period revisions supported by later data (Appendix~\ref{app:data}). They are not confirmed revisions; each should be checked against the light curve and the binary's other data before an ephemeris is changed.
+
+\input{tables/audit}
+
+\subsection{B2: TOI temporal holdout} \label{sec:b2}
+
+B2 asks whether the gains on injections and binaries carry over to the TOI catalog. The pre-registered criterion was that the TLS-seeded \Vtwo\ resolver beat raw BLS, raw TLS and SPOC-1 with McNemar $p<0.01$. It is not met (Table~\ref{tab:b2}). The resolver is correct for \bTwoAcc\ \bTwoAccCI\ of \bTwoN\ TOIs, against \bTwoRawTls\ for TLS ($\bTwoMcTlsFix/\bTwoMcTlsBreak$, $p\bTwoMcTlsP$) and \bTwoRawBls\ for BLS ($\bTwoMcBlsFix/\bTwoMcBlsBreak$, $p\bTwoMcBlsP$). On this sample the resolver is comparable to the two searches and does not improve on them. The rule-based correction of \citet{Tschudi2026a} gives the same accuracy as TLS (\bTwoRawTsch), because its rules rarely trigger on these targets. The SPOC-1 and SPOC-E periods are available for \bTwoCovSpocOne\% and \bTwoCovSpocE\% of TOIs. The resolver's advantage over them in Table~\ref{tab:b2} comes entirely from this coverage. Where SPOC gives a period it is at least as accurate as the resolver: \bTwoGivenSpocOne\ for SPOC-1 ($\bTwoMcGivenSpocOneFix/\bTwoMcGivenSpocOneBreak$, $p\bTwoMcGivenSpocOneP$) and \bTwoGivenSpocE\ for SPOC-E ($\bTwoMcGivenSpocEFix/\bTwoMcGivenSpocEBreak$, $p\bTwoMcGivenSpocEP$). The same holds for the historical QLP and SPOC catalog periods.
+
+When the resolver is seeded with a period that is usually right already, it changes correct periods to wrong ones more often than the reverse. Seeded with BLS it corrects \bTwoSelfBlsFix\ and breaks \bTwoSelfBlsBreak\ BLS periods ($p\bTwoSelfBlsP$), and seeded with SPOC-E it corrects \bTwoSelfSpocEFix\ and breaks \bTwoSelfSpocEBreak\ ($p\bTwoSelfSpocEP$). By truth tier, the resolver and TLS are correct for \bTwoTierAAcc\ and \bTwoTierATls\ of planets ($p\bTwoTierAP$) and \bTwoTierBAcc\ and \bTwoTierBTls\ of EBs ($p\bTwoTierBP$). The ECE is \bTwoEce\ overall and \bTwoTierBEce\ for the EBs. Among TOIs with a single early sector, an exploratory breakdown not in the protocol, the resolver is correct for \bTwoOneSecAcc\ against \bTwoOneSecTls\ for TLS ($p\bTwoOneSecP$, \bTwoOneSecN\ TOIs).
+
+\input{tables/b2}
+
+\emph{Post hoc: selective accuracy.} The resolver abstains on \bTwoAbst\% of B2 TOIs. On the \selAnswered\ it answers it is \selOurs\ correct, against \selTls\ for TLS ($p\selTlsP$) and \selBls\ for BLS ($p\selBlsP$) on the same TOIs. On the \abstN\ abstained TOIs all methods are poor (resolver \abstOurs, TLS \abstTls, BLS \abstBls), so abstention picks out hard targets. Most of this selectivity, however, is already in the TLS detection statistic. Ranking the TLS periods by TLS's own SDE and keeping the same fraction gives \rcTls, close to the resolver's \rcOurs. The area under the accuracy-coverage curve is \aucOurs\ for the resolver and \aucTls\ for TLS ranked by SDE (Figure~\ref{fig:riskcov}). The resolver's ranking of which TLS periods to trust is therefore close to TLS's own. What it adds is a probability for each alias and a calibrated decision to abstain.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.62\textwidth]{figures/fig_b2_riskcov.pdf}
+\caption{B2 (post hoc): accuracy of the answered TOIs against the fraction answered, when TOIs are ranked by the resolver's \Vtwo\ confidence, by the TLS SDE of the raw TLS period, or by the BLS power of the raw BLS period. The vertical line marks the coverage of the \Vtwo\ abstain threshold.}
+\label{fig:riskcov}
+\end{figure}
+
+\emph{Post hoc: why B2 differs from B1 and B5.} In B2 the raw TLS period is already correct for \cmpTlsBTwo\ of targets, compared with \cmpTlsBOne\ for the B1(ii) injections. Only \cmpEbBTwo\% of B2 targets are EBs, against \cmpEbBOne\% of the B1(ii) injections, and the TOIs were selected because a search had already found them at a usable period. The room for alias correction is therefore small, and most of the remaining errors are outside the alias family (the ceiling for TLS seeds is \bTwoCeilTls).
+
+\emph{Post hoc: catalog audit not pursued.} We had planned an audit of the TOI catalog (B3) that would flag TOIs where the resolver confidently disagrees with the current catalog period. Among the \nogoN\ B2 TOIs where that happens, the resolver is right in a fraction \nogoRight\ and the catalog in \nogoCatRight, so such an audit would mostly flag correct periods. We dropped it.
+
+\subsection{False alarms} \label{sec:fa}
+
+To measure how the resolver behaves when there is no real signal, we ran it on the early-window light curves of the \faScrN\ B2 TOIs after either inverting the flux ($f \to 2-f$, which turns dips into bumps) or scrambling it (permuting 1-day blocks within each continuous segment). The seed is the BLS peak of the modified light curve. The pre-registered criterion was a confident-resolution rate below 5\% on scrambled light curves; it is missed (Table~\ref{tab:fa}). The \Vtwo\ resolver is confident for \faScrVtwo\% \faScrVtwoCI\ of scrambled and \faInvVtwo\% \faInvVtwoCI\ of inverted light curves; \Vone\ and the principled combiner are confident more often. The seeds found on scrambled light curves have a median period of \faScrSeedMed\,d, against \faInvSeedMed\,d on inverted ones. Scrambling keeps the variability within each day, and rearranged blocks of it can line up into dips that recur at a regular spacing. The resolver assumes that it is given a real periodic signal and has no term that tests that assumption, so it treats such dips like eclipses.
+
+\emph{Post hoc: the searches on the same light curves.} To see whether the resolver adds overconfidence beyond the search itself, we recorded how often the searches cross SDE\,$=9$ on the same modified light curves (Table~\ref{tab:fa}). TLS reaches SDE\,$\ge$\,9 on \ctxScrTls\% \ctxScrTlsCI\ of scrambled and \ctxInvTls\% \ctxInvTlsCI\ of inverted light curves, and the A6 BLS SDE on \ctxScrAsix\% and \ctxInvAsix\%. Where TLS already reports SDE\,$\ge$\,9 on a scrambled light curve, the resolver is confident in \ctxScrBoth\% of cases. Detection thresholds of this kind are not designed to reject systematics on their own, which is why vetting follows them, and the same holds for the resolver. In use, it belongs after vetting tools such as LEO-Vetter or ExoMiner++, which test whether a signal is astrophysical \citep{Kunimoto2025leo,Valizadegan2025}.
+
+\input{tables/fa}
+
+\subsection{B4: run time on a full sector} \label{sec:b4}
+
+To measure throughput we processed all \bFourPinned\ SPOC 2-minute light curves of Sector 49, of which \bFourN\ completed every stage without failure. Each light curve was read, detrended and binned, searched with the GPU BLS, and passed with its BLS peak to the frozen \Vtwo\ resolver (Table~\ref{tab:b4}). The BLS stage ran as one process per NVIDIA \bFourGpu\ on Kaggle GPU sessions. The resolver ran on Kaggle CPU sessions with \bFourCores\ virtual cores (\bFourCpuRes), as four single-threaded worker processes. Per light curve the median total time is \bFourTotalMed\,s and the 95th percentile \bFourTotalPnf\,s, of which the resolver takes a median of \bFourResMed\,s. Summed over the parallel sessions, the search stage used \bFourBlsWallH\,h of GPU-session wall time and the resolver stage \bFourResWallH\,h of CPU-session wall time. TLS was not run on this sample. On the multi-sector B2 light curves it took a median of \bFourTlsMed\,s and a 95th percentile of \bFourTlsPnf\,s per light curve on four cores, so a TLS-seeded run of a sector would be dominated by the search. These numbers describe a single-signal period check after detection. They are not comparable to the cost of SPOC or QLP processing, which includes photometry, systematics correction, multi-planet search and vetting.
+
+\input{tables/b4}
+
+%% ======================================================================
+\section{Limitations} \label{sec:limits}
+
+\emph{Real signals only.} The resolver chooses among periods of a signal it assumes to be real and periodic. On scrambled light curves it is confident for \faScrVtwo\% of targets (Section~\ref{sec:fa}). It should be applied only to signals that have passed vetting, and its confidence is not evidence that a signal is astrophysical.
+
+\emph{Search-limited ceiling.} The resolver only considers the eleven alias factors of the seed. When a search locks onto a peak unrelated to the true period, no alias choice can recover it. This happened for \bOneTMissPc\% of the TLS seeds and \bOneBMissPc\% of the BLS seeds in B1(ii), and for \bTwoMissTlsPc\% of the TLS seeds in B2. Non-integer relations from multi-planet confusion or transit-timing variations are outside this model.
+
+\emph{Seeds that are usually right.} When the seed is already correct for most targets, as for BLS, SPOC and historical catalog periods in B2, the resolver changes more correct periods into wrong ones than the reverse (Section~\ref{sec:b2}). It should not be run over catalog periods with the expectation of improving them; its alias probabilities are more useful as a flag for review.
+
+\emph{Calibration domain.} The \Vtwo\ map was fitted on BLS- and TLS-seeded injections into quiet stars. On binaries it is less well calibrated (ECE \bFiveEce\ in B5, \bTwoTierBEce\ for B2 EBs), and for seeds from other sources it was not fitted at all. Nearly equal eclipses (B-amb) remain hard, with accuracy \bFiveAmbAcc.
+
+\emph{Injection hosts.} B1 hosts were selected to be quiet, uncrowded and free of detectable signals. The pre-search screen also preferentially removed stars with long data spans and with systematics near the 13.7\,d orbit or the sector length, so many-sector injections rest on fewer hosts (accuracy \bOneStratLow\ for 2--3 sectors and \bOneStratHigh\ for 13 or more, from wrong-alias seeds). B1 numbers are best read as upper limits for active or crowded stars; B2 and B5 are the checks on real targets.
+
+\emph{Scope.} Single transits, two-transit systems with large gaps, periods outside 0.5--30\,d, and transit-timing variations are out of scope. The resolver uses photometry only; it has no pixel-level or centroid information and makes no statement about the nature of a signal. Its truth catalogs are themselves derived from data, and the audit of Section~\ref{sec:audit} suggests that a fraction of the B5 errors may be catalog errors.
+
+%% ======================================================================
+\section{Conclusions} \label{sec:conclusions}
+
+We built a resolver that turns a seed period into calibrated probabilities over eleven aliases, using six standard photometric tests combined by a classifier trained only on injections, and tested it on four pre-registered benchmarks. Its clearest use is on eclipsing binaries: with one year of TESS 2-minute data it recovers the catalog period of \bFiveAcc\ of \bFiveN\ TESS EBs, compared with \bFiveRawTls\ and \bFiveRawBls\ for the TLS and BLS peaks, and later data favor its period in \auditVtwo\ of the binaries where it disagrees with the catalog. On injections it recovers the true period from a wrong alias seed for \bOneWAcc\ of cases with well-calibrated probabilities. On the TOI catalog, where search periods are already mostly right and few targets are binaries, it is comparable to TLS and BLS, and its ranking of reliable periods is close to that of the TLS SDE. It is not a false-alarm filter. We see it as a period check to run after detection and vetting, as a complement to the SPOC and QLP products, and we release the code, the benchmark samples, the per-target results and the candidate EB period revisions so that each of these claims can be checked.
+
+%% ======================================================================
+\section*{Data Availability}
+
+The code, protocols, decision log, sample logs, results files and the scripts that produce every number, table and figure in this paper are at \url{https://github.com/bytes06runner/exo_gargantua} (branch \texttt{v2-alias-resolver}, MIT license) and archived at Zenodo, \dataset[doi:10.5281/zenodo.0000000]{https://doi.org/10.5281/zenodo.0000000} \textbf{[Zenodo DOI to be inserted]}. The machine-readable tables of Appendix~\ref{app:data} are included in that archive.
+
+This paper includes data collected by the TESS mission, which are publicly available from the Mikulski Archive for Space Telescopes (MAST) at the Space Telescope Science Institute \citep{TESSdataDOI}. The specific observations analyzed can be accessed via \dataset[doi:10.17909/0000-0000]{https://doi.org/10.17909/0000-0000} \textbf{[MAST collection DOI to be inserted]}.
+
+\begin{acknowledgments}
+This paper made use of data collected by the TESS mission and are publicly available from the Mikulski Archive for Space Telescopes (MAST) operated by the Space Telescope Science Institute (STScI). Funding for the TESS mission is provided by NASA's Science Mission Directorate. We acknowledge the use of public TESS data from pipelines at the TESS Science Office and at the TESS Science Processing Operations Center. Resources supporting this work were provided by the NASA High-End Computing (HEC) Program through the NASA Advanced Supercomputing (NAS) Division at Ames Research Center for the production of the SPOC data products.
+
+This research has made use of the NASA Exoplanet Archive, which is operated by the California Institute of Technology under contract with the National Aeronautics and Space Administration under the Exoplanet Exploration Program, and of the Exoplanet Follow-up Observation Program (ExoFOP) website, which is operated by the California Institute of Technology under contract with the National Aeronautics and Space Administration. This work has made use of data from the European Space Agency (ESA) mission Gaia, processed by the Gaia Data Processing and Analysis Consortium (DPAC). Computations were run on Kaggle notebook sessions.
+\end{acknowledgments}
+
+\facilities{TESS, MAST, Exoplanet Archive, ExoFOP, Gaia}
+
+\software{\texttt{astropy} \citep{Astropy2022}, \texttt{numpy} \citep{Harris2020}, \texttt{scipy} \citep{Virtanen2020}, \texttt{matplotlib} \citep{Hunter2007}, \texttt{scikit-learn} \citep{Pedregosa2011}, \texttt{PyTorch} \citep{Paszke2019}, \texttt{transitleastsquares} \citep{Hippke2019tls}, \texttt{wotan} \citep{Hippke2019wotan}, \texttt{batman} \citep{Kreidberg2015}, \texttt{lightkurve}}
+
+\appendix
+
+\section{Protocol amendments and decisions} \label{app:amend}
+
+Table~\ref{tab:amend} lists every recorded change to the pre-registered protocols, in the order they were made, together with the operational decisions that did not affect any measured quantity. The full text of each entry, with the evidence that motivated it, is in \texttt{docs/decisions.md} of the repository. Entries marked ``before data'' were made before any result of the affected benchmark existed.
+
+\input{amendments_table}
+
+\section{Released tables} \label{app:data}
+
+Two machine-readable tables accompany this paper. \texttt{b5\_candidate\_period\_revisions.csv} has one row for each of the \auditVtwo\ plus \auditCat\ audited binaries with a decided verdict: TIC identifier, truth tier, catalog period, resolver period, their ratio, $\Delta\chi^2$ on the later data (positive values favor the resolver), the number of later eclipses at each period, the period favored by the later data, and a status column that reads either ``candidate revision (resolver period favored by later data)'' or ``catalog period favored by later data''. These are candidates for revision supported by later data, not confirmed periods. \texttt{b2\_per\_target.csv} has one row for each of the \bTwoN\ B2 TOIs: TOI, TIC, truth tier, early sectors used, number of early sectors, true period, the TLS period and SDE, the BLS period, the SPOC-1, SPOC-E and SPOC-hist periods where available, the current TOI catalog period, the resolver period and confidence, the seed signal-to-noise ratio and depth as measured by the resolver, and the correctness of each method.
+
+\bibliography{refs_clean}{}
+\bibliographystyle{aasjournalv7}
+
+\end{document}

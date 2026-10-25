@@ -51,6 +51,8 @@ def main():
         seen.add(m.group(2))
         e = re.sub(r"</?(i|b|tt|scp|sup|sub|em|mml:[a-z]+)[^>]*>", "", e)
         e = re.sub(r"\s*\n\s*", " ", e.strip())
+        e = e.replace("&amp;", "\\&").replace("&lt;", "<").replace("&gt;", ">")
+        e = re.sub(r"(?<!\\)&(?!amp;)", r"\\&", e)
         dropped |= {c for c in e if ord(c) >= 128 and c not in PUNCT and c not in SPECIAL
                     and not (len(unicodedata.normalize("NFD", c)) > 1 and unicodedata.normalize("NFD", c)[0].isascii())}
         out.append(latexify(e))
