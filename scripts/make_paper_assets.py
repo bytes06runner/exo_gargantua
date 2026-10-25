@@ -485,7 +485,7 @@ def figures():
 
     b5 = J("b5_report.json")
     bins = ["<1", "1-3", "3-10", ">10"]
-    labels = ["$<1$ d", "1--3 d", "3--10 d", "$>10$ d"]
+    labels = ["$<1$ d", "1\u20133 d", "3\u201310 d", "$>10$ d"]
     series = [("raw", "tls", "Raw TLS peak", "#9e9e9e", "o"), ("raw", "bls", "Raw BLS peak", "#616161", "s"),
               ("res", "tls", "Resolver v2 (TLS seed)", "#1f4e79", "D")]
     fig, ax = plt.subplots(figsize=(3.4, 2.6))

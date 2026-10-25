@@ -17,7 +17,7 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q --no-install-recommends texlive-latex-base texlive-latex-recommended texlive-latex-extra \
-            texlive-fonts-recommended texlive-fonts-extra texlive-science texlive-publishers texlive-bibtex-extra lmodern unzip
+            texlive-fonts-recommended texlive-fonts-extra texlive-science texlive-publishers texlive-bibtex-extra texlive-plain-generic texlive-pictures lmodern unzip
       - name: AASTeX 7.0.1 from CTAN
         run: |
           curl -sSL -o /tmp/aastex.zip https://mirrors.ctan.org/macros/latex/contrib/aastex.zip
