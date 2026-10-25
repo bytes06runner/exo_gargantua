@@ -466,13 +466,14 @@ def tables():
 
     pl = b4["per_light_curve"]
     rows = [[lbl, f2(pl[k]["median_s"]), f2(pl[k]["p95_s"]), hw] for k, lbl, hw in (
-        ("load", "Read light curve", "GPU session host"), ("prepare", "Detrend and bin", "GPU session host"),
+        ("load", "Read light curve", "GPU-session CPU"), ("prepare", "Detrend and bin", "GPU-session CPU"),
         ("gpu_bls", "BLS seed search", b4["hardware"]["bls"]["gpu"]), ("resolver", "Alias resolver (v2)", "CPU session"),
         ("total", "Total", "\\nodata"))]
     table("b4.tex", "B4: processing time per light curve, TESS Sector 49.", "tab:b4", "lccl",
           ["Stage", "Median (s)", "95th percentile (s)", "Hardware"], rows,
           f"{n(b4['complete_pipeline'])} light curves. GPU session: one process per NVIDIA {b4['hardware']['bls']['gpu']}; CPU session: "
-          f"{b4['hardware']['resolver']['cpu_count']} vCPU ({b4['hardware']['resolver']['cpu_model']}), four worker processes with one BLAS thread each.")
+          f"{b4['hardware']['resolver']['cpu_count']} vCPU ({MACROS['bFourCpuRes']}), four worker processes with one BLAS thread each; "
+          f"GPU-session CPU: {MACROS['bFourCpuBls']}.")
 
 
 # ------------------------------------------------------------------ figures
