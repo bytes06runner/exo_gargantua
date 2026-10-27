@@ -101,7 +101,11 @@ All methods are scored on the same targets and the same early-window data. Besid
 
 \subsection{Alias hypotheses} \label{sec:hyp}
 
-The alias set is $R = \{1/5, 1/4, 1/3, 1/2, 2/3, 1, 3/2, 2, 3, 4, 5\}$. For a seed period $\Pz$ and seed epoch $t_0$, a hypothesis $(r, j)$ with $r=a/b$ places events at
+The alias set is
+\begin{equation}
+R = \{1/5, 1/4, 1/3, 1/2, 2/3, 1, 3/2, 2, 3, 4, 5\}.
+\end{equation}
+For a seed period $\Pz$ and seed epoch $t_0$, a hypothesis $(r, j)$ with $r=a/b$ places events at
 \begin{equation}
 t_m = t_0 + j\,\Pz + m\,r\,\Pz, \qquad j = 0, \ldots, a-1,
 \end{equation}
@@ -275,7 +279,7 @@ This research has made use of the NASA Exoplanet Archive, which is operated by t
 
 \section{Protocol amendments and decisions} \label{app:amend}
 
-Table~\ref{tab:amend} lists every recorded scientific or methodological change to the pre-registered protocols, in the order they were made. The full text, together with purely operational decisions about computing resources, of each entry, with the evidence that motivated it, is in \texttt{docs/decisions.md} of the repository. Entries marked ``before data'' were made before any result of the affected benchmark existed.
+Table~\ref{tab:amend} lists every recorded scientific or methodological change to the pre-registered protocols, in the order they were made. The full text of each entry, with the evidence that motivated it, is in \texttt{docs/decisions.md} of the repository, which also records purely operational decisions about computing resources. Entries marked ``before data'' were made before any result of the affected benchmark existed.
 
 \input{amendments_table}
 
