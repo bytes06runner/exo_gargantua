@@ -333,6 +333,24 @@ def macros():
         mac(f"ctx{t}LowCI", cip(c[v_]["resolver_confident_given_a6_sde_lt9"]["ci95"]))
         mac(f"ctx{t}Joint", pc(c[v_]["resolver_confident_and_a6_sde_ge9"]["rate"]))
 
+    ms = json.loads((P / "data" / "mast" / "summary.json").read_text())  # scripts/make_mast_doi_lists.py
+    mac("mastFiles", n(ms["all_files"]))
+    mac("mastStars", n(ms["all_stars"]))
+    mac("mastSecMin", str(ms["sector_min"]))
+    mac("mastSecMax", str(ms["sector_max"]))
+    mac("mastSubFiles", n(ms["subset_files"]))
+    mac("mastSubStars", n(ms["subset_stars"]))
+
+    rr = J("b1_raw_rule_sensitivity.json")  # amendment A6 sensitivity
+    mac("rawHostsBoth", n(rr["test_hosts"]["pass_raw_rule"]))
+    mac("rawHostsOnly", n(rr["test_hosts"]["a6_only"]))
+    for sub, t in (("pass_raw_rule", "Both"), ("a6_only", "Only")):
+        for key, kt in (("B1_i_wrong_seed", "W"), ("B1_ii_tls_seed", "T"), ("B1_ii_bls_seed", "B")):
+            le = rr[sub][key]["learned"]
+            mac(f"raw{t}{kt}Acc", f3(le["accuracy"]))
+            mac(f"raw{t}{kt}AccCI", ci(le["accuracy_ci95"]))
+            mac(f"raw{t}{kt}Ece", f3(le["ece"]))
+
     lc = J("fig_lc_example.json")  # written by scripts/make_lc_figure.py
     mac("lcTic", str(lc["tic"]))
     mac("lcPcat", f"{lc['P_catalog']:.4f}")
