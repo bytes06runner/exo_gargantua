@@ -1,11 +1,10 @@
 %% Hand-written summary of docs/decisions.md (protocol amendments and operational decisions). No result numbers.
 \startlongtable
 \begin{deluxetable*}{llp{2.3cm}p{10.2cm}}
-\tablecaption{Protocol amendments and recorded decisions, from \texttt{docs/decisions.md}. \label{tab:amend}}
+\tablecaption{Scientific and methodological protocol amendments, from \texttt{docs/decisions.md}. \label{tab:amend}}
 \tablewidth{0pt}
 \tablehead{\colhead{ID} & \colhead{Date} & \colhead{Timing} & \colhead{Change}}
 \startdata
-\multicolumn{4}{l}{\emph{Changes to what is measured or how}} \\
 A1 & 2026-09-30 & before data & Seed BLS searches run four targets in parallel; configuration unchanged and parallel output tested identical to serial. \\
 A2 & 2026-09-30 & before data & B1 split into wrong-alias seeds on all injections, B1(i), and full BLS and TLS searches on a subsample drawn in advance, B1(ii), reported separately, because full searches of every injection were too costly; GPU BLS allowed only if it reproduces astropy peak periods within one grid step. \\
 A3 & 2026-09-30 & before data & TOIs dispositioned as confirmed or known planets take truth only from the NASA Exoplanet Archive, never from the EB catalog; TOIs 143.01, 1165.01, 1422.01, 1779.01, 2119.01 and 4495.01 moved from EB truth to catalog reference and left B2. \\
@@ -30,14 +29,6 @@ B5 & 2026-10-20 & before data & Eclipsing-binary benchmark specified after B1 an
 B5-audit & 2026-10-20 & before data & Secondary catalog-truth audit of B5 disagreements on later sectors, specified before any B5 light curve was downloaded. \\
 B4 & 2026-10-20 & before data & Run-time protocol on Sector 49; TLS not run, its time quoted from earlier runs. \\
 B3-nogo & 2026-10-20 & post hoc & Planned audit of the TOI catalog dropped after the post hoc check of Section~\ref{sec:b2}. \\
-FA-ctx & 2026-10-26 & post hoc & Detection statistics of TLS and BLS recorded on the false-alarm light curves. \\
-\multicolumn{4}{l}{\emph{Operational decisions (no effect on any measured quantity)}} \\
-Gate 1 & 2026-09-30 & before data & Rule-based correction of \citet{Tschudi2026a} added as a B2 baseline. \\
-Freeze & 2026-09-30 & before data & Exact product files pinned per target; first freeze run voided because of an identifier-parsing bug, selection rules unchanged. \\
-G1, G2 & 2026-09-30 & before data & GPU sessions for GPU work only; CPU-bound work on CPU sessions. \\
-G2-m & 2026-09-30 & before data & Concurrent CPU-session limit measured. \\
-D1 & 2026-09-30 & before data & Light-curve download in four chunks to a compact cache. \\
-O1, O2 & 2026-10-01 & before data & Job orchestration moved to a scheduled workflow; its skip guard tested. \\
-V2-tag & 2026-10-20 & before B2 & Second freeze tag created after fitting the isotonic map.
+FA-ctx & 2026-10-26 & post hoc & Detection statistic of the seed BLS search recorded on the false-alarm light curves; a TLS version was not completed.
 \enddata
 \end{deluxetable*}

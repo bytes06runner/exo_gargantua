@@ -1,10 +1,10 @@
 \begin{deluxetable*}{lrccccc}
 \tablecaption{False-alarm test: fraction of light curves resolved with confidence. \label{tab:fa}}
 \tablewidth{0pt}
-\tablehead{\colhead{Light curves} & \colhead{$N$} & \colhead{v2 [95\% CI]} & \colhead{v1} & \colhead{Principled} & \colhead{TLS SDE$\ge9^a$} & \colhead{BLS SDE$\ge9^a$}}
+\tablehead{\colhead{Light curves} & \colhead{$N$} & \colhead{v2 [95\% CI]} & \colhead{v1} & \colhead{Principled} & \colhead{BLS SDE$\ge9^a$} & \colhead{v2 if SDE$\ge9^a$}}
 \startdata
-Scrambled & 1{,}198 & 37.2\% [34.5, 40.0] & 67.0\% & 43.7\% & pending & pending \\
-Inverted & 1{,}198 & 4.0\% [3.0, 5.3] & 18.6\% & 7.5\% & pending & pending
+Scrambled & 1{,}198 & 37.2\% [34.5, 40.0] & 67.0\% & 43.7\% & 42.1\% & 49.8\% \\
+Inverted & 1{,}198 & 4.0\% [3.0, 5.3] & 18.6\% & 7.5\% & 26.6\% & 12.5\%
 \enddata
-\tablecomments{The pre-registered criterion is a confident-resolution rate below 5\% on scrambled light curves. $^a$Post hoc: the rate at which the searches themselves exceed SDE~$=9$ on the same light curves (BLS: TLS-style detrended SDE, amendment A6).}
+\tablecomments{The pre-registered criterion is a confident-resolution rate below 5\% on scrambled light curves. $^a$Post hoc: the fraction of light curves on which the BLS search that supplied the seed reaches SDE~$\ge9$ (SDE on the detrended spectrum at TLS's trial periods), and the \Vtwo\ confident rate among those light curves.}
 \end{deluxetable*}

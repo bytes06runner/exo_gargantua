@@ -66,7 +66,7 @@ def parse_bib(text):
 def registrar_title(entry):
     if entry["doi"]:
         doi = entry["doi"]
-        if doi.upper().startswith("10.17909/"):  # MAST DOIs are registered with DataCite
+        if doi.upper().startswith(("10.17909/", "10.5281/")):  # MAST and Zenodo DOIs are registered with DataCite
             data = json.loads(_get(f"https://api.datacite.org/dois/{doi}"))
             return data["data"]["attributes"]["titles"][0]["title"]
         data = json.loads(_get(f"https://api.crossref.org/works/{doi}"))

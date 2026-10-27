@@ -321,20 +321,31 @@ def macros():
             mac(f"fa{t}{ct}CI", cip(fa[v_][c]["ci95"]))
     mac("faScrSeedMed", f1(fa["scrambled"]["seed_periods_median_d"]))
     mac("faInvSeedMed", f2(fa["inverted"]["seed_periods_median_d"]))
-    ctx = R / "fa_context_report.json"
-    if ctx.exists():
-        c = json.loads(ctx.read_text())
-        for v_, t in (("scrambled", "Scr"), ("inverted", "Inv")):
-            for k, kt in (("tls_sde_ge9", "Tls"), ("a6_sde_ge9", "Asix"), ("raw_sde_ge9", "Raw")):
-                mac(f"ctx{t}{kt}", pc(c[v_][k]["rate"]))
-                mac(f"ctx{t}{kt}CI", cip(c[v_][k]["ci95"]))
-            mac(f"ctx{t}Both", pc(c[v_]["resolver_confident_given_tls_sde_ge9"]["rate"]))
-    else:
-        for v_, t in (("scrambled", "Scr"), ("inverted", "Inv")):
-            for kt in ("Tls", "Asix", "Raw"):
-                mac(f"ctx{t}{kt}", "\\textbf{[pending]}")
-                mac(f"ctx{t}{kt}CI", "")
-            mac(f"ctx{t}Both", "\\textbf{[pending]}")
+    c = J("fa_context_report.json")  # post hoc, decision FA-ctx
+    for v_, t in (("scrambled", "Scr"), ("inverted", "Inv")):
+        for k, kt in (("a6_sde_ge9", "Asix"), ("raw_sde_ge9", "Raw")):
+            mac(f"ctx{t}{kt}", pc(c[v_][k]["rate"]))
+            mac(f"ctx{t}{kt}CI", cip(c[v_][k]["ci95"]))
+        mac(f"ctx{t}AsixN", n(c[v_]["a6_sde_ge9"]["count"]))
+        mac(f"ctx{t}Both", pc(c[v_]["resolver_confident_given_a6_sde_ge9"]["rate"]))
+        mac(f"ctx{t}BothCI", cip(c[v_]["resolver_confident_given_a6_sde_ge9"]["ci95"]))
+        mac(f"ctx{t}Low", pc(c[v_]["resolver_confident_given_a6_sde_lt9"]["rate"]))
+        mac(f"ctx{t}LowCI", cip(c[v_]["resolver_confident_given_a6_sde_lt9"]["ci95"]))
+        mac(f"ctx{t}Joint", pc(c[v_]["resolver_confident_and_a6_sde_ge9"]["rate"]))
+
+    lc = J("fig_lc_example.json")  # written by scripts/make_lc_figure.py
+    mac("lcTic", str(lc["tic"]))
+    mac("lcPcat", f"{lc['P_catalog']:.4f}")
+    mac("lcPres", f"{lc['P_resolver']:.4f}")
+    mac("lcPseed", f"{lc['seed_period_tls']:.4f}")
+    mac("lcProb", f3(lc["p_v2_choice"]))
+    mac("lcDchi", f"{lc['delta_chi2_later']:.0f}")
+    for k, t in (("F1", "One"), ("F2", "Two"), ("F3", "Three")):
+        mac(f"lcDF{t}", f"{lc['terms_catalog_minus_choice'][k]:+.0f}".replace("-", "$-$"))
+    mac("lcEarlySec", f"{lc['early_sectors'][0]}--{lc['early_sectors'][-1]}")
+    mac("lcEarlyN", str(len(lc["early_sectors"])))
+    mac("lcLaterSec", f"{lc['later_sectors_shown'][0]}--{lc['later_sectors_shown'][-1]}")
+    mac("lcLaterN", str(len(lc["later_sectors_shown"])))
 
     rt = J("b4_runtime.json")
     pl = rt["per_light_curve"]
@@ -452,17 +463,14 @@ def tables():
     rows = []
     for v_, lbl in (("scrambled", "Scrambled"), ("inverted", "Inverted")):
         r_ = [lbl, n(fa[v_]["n"]), f"{pc(fa[v_]['v2']['rate'])}\\% {cip(fa[v_]['v2']['ci95'])}", f"{pc(fa[v_]['v1']['rate'])}\\%", f"{pc(fa[v_]['principled']['rate'])}\\%"]
-        ctx = R / "fa_context_report.json"
-        if ctx.exists():
-            c = json.loads(ctx.read_text())[v_]
-            r_ += [f"{pc(c['tls_sde_ge9']['rate'])}\\%", f"{pc(c['a6_sde_ge9']['rate'])}\\%"]
-        else:
-            r_ += ["pending", "pending"]
+        c = J("fa_context_report.json")[v_]
+        r_ += [f"{pc(c['a6_sde_ge9']['rate'])}\\%", f"{pc(c['resolver_confident_given_a6_sde_ge9']['rate'])}\\%"]
         rows.append(r_)
     table("fa.tex", "False-alarm test: fraction of light curves resolved with confidence.", "tab:fa", "lrccccc",
-          ["Light curves", "$N$", "v2 [95\\% CI]", "v1", "Principled", "TLS SDE$\\ge9^a$", "BLS SDE$\\ge9^a$"], rows,
-          "The pre-registered criterion is a confident-resolution rate below 5\\% on scrambled light curves. $^a$Post hoc: the rate "
-          "at which the searches themselves exceed SDE~$=9$ on the same light curves (BLS: TLS-style detrended SDE, amendment A6).")
+          ["Light curves", "$N$", "v2 [95\\% CI]", "v1", "Principled", "BLS SDE$\\ge9^a$", "v2 if SDE$\\ge9^a$"], rows,
+          "The pre-registered criterion is a confident-resolution rate below 5\\% on scrambled light curves. $^a$Post hoc: the "
+          "fraction of light curves on which the BLS search that supplied the seed reaches SDE~$\\ge9$ (SDE on the detrended "
+          "spectrum at TLS's trial periods), and the \\Vtwo\\ confident rate among those light curves.")
 
     pl = b4["per_light_curve"]
     rows = [[lbl, f2(pl[k]["median_s"]), f2(pl[k]["p95_s"]), hw] for k, lbl, hw in (
