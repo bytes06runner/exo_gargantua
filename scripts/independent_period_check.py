@@ -42,7 +42,7 @@ def per_target():
     log = pd.read_csv(ROOT / "data/b5_sample_log.csv")
     log = log[log["decision"] == "include"].set_index("tic")
     runs = {}
-    for p in glob.glob(str(ROOT / "results/kaggle/b5/*/b5/b5_*.jsonl.gz")):
+    for p in glob.glob(str(ROOT / "results/kaggle/b5r/*/b5/b5_*.jsonl.gz")):
         for r in read_records(p):
             runs[(r["tic"], r["engine"])] = r
     out = []
