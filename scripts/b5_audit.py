@@ -70,7 +70,7 @@ def main():
     man = pd.read_csv(cache / "manifest.csv")
     excluded = set(zip(man.loc[man["excluded"].notna(), "tic"], man.loc[man["excluded"].notna(), "sector"]))
     tgt = pd.read_csv(ROOT / "data" / "b5_audit_targets.csv")
-    tseed = {r["tic"]: r["summary"]["T_seed"] for p in glob.glob(str(ROOT / "results/kaggle/b5/*/b5/b5_tls_*.jsonl.gz"))
+    tseed = {r["tic"]: r["summary"]["T_seed"] for p in glob.glob(str(ROOT / "results/kaggle/b5r/*/b5/b5_tls_*.jsonl.gz"))
              for r in read_records(p) if "summary" in r}
     rows = []
     t_start = time.time()

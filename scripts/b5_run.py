@@ -1,4 +1,4 @@
-"""B5 runs (docs/b5_definition.md): early-sector light curve of each included EB (pinned files, X10/X11 applied),
+"""B5 runs (docs/b5_definition.md; decision B5-r1 for --stars and --engine bls_stored): early-sector light curve of each included EB (pinned files, X10/X11 applied),
 H3 eligibility from the catalog ephemeris, seed search exactly as B2 (search.prepare, then TLS 1.32 or the GPU BLS
 port on the pre-registered grid), then the frozen resolver from that seed. Writes no correctness.
 Output: b5_<engine>_<shard>of<n>.jsonl.gz.
@@ -12,6 +12,7 @@ for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
     os.environ.setdefault(_v, "1")
 
 import argparse  # noqa: E402
+import glob  # noqa: E402
 import gzip  # noqa: E402
 import json  # noqa: E402
 import sys  # noqa: E402
@@ -57,7 +58,7 @@ def light_curve(tic, sectors):
 def one(args):
     r, engine, device = args
     tic = int(r["tic"])
-    rec = {"tic": tic, "engine": engine}
+    rec = {"tic": tic, "engine": "bls_gpu" if engine == "bls_stored" else engine}
     t0 = time.time()
     try:
         secs = [int(x) for x in str(r["sectors_early"]).split(";")]
@@ -73,6 +74,9 @@ def one(args):
         if engine == "tls":
             sd = SE.tls_peak(tb, fb, 1, rs, ms)
             P = sd["tls_period"]
+        elif engine == "bls_stored":  # BLS does not use stellar parameters: the GPU BLS seed of the original run is reused
+            P = G["bls_seed"][tic]
+            sd = {"bls_period": P}
         else:
             import torch
             from exogargantua import gpu_bls
@@ -82,7 +86,7 @@ def one(args):
             torch.cuda.synchronize(device)
             P = float(grid[int(np.nanargmax(pw))])
             sd = {"bls_period": P, "bls_power_max": float(np.nanmax(pw)), "bls_n_periods": int(grid.size)}
-        rec["seed"] = {"engine": engine, "P_seed": float(P), **{k: float(v) for k, v in sd.items() if isinstance(v, (int, float))}}
+        rec["seed"] = {"engine": "bls_gpu" if engine == "bls_stored" else engine, "P_seed": float(P), **{k: float(v) for k, v in sd.items() if isinstance(v, (int, float))}}
         star = Star(float(st["rho"]) * RHO_SUN, float(st["e_rho"]) * RHO_SUN) if st is not None and np.isfinite(st["rho"]) else Star()
         s, hyps = resolve(t, f, float(P), star=star)
         probs = np.array([s["hyp_probs"][h.key] for h in hyps])
@@ -94,18 +98,23 @@ def one(args):
     return rec
 
 
-def init(cache):
+def init(cache, stars="data/stellar_params.csv"):
     import b2_seeds as B2
     G["cache"] = Path(cache)
     man = pd.read_csv(G["cache"] / "manifest.csv")
     G["excluded"] = set(zip(man.loc[man["excluded"].notna(), "tic"], man.loc[man["excluded"].notna(), "sector"]))
-    G["stars"] = pd.read_csv(ROOT / "data" / "stellar_params.csv").drop_duplicates("tic").set_index("tic")
+    G["stars"] = pd.read_csv(ROOT / stars).drop_duplicates("tic").set_index("tic")
+    G["bls_seed"] = {}
+    for p in glob.glob(str(ROOT / "results/kaggle/b5/*/b5/b5_bls_gpu_*.jsonl.gz")):
+        from b1_run import read_records
+        G["bls_seed"].update({r["tic"]: float(r["seed"]["P_seed"]) for r in read_records(p) if "seed" in r})
 
 
 def main():
     import b2_seeds as B2
     ap = argparse.ArgumentParser()
-    ap.add_argument("--engine", choices=["tls", "bls_gpu"], required=True)
+    ap.add_argument("--engine", choices=["tls", "bls_gpu", "bls_stored"], required=True)
+    ap.add_argument("--stars", default="data/stellar_params.csv")
     ap.add_argument("--shard", type=int, required=True)
     ap.add_argument("--nshards", type=int, required=True)
     ap.add_argument("--device", default="cuda:0")
@@ -130,10 +139,10 @@ def main():
     workers = 1 if a.engine == "bls_gpu" else a.workers
     with gzip.open(out / f"b5_{tag}.jsonl.gz", "wt") as fh:
         if workers == 1:
-            init(cache)
+            init(cache, a.stars)
             it = map(one, jobs)
         else:
-            it = ProcessPoolExecutor(workers, initializer=init, initargs=(cache,)).map(one, jobs, chunksize=1)
+            it = ProcessPoolExecutor(workers, initializer=init, initargs=(cache, a.stars)).map(one, jobs, chunksize=1)
         for rec in it:
             fh.write(json.dumps(rec, default=float) + "\n")
             n += 1

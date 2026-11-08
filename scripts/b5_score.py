@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
+RUNS = "results/kaggle/b5r"  # the protocol-conforming rerun (decision B5-r1); original runs: results/kaggle/b5
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 from exogargantua import scoring  # noqa: E402
@@ -40,7 +41,7 @@ def main():
     models = {v: RM.load(v) for v in ("v1", "v2")}
     log = pd.read_csv(ROOT / "data" / "b5_sample_log.csv").set_index("tic")
     runs = {}
-    for p in sorted(glob.glob(str(ROOT / "results/kaggle/b5/*/b5/b5_*.jsonl.gz"))):
+    for p in sorted(glob.glob(str(ROOT / RUNS / "*/b5/b5_*.jsonl.gz"))):
         for r in read_records(p):
             runs[(r["tic"], r["engine"])] = r
     rows = []
@@ -98,7 +99,7 @@ def main():
     met = all(a[k]["p_value"] < 0.01 and a[k]["only_second_correct"] > a[k]["only_first_correct"]
               for k in ("PRIMARY_v2_tls_vs_raw_tls", "PRIMARY_v2_tls_vs_raw_bls"))
     rep = {"resolver_frozen_v1": t1, "resolver_frozen_v2": t2,
-           "run_commits": sorted({json.loads(Path(f).read_text())["git_commit"] for f in glob.glob(str(ROOT / "results/kaggle/b5/*/b5/done_*.json"))}),
+           "run_commits": sorted({json.loads(Path(f).read_text())["git_commit"] for f in glob.glob(str(ROOT / RUNS / "*/b5/done_*.json"))}),
            "included": int(len(d)), "h3_pass": int(d["h3_pass"].sum()), "run_errors": {k: int((d[f"err_{k}"] != "").sum()) for k in ("tls", "bls")},
            "primary_sample": int(len(prim)), "SUCCESS_CRITERION_MET": bool(met),
            "criterion": "v2 (TLS-seeded) beats raw TLS AND raw BLS, exact McNemar p < 0.01 each (docs/b5_definition.md §4)",
