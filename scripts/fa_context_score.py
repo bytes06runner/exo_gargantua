@@ -1,8 +1,8 @@
-"""POST HOC false-alarm context (decision FA-ctx): on the FA1 inverted and scrambled light curves, how often the BLS
-search that supplied the resolver's seed itself crosses SDE >= 9 (A6 SDE of the GPU BLS spectrum; raw BLS SDE of
-decision V1), and how often the v2 resolver is confident when it does and when it does not. A record with an error
-counts as not crossing (reported). The TLS shards were not completed (decision FA-ctx) and are not scored.
-Inputs: results/kaggle/fac/**/fac_bls_gpu_*.jsonl.gz and the FA1 resolver records in results/kaggle/fa/.
+"""POST HOC false-alarm context (decisions FA-ctx, FA-ctx.1, FA-ctx.2): on the FA1 inverted and scrambled light curves,
+how often the searches themselves cross SDE >= 9 (TLS 1.32 SDE; A6 SDE of the GPU BLS spectrum, the search that
+supplied the resolver's seed; raw BLS SDE of decision V1), and how often the v2 resolver is confident when they do and
+when they do not. A record with an error counts as not crossing (reported).
+Inputs: results/kaggle/fac/**/fac_{tls,bls_gpu}_*.jsonl.gz and the FA1 resolver records in results/kaggle/fa/.
 Output: results/fa_context_report.json."""
 
 import glob
@@ -10,6 +10,8 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+
+import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -37,11 +39,11 @@ def main():
     v2, thr = RM.load("v2")
     rep = {"label": "POST HOC (decision FA-ctx; not pre-registered)",
            "git_commit": subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT).stdout.strip(),
-           "threshold_sde": THR, "engine": "GPU BLS on the modified light curve (the search that supplied the resolver's seed)"}
+           "threshold_sde": THR}
     for variant in ("scrambled", "inverted"):
-        bls = load("bls_gpu", variant)
+        bls, tls = load("bls_gpu", variant), load("tls", variant)
         fa = {r["toi"]: r for p in sorted(glob.glob(str(ROOT / f"results/kaggle/fa/*/fa/fa_{variant}_*.jsonl.gz"))) for r in read_records(p)}
-        assert set(bls) == set(fa), (variant, len(bls), len(fa))
+        assert set(bls) == set(fa) and set(tls) == set(fa), (variant, len(bls), len(tls), len(fa))
         n = len(fa)
         conf = {}
         for k, r in fa.items():
@@ -52,9 +54,15 @@ def main():
             conf[k] = c >= thr["learned"]
         a9 = {k for k, r in bls.items() if r.get("sde_a6") is not None and r["sde_a6"] >= THR}
         r9 = {k for k, r in bls.items() if r.get("sde_raw") is not None and r["sde_raw"] >= THR}
+        t9 = {k for k, r in tls.items() if r.get("tls_sde") is not None and np.isfinite(r["tls_sde"]) and r["tls_sde"] >= THR}
         rep[variant] = {
             "n": n,
             "errors_bls": sum("error" in r for r in bls.values()),
+            "errors_tls": sum("error" in r for r in tls.values()),
+            "tls_sde_ge9": rate(len(t9), n),
+            "resolver_confident_given_tls_sde_ge9": rate(sum(conf[k] for k in t9), len(t9)),
+            "resolver_confident_given_tls_sde_lt9": rate(sum(conf[k] for k in fa if k not in t9), n - len(t9)),
+            "resolver_confident_and_tls_sde_ge9": rate(sum(conf[k] for k in t9), n),
             "a6_sde_ge9": rate(len(a9), n),
             "raw_sde_ge9": rate(len(r9), n),
             "resolver_v2_confident": rate(sum(conf.values()), n),

@@ -323,7 +323,7 @@ def macros():
     mac("faInvSeedMed", f2(fa["inverted"]["seed_periods_median_d"]))
     c = J("fa_context_report.json")  # post hoc, decision FA-ctx
     for v_, t in (("scrambled", "Scr"), ("inverted", "Inv")):
-        for k, kt in (("a6_sde_ge9", "Asix"), ("raw_sde_ge9", "Raw")):
+        for k, kt in (("tls_sde_ge9", "Tls"), ("a6_sde_ge9", "Asix"), ("raw_sde_ge9", "Raw")):
             mac(f"ctx{t}{kt}", pc(c[v_][k]["rate"]))
             mac(f"ctx{t}{kt}CI", cip(c[v_][k]["ci95"]))
         mac(f"ctx{t}AsixN", n(c[v_]["a6_sde_ge9"]["count"]))
@@ -332,6 +332,13 @@ def macros():
         mac(f"ctx{t}Low", pc(c[v_]["resolver_confident_given_a6_sde_lt9"]["rate"]))
         mac(f"ctx{t}LowCI", cip(c[v_]["resolver_confident_given_a6_sde_lt9"]["ci95"]))
         mac(f"ctx{t}Joint", pc(c[v_]["resolver_confident_and_a6_sde_ge9"]["rate"]))
+        mac(f"ctx{t}TlsN", n(c[v_]["tls_sde_ge9"]["count"]))
+        mac(f"ctx{t}TlsBoth", pc(c[v_]["resolver_confident_given_tls_sde_ge9"]["rate"]))
+        mac(f"ctx{t}TlsBothCI", cip(c[v_]["resolver_confident_given_tls_sde_ge9"]["ci95"]))
+        mac(f"ctx{t}TlsLow", pc(c[v_]["resolver_confident_given_tls_sde_lt9"]["rate"]))
+        mac(f"ctx{t}TlsLowCI", cip(c[v_]["resolver_confident_given_tls_sde_lt9"]["ci95"]))
+        mac(f"ctx{t}TlsJoint", pc(c[v_]["resolver_confident_and_tls_sde_ge9"]["rate"]))
+        mac(f"ctx{t}TlsLowN", n(c[v_]["resolver_confident_given_tls_sde_lt9"]["count"]))
 
     ms = json.loads((P / "data" / "mast" / "summary.json").read_text())  # scripts/make_mast_doi_lists.py
     mac("mastFiles", n(ms["all_files"]))
@@ -482,13 +489,13 @@ def tables():
     for v_, lbl in (("scrambled", "Scrambled"), ("inverted", "Inverted")):
         r_ = [lbl, n(fa[v_]["n"]), f"{pc(fa[v_]['v2']['rate'])}\\% {cip(fa[v_]['v2']['ci95'])}", f"{pc(fa[v_]['v1']['rate'])}\\%", f"{pc(fa[v_]['principled']['rate'])}\\%"]
         c = J("fa_context_report.json")[v_]
-        r_ += [f"{pc(c['a6_sde_ge9']['rate'])}\\%", f"{pc(c['resolver_confident_given_a6_sde_ge9']['rate'])}\\%"]
+        r_ += [f"{pc(c['tls_sde_ge9']['rate'])}\\%", f"{pc(c['a6_sde_ge9']['rate'])}\\%"]
         rows.append(r_)
     table("fa.tex", "False-alarm test: fraction of light curves resolved with confidence.", "tab:fa", "lrccccc",
-          ["Light curves", "$N$", "v2 [95\\% CI]", "v1", "Principled", "BLS SDE$\\ge9^a$", "v2 if SDE$\\ge9^a$"], rows,
+          ["Light curves", "$N$", "v2 [95\\% CI]", "v1", "Principled", "TLS SDE$\\ge9^a$", "BLS SDE$\\ge9^a$"], rows,
           "The pre-registered criterion is a confident-resolution rate below 5\\% on scrambled light curves. $^a$Post hoc: the "
-          "fraction of light curves on which the BLS search that supplied the seed reaches SDE~$\\ge9$ (SDE on the detrended "
-          "spectrum at TLS's trial periods), and the \\Vtwo\\ confident rate among those light curves.")
+          "fraction of light curves on which each search reaches SDE~$\\ge9$ (TLS: its own SDE; BLS: the search that supplied the "
+          "seed, with SDE computed on the detrended spectrum at TLS's trial periods).")
 
     pl = b4["per_light_curve"]
     rows = [[lbl, f2(pl[k]["median_s"]), f2(pl[k]["p95_s"]), hw] for k, lbl, hw in (

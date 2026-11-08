@@ -1,11 +1,47 @@
 {
  "label": "POST HOC (decision FA-ctx; not pre-registered)",
- "git_commit": "1336b5328cb6cf83bdd4e155485c5aa296807507",
+ "git_commit": "c5bcc19eae170d42e08e0990236805c73ec306db",
  "threshold_sde": 9.0,
- "engine": "GPU BLS on the modified light curve (the search that supplied the resolver's seed)",
  "scrambled": {
   "n": 1198,
   "errors_bls": 0,
+  "errors_tls": 0,
+  "tls_sde_ge9": {
+   "count": 583,
+   "n": 1198,
+   "rate": 0.48664440734557596,
+   "ci95": [
+    0.4584286715310233,
+    0.5149455235376115
+   ]
+  },
+  "resolver_confident_given_tls_sde_ge9": {
+   "count": 273,
+   "n": 583,
+   "rate": 0.46826758147512865,
+   "ci95": [
+    0.42810194034440713,
+    0.5088486780166632
+   ]
+  },
+  "resolver_confident_given_tls_sde_lt9": {
+   "count": 173,
+   "n": 615,
+   "rate": 0.2813008130081301,
+   "ci95": [
+    0.24720616666257406,
+    0.3181107092552699
+   ]
+  },
+  "resolver_confident_and_tls_sde_ge9": {
+   "count": 273,
+   "n": 1198,
+   "rate": 0.2278797996661102,
+   "ci95": [
+    0.2050184098757226,
+    0.25248081464770883
+   ]
+  },
   "a6_sde_ge9": {
    "count": 504,
    "n": 1198,
@@ -64,6 +100,43 @@
  "inverted": {
   "n": 1198,
   "errors_bls": 0,
+  "errors_tls": 0,
+  "tls_sde_ge9": {
+   "count": 297,
+   "n": 1198,
+   "rate": 0.24791318864774625,
+   "ci95": [
+    0.22429294675502598,
+    0.2731449851654535
+   ]
+  },
+  "resolver_confident_given_tls_sde_ge9": {
+   "count": 38,
+   "n": 297,
+   "rate": 0.12794612794612795,
+   "ci95": [
+    0.09465313431376252,
+    0.17074101330412014
+   ]
+  },
+  "resolver_confident_given_tls_sde_lt9": {
+   "count": 10,
+   "n": 901,
+   "rate": 0.011098779134295227,
+   "ci95": [
+    0.006039581509059593,
+    0.020309339672283083
+   ]
+  },
+  "resolver_confident_and_tls_sde_ge9": {
+   "count": 38,
+   "n": 1198,
+   "rate": 0.03171953255425709,
+   "ci95": [
+    0.02319569541285567,
+    0.043237019181147404
+   ]
+  },
   "a6_sde_ge9": {
    "count": 319,
    "n": 1198,
