@@ -1,0 +1,440 @@
+{
+ "git_commit": "729545bf685deee050795c9c85d5f382d6a5932a",
+ "n_checks": 72,
+ "n_failed": 0,
+ "failed": [],
+ "checks": [
+  {
+   "check": "B5 included",
+   "recomputed": 1500,
+   "reported": 1500,
+   "ok": true
+  },
+  {
+   "check": "B5 H3 pass",
+   "recomputed": 1473,
+   "reported": 1473,
+   "ok": true
+  },
+  {
+   "check": "B5 primary N",
+   "recomputed": 1341,
+   "reported": 1341,
+   "ok": true
+  },
+  {
+   "check": "B5 raw tls accuracy",
+   "recomputed": 0.6748695003728561,
+   "reported": 0.6748695003728561,
+   "ok": true
+  },
+  {
+   "check": "B5 raw bls accuracy",
+   "recomputed": 0.6435495898583147,
+   "reported": 0.6435495898583147,
+   "ok": true
+  },
+  {
+   "check": "B5 v2 accuracy",
+   "recomputed": 0.814317673378076,
+   "reported": 0.814317673378076,
+   "ok": true
+  },
+  {
+   "check": "B5 v2 CI low",
+   "recomputed": 0.7926181039564807,
+   "reported": 0.7926176891921156,
+   "ok": true
+  },
+  {
+   "check": "B5 v2 CI high",
+   "recomputed": 0.8342215837039783,
+   "reported": 0.8342219326637222,
+   "ok": true
+  },
+  {
+   "check": "B5 v2 ECE",
+   "recomputed": 0.09071689250702783,
+   "reported": 0.09071689250702783,
+   "ok": true
+  },
+  {
+   "check": "B5 v2 abstain",
+   "recomputed": 0.28560775540641314,
+   "reported": 0.28560775540641314,
+   "ok": true
+  },
+  {
+   "check": "B5 ceiling",
+   "recomputed": 0.9202087994034303,
+   "reported": 0.9202087994034303,
+   "ok": true
+  },
+  {
+   "check": "B5 McNemar vs tls: resolver only",
+   "recomputed": 254,
+   "reported": 254,
+   "ok": true
+  },
+  {
+   "check": "B5 McNemar vs tls: seed only",
+   "recomputed": 67,
+   "reported": 67,
+   "ok": true
+  },
+  {
+   "check": "B5 McNemar vs tls: p (ratio)",
+   "recomputed": 0.9999999999999902,
+   "reported": 1.0,
+   "ok": true
+  },
+  {
+   "check": "B5 McNemar vs bls: resolver only",
+   "recomputed": 292,
+   "reported": 292,
+   "ok": true
+  },
+  {
+   "check": "B5 McNemar vs bls: seed only",
+   "recomputed": 63,
+   "reported": 63,
+   "ok": true
+  },
+  {
+   "check": "B5 McNemar vs bls: p (ratio)",
+   "recomputed": 1.0000000000000246,
+   "reported": 1.0,
+   "ok": true
+  },
+  {
+   "check": "B2 records",
+   "recomputed": 1198,
+   "reported": 1198,
+   "ok": true
+  },
+  {
+   "check": "B2 primary N",
+   "recomputed": 1169,
+   "reported": 1169,
+   "ok": true
+  },
+  {
+   "check": "B2 v2 accuracy",
+   "recomputed": 0.8323353293413174,
+   "reported": 0.8323353293413174,
+   "ok": true
+  },
+  {
+   "check": "B2 v2 ECE",
+   "recomputed": 0.050311726186406835,
+   "reported": 0.050311726186406835,
+   "ok": true
+  },
+  {
+   "check": "B2 raw tls",
+   "recomputed": 0.8143712574850299,
+   "reported": 0.8143712574850299,
+   "ok": true
+  },
+  {
+   "check": "B2 McNemar vs tls: resolver only",
+   "recomputed": 69,
+   "reported": 69,
+   "ok": true
+  },
+  {
+   "check": "B2 McNemar vs tls: seed only",
+   "recomputed": 48,
+   "reported": 48,
+   "ok": true
+  },
+  {
+   "check": "B2 McNemar vs tls: p (ratio)",
+   "recomputed": 0.999999999999998,
+   "reported": 1.0,
+   "ok": true
+  },
+  {
+   "check": "B2 raw bls",
+   "recomputed": 0.8263473053892215,
+   "reported": 0.8263473053892215,
+   "ok": true
+  },
+  {
+   "check": "B2 McNemar vs bls: resolver only",
+   "recomputed": 60,
+   "reported": 60,
+   "ok": true
+  },
+  {
+   "check": "B2 McNemar vs bls: seed only",
+   "recomputed": 53,
+   "reported": 53,
+   "ok": true
+  },
+  {
+   "check": "B2 McNemar vs bls: p (ratio)",
+   "recomputed": 0.9999999999999997,
+   "reported": 1.0,
+   "ok": true
+  },
+  {
+   "check": "B2 raw spoc1",
+   "recomputed": 0.6749358426005133,
+   "reported": 0.6749358426005133,
+   "ok": true
+  },
+  {
+   "check": "B2 McNemar vs spoc1: resolver only",
+   "recomputed": 239,
+   "reported": 239,
+   "ok": true
+  },
+  {
+   "check": "B2 McNemar vs spoc1: seed only",
+   "recomputed": 55,
+   "reported": 55,
+   "ok": true
+  },
+  {
+   "check": "B2 McNemar vs spoc1: p (ratio)",
+   "recomputed": 0.9999999999999839,
+   "reported": 1.0,
+   "ok": true
+  },
+  {
+   "check": "B2 single-sector N",
+   "recomputed": 577,
+   "reported": 577,
+   "ok": true
+  },
+  {
+   "check": "B2 single-sector resolver",
+   "recomputed": 0.8249566724436742,
+   "reported": 0.8249566724436742,
+   "ok": true
+  },
+  {
+   "check": "B2 single-sector TLS",
+   "recomputed": 0.7712305025996534,
+   "reported": 0.7712305025996534,
+   "ok": true
+  },
+  {
+   "check": "B2 per-target table disagreements",
+   "recomputed": 0,
+   "reported": 0,
+   "ok": true
+  },
+  {
+   "check": "B1_i_wrong_seed N",
+   "recomputed": 8620,
+   "reported": 8620,
+   "ok": true
+  },
+  {
+   "check": "B1_i_wrong_seed accuracy",
+   "recomputed": 0.8664733178654292,
+   "reported": 0.8664733178654292,
+   "ok": true
+  },
+  {
+   "check": "B1_i_wrong_seed v1 ECE",
+   "recomputed": 0.019145096736750453,
+   "reported": 0.019145096736750453,
+   "ok": true
+  },
+  {
+   "check": "B1_i_wrong_seed v2 ECE",
+   "recomputed": 0.05558115140620227,
+   "reported": 0.05558115140620227,
+   "ok": true
+  },
+  {
+   "check": "B1_ii_tls_seed N",
+   "recomputed": 2000,
+   "reported": 2000,
+   "ok": true
+  },
+  {
+   "check": "B1_ii_tls_seed accuracy",
+   "recomputed": 0.7915,
+   "reported": 0.7915,
+   "ok": true
+  },
+  {
+   "check": "B1_ii_tls_seed v1 ECE",
+   "recomputed": 0.09720590872030802,
+   "reported": 0.09720590872030802,
+   "ok": true
+  },
+  {
+   "check": "B1_ii_tls_seed v2 ECE",
+   "recomputed": 0.016816265157904825,
+   "reported": 0.016816265157904825,
+   "ok": true
+  },
+  {
+   "check": "B1_ii_bls_seed N",
+   "recomputed": 2000,
+   "reported": 2000,
+   "ok": true
+  },
+  {
+   "check": "B1_ii_bls_seed accuracy",
+   "recomputed": 0.784,
+   "reported": 0.784,
+   "ok": true
+  },
+  {
+   "check": "B1_ii_bls_seed v1 ECE",
+   "recomputed": 0.09575638039795159,
+   "reported": 0.09575638039795159,
+   "ok": true
+  },
+  {
+   "check": "B1_ii_bls_seed v2 ECE",
+   "recomputed": 0.014012836110742177,
+   "reported": 0.014012836110742177,
+   "ok": true
+  },
+  {
+   "check": "FA scrambled N",
+   "recomputed": 1198,
+   "reported": 1198,
+   "ok": true
+  },
+  {
+   "check": "FA scrambled v2 confident",
+   "recomputed": 446,
+   "reported": 446,
+   "ok": true
+  },
+  {
+   "check": "FA ctx scrambled TLS coverage",
+   "recomputed": 1198,
+   "reported": 1198,
+   "ok": true
+  },
+  {
+   "check": "FA ctx scrambled BLS coverage",
+   "recomputed": 1198,
+   "reported": 1198,
+   "ok": true
+  },
+  {
+   "check": "FA ctx scrambled TLS SDE>=9",
+   "recomputed": 583,
+   "reported": 583,
+   "ok": true
+  },
+  {
+   "check": "FA ctx scrambled BLS SDE>=9",
+   "recomputed": 504,
+   "reported": 504,
+   "ok": true
+  },
+  {
+   "check": "FA inverted N",
+   "recomputed": 1198,
+   "reported": 1198,
+   "ok": true
+  },
+  {
+   "check": "FA inverted v2 confident",
+   "recomputed": 48,
+   "reported": 48,
+   "ok": true
+  },
+  {
+   "check": "FA ctx inverted TLS coverage",
+   "recomputed": 1198,
+   "reported": 1198,
+   "ok": true
+  },
+  {
+   "check": "FA ctx inverted BLS coverage",
+   "recomputed": 1198,
+   "reported": 1198,
+   "ok": true
+  },
+  {
+   "check": "FA ctx inverted TLS SDE>=9",
+   "recomputed": 297,
+   "reported": 297,
+   "ok": true
+  },
+  {
+   "check": "FA ctx inverted BLS SDE>=9",
+   "recomputed": 319,
+   "reported": 319,
+   "ok": true
+  },
+  {
+   "check": "B4 complete",
+   "recomputed": 19997,
+   "reported": 19997,
+   "ok": true
+  },
+  {
+   "check": "B4 median total",
+   "recomputed": 4.558391094207764,
+   "reported": 4.558391094207764,
+   "ok": true
+  },
+  {
+   "check": "Audit N",
+   "recomputed": 319,
+   "reported": 319,
+   "ok": true
+  },
+  {
+   "check": "Audit favor resolver",
+   "recomputed": 74,
+   "reported": 74,
+   "ok": true
+  },
+  {
+   "check": "Audit favor catalog",
+   "recomputed": 44,
+   "reported": 44,
+   "ok": true
+  },
+  {
+   "check": "Stars in both injection pool and B2",
+   "recomputed": 0,
+   "reported": 0,
+   "ok": true
+  },
+  {
+   "check": "Stars in both injection pool and B5",
+   "recomputed": 0,
+   "reported": 0,
+   "ok": true
+  },
+  {
+   "check": "Stars in both B2 and B5",
+   "recomputed": 0,
+   "reported": 0,
+   "ok": true
+  },
+  {
+   "check": "v2 calibration hosts in B1 test split",
+   "recomputed": 0,
+   "reported": 0,
+   "ok": true
+  },
+  {
+   "check": "B2 targets with a sector in both windows",
+   "recomputed": 0,
+   "reported": 0,
+   "ok": true
+  },
+  {
+   "check": "B5 targets with a sector in both windows",
+   "recomputed": 0,
+   "reported": 0,
+   "ok": true
+  }
+ ]
+}
