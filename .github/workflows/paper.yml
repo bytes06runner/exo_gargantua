@@ -10,7 +10,7 @@ permissions:
   contents: read
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # TeX Live 2023; AASTeX 7.0.1 long tables fail with the array package on ubuntu-26.04 (TeX Live 2025)
     steps:
       - uses: actions/checkout@v4
       - name: Install TeX Live
