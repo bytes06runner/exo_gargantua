@@ -75,6 +75,7 @@ def one(args):
             sd = SE.tls_peak(tb, fb, 1, rs, ms)
             P = sd["tls_period"]
         elif engine == "bls_stored":  # BLS does not use stellar parameters: the GPU BLS seed of the original run is reused
+            assert G["bls_seed"], "stored GPU BLS seeds not found"
             P = G["bls_seed"][tic]
             sd = {"bls_period": P}
         else:
