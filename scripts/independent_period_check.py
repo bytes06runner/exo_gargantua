@@ -83,7 +83,7 @@ def main():
                            "raw_tls": rate(ok("P_tls").sum(), len(q)), "raw_bls": rate(ok("P_bls").sum(), len(q)), "resolver_v2": rate(ok("P_resolver").sum(), len(q)),
                            "mcnemar_vs_tls": mcnemar(ok("P_tls"), ok("P_resolver")), "mcnemar_vs_bls": mcnemar(ok("P_bls"), ok("P_resolver"))}
     # audit cases
-    a = pd.read_csv(ROOT / "results/kaggle/b5_audit/b5audit/b5_audit.csv")
+    a = pd.read_csv(ROOT / "results/kaggle/b5r_audit/b5audit/b5_audit.csv")
     a["P_kostov"] = a["tic"].map(K)
     def side(r):
         if not np.isfinite(r["P_kostov"]):

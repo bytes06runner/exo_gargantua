@@ -1,0 +1,74 @@
+{
+ "label": "POST HOC (decision Indep-1)",
+ "git_commit": "431ecbe4d24bd5e966f57984535bcc46805b6d90",
+ "fetched_rows": 167,
+ "primary_with_gaia": 137,
+ "catalog_equals_gaia": {
+  "count": 104,
+  "n": 137,
+  "fraction": 0.7591240875912408,
+  "ci95": [
+   0.6810808223611243,
+   0.8230315989689373
+  ]
+ },
+ "catalog_equals_2x_gaia": {
+  "count": 6,
+  "n": 137,
+  "fraction": 0.043795620437956206,
+  "ci95": [
+   0.020223886822615784,
+   0.09225424463854343
+  ]
+ },
+ "catalog_equals_half_gaia": {
+  "count": 10,
+  "n": 137,
+  "fraction": 0.072992700729927,
+  "ci95": [
+   0.04012818886554231,
+   0.1291513421821027
+  ]
+ },
+ "vs_gaia": {
+  "raw_tls": {
+   "count": 34,
+   "n": 137,
+   "fraction": 0.24817518248175183,
+   "ci95": [
+    0.18337487429287933,
+    0.3267130542736806
+   ]
+  },
+  "raw_bls": {
+   "count": 72,
+   "n": 137,
+   "fraction": 0.5255474452554745,
+   "ci95": [
+    0.4423782454608223,
+    0.6073229791773529
+   ]
+  },
+  "resolver": {
+   "count": 92,
+   "n": 137,
+   "fraction": 0.6715328467153284,
+   "ci95": [
+    0.5891473433803022,
+    0.7445608791903019
+   ]
+  }
+ },
+ "mcnemar_vs_tls": {
+  "only_first_correct": 3,
+  "only_second_correct": 61,
+  "n": 137,
+  "p_value": 4.742842403537839e-15
+ },
+ "mcnemar_vs_bls": {
+  "only_first_correct": 8,
+  "only_second_correct": 28,
+  "n": 137,
+  "p_value": 0.0011932429624721408
+ }
+}

@@ -32,9 +32,9 @@ def tally(df):
 
 
 def main():
-    d = pd.read_csv(ROOT / "results/kaggle/b5_audit/b5audit/b5_audit.csv")
+    d = pd.read_csv(ROOT / "results/kaggle/b5r_audit/b5audit/b5_audit.csv")
     d["ratio_label"] = [ratio_label(r) for r in d["ratio"]]
-    done = json.loads((ROOT / "results/kaggle/b5_audit/b5audit/b5_audit_done.json").read_text())
+    done = json.loads((ROOT / "results/kaggle/b5r_audit/b5audit/b5_audit_done.json").read_text())
     rep = {"git_commit": subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT).stdout.strip(),
            "run_commit": done["git_commit"], "label": "SECONDARY: catalog-truth audit (does not change the primary B5 result)",
            "errors": int(d["verdict"].str.startswith("error").sum()),

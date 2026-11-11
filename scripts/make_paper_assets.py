@@ -6,6 +6,7 @@ Writes
   paper/tables/*.tex                   deluxetables
   paper/figures/*.pdf                  figures; each asserts that what it plots equals the results file
   paper/data/b5_candidate_period_revisions.csv  catalog-truth audit cases decided by later data (machine-readable)
+  paper/data/b5_per_target.csv  every B5 binary, with each method's period (machine-readable)
   paper/data/b2_per_target.csv         B2 per-TOI table (sectors, SNR, periods, correctness)
 """
 
@@ -203,6 +204,122 @@ def macros():
     mac("bFiveCovered", pc(1 - v["abstain_rate"]))
     mac("bFiveOneSecAcc", f3(b5["by_n_early"]["1"]["resolver_seeded_tls"]["v2"]["accuracy"]))
     mac("bFiveFourSecAcc", f3(b5["by_n_early"]["4"]["resolver_seeded_tls"]["v2"]["accuracy"]))
+
+    # B5: first run (TLS default stellar parameters, F4 inactive), reported as a sensitivity analysis (decision B5-r1)
+    o = J("b5_report_F4off.json")["primary"]
+    ov = o["resolver_seeded_tls"]["v2"]
+    mac("bFiveOrigTls", f3(o["raw"]["tls"]["accuracy"]))
+    mac("bFiveOrigAcc", f3(ov["accuracy"]))
+    mac("bFiveOrigAccCI", ci(ov["ci95"]))
+    mac("bFiveOrigEce", f3(ov["ece"]))
+    mac("bFiveOrigAbst", pc(ov["abstain_rate"]))
+    mac("bFiveOrigNa", f3(ov["accuracy_non_abstained"]["accuracy"]))
+    for key, tag in (("PRIMARY_v2_tls_vs_raw_tls", "Tls"), ("PRIMARY_v2_tls_vs_raw_bls", "Bls")):
+        mac(f"bFiveOrig{tag}P", pval(o[key]["p_value"]))
+        mac(f"bFiveOrig{tag}Fix", n(o[key]["only_second_correct"]))
+        mac(f"bFiveOrig{tag}Break", n(o[key]["only_first_correct"]))
+    # B5: TLS period floor and the density term on binaries (post hoc, decision B5-floor)
+    fl = J("b5_tls_floor.json")
+    mac("bFiveFloorKnown", n(fl["with_radius_and_mass"]))
+    mac("bFiveFloorBelow", n(fl["true_period_below_floor"]))
+    mac("bFiveFloorBelowTls", f3(fl["below_floor"]["raw_tls_rerun"]["accuracy"]))
+    mac("bFiveFloorBelowOrig", f3(fl["below_floor"]["raw_tls_original"]["accuracy"]))
+    mac("bFiveFloorBelowAcc", f3(fl["below_floor"]["v2_rerun"]["accuracy"]))
+    ab = fl["above_floor"]
+    mac("bFiveFloorAboveN", n(ab["raw_tls_rerun"]["n"]))
+    mac("bFiveFloorAboveTls", f3(ab["raw_tls_rerun"]["accuracy"]))
+    mac("bFiveFloorAboveTlsCI", ci(ab["raw_tls_rerun"]["ci95"]))
+    mac("bFiveFloorAboveOrig", f3(ab["raw_tls_original"]["accuracy"]))
+    mac("bFiveFloorAboveBls", f3(ab["raw_bls"]["accuracy"]))
+    mac("bFiveFloorAboveAcc", f3(ab["v2_rerun"]["accuracy"]))
+    mac("bFiveFloorAboveAccCI", ci(ab["v2_rerun"]["ci95"]))
+    for key, tag in (("v2_vs_raw_tls", "Tls"), ("v2_vs_raw_bls", "Bls")):
+        mac(f"bFiveFloorAbove{tag}P", pval(ab[key]["p_value"]))
+        mac(f"bFiveFloorAbove{tag}Fix", n(ab[key]["only_second_correct"]))
+        mac(f"bFiveFloorAbove{tag}Break", n(ab[key]["only_first_correct"]))
+    mac("bFiveFloorTlsErr", n(fl["tls_errors_primary"]))
+    mac("bFiveFloorLost", n(fl["raw_tls_correct_only_in_original"]))
+    mac("bFiveFloorLostMult", n(fl["lost_at_integer_multiple"]))
+    mac("bFiveFloorLostGrid", n(fl["lost_within_1pct_of_truth"]))
+    mac("bFiveFourActive", n(fl["f4_active_bls_seeded"]))
+    fe = fl["f4_effect_same_bls_seeds"]
+    mac("bFiveFourWith", f3(fe["v2_with_f4"]["accuracy"]))
+    mac("bFiveFourWithout", f3(fe["v2_without_f4"]["accuracy"]))
+    mac("bFiveFourP", pval(fe["mcnemar_without_vs_with"]["p_value"]))
+    mac("bFiveFourFix", n(fe["mcnemar_without_vs_with"]["only_second_correct"]))
+    mac("bFiveFourBreak", n(fe["mcnemar_without_vs_with"]["only_first_correct"]))
+    mac("bTwoFloorN", n(fl["other_benchmarks"]["b2"]["n_with_floor"]))
+    mac("bTwoFloorBelow", n(fl["other_benchmarks"]["b2"]["below_floor"]))
+    mac("bOneFloorN", n(fl["other_benchmarks"]["b1_search_subsample"]["n_with_floor"]))
+    mac("bOneFloorBelow", n(fl["other_benchmarks"]["b1_search_subsample"]["below_floor"]))
+    # B5: SPOC periods (post hoc, decision B5-spoc)
+    sp = J("b5_spoc_report.json")
+    mac("bFiveSpocStars", n(sp["stars_with_any_tce"]))
+    for k, t in (("spoc1", "One"), ("spocE", "E")):
+        q = sp["primary"][k]
+        mac(f"bFiveSpoc{t}", f3(q["accuracy"]))
+        mac(f"bFiveSpoc{t}Cov", pc(q["coverage"]))
+        mac(f"bFiveSpoc{t}Given", f3(q["accuracy_where_period_given"]["accuracy"]))
+        mac(f"bFiveSpoc{t}GivenN", n(q["accuracy_where_period_given"]["n"]))
+        m_ = q["resolver_vs_spoc_where_period_given"]
+        mac(f"bFiveSpoc{t}GivenP", pval(m_["p_value"]))
+        mac(f"bFiveSpoc{t}GivenFix", n(m_["only_second_correct"]))
+        mac(f"bFiveSpoc{t}GivenBreak", n(m_["only_first_correct"]))
+    # reproducibility and independent checks (decisions Repro-1, Indep-1)
+    r5, r2 = J("repro_b5.json"), J("repro_b2.json")
+    assert r5["errors"] == r2["errors"] == 0 and r5["same_chosen_alias"] == r5["n"] and r2["same_chosen_alias"] == r2["n"]
+    assert r5["tls_same_period_within_1e-6"] == r5["tls_rerun_n"] and r2["tls_same_period_within_1e-6"] == r2["tls_rerun_n"]
+    assert r5["max_abs_conf_diff"] == 0 and r2["max_abs_conf_diff"] == 0
+    mac("bFiveReproN", n(r5["n"]))
+    mac("bTwoReproN", n(r2["n"]))
+    mac("bFiveReproTls", n(r5["tls_rerun_n"]))
+    ic = J("b5_independent_check.json")
+    k = ic["b5_vs_kostov"]
+    mac("bFiveKostovN", n(k["n_primary_with_kostov"]))
+    mac("bFiveKostovCat", n(k["kostov_equals_catalog"]["count"]))
+    mac("bFiveKostovTls", n(k["raw_tls"]["count"]))
+    mac("bFiveKostovBls", n(k["raw_bls"]["count"]))
+    mac("bFiveKostovRes", n(k["resolver_v2"]["count"]))
+    mac("bFiveKostovP", pval(k["mcnemar_vs_tls"]["p_value"]))
+    h = ic["half_period_tois"]
+    mac("bTwoHalfTotal", n(h["tois_total_with_period"]))
+    mac("bTwoHalfSame", n(h["tois_matching_eb_period"]))
+    mac("bTwoHalfN", n(h["tois_at_half_the_eb_period"]))
+    mac("bTwoHalfOpen", n(h["half_period_still_open_PC_APC_or_none"]))
+    mac("bTwoHalfCp", n(h["half_period_CP_KP"]))
+    mac("bTwoHalfFp", n(h["half_period_FP_FA"]))
+    dc = ic["decided_audit_cases"]
+    mac("auditDecidedToi", n(dc["are_tois"]))
+    mac("auditDecidedNea", n(dc["in_exoplanet_archive"]))
+    g = J("b5_gaia_check.json")
+    mac("bFiveGaiaN", n(g["primary_with_gaia"]))
+    mac("bFiveGaiaCat", n(g["catalog_equals_gaia"]["count"]))
+    mac("bFiveGaiaRes", n(g["vs_gaia"]["resolver"]["count"]))
+    mac("bFiveGaiaTls", n(g["vs_gaia"]["raw_tls"]["count"]))
+    mac("bFiveGaiaBls", n(g["vs_gaia"]["raw_bls"]["count"]))
+    mac("bFiveGaiaTlsP", pval(g["mcnemar_vs_tls"]["p_value"]))
+    mac("bFiveGaiaBlsP", pval(g["mcnemar_vs_bls"]["p_value"]))
+    ad = pd.read_csv(R / "kaggle/b5r_audit/b5audit/b5_audit.csv")
+    mac("auditNonaliasClose", n(int((np.abs(ad["ratio"] - 1) < 0.01).sum())))
+    # rule-6 flags discussed in the text: values read from the audit, the Exoplanet Archive snapshot and ExoFOP
+    ps = pd.read_csv(ROOT / "data/raw/pscomppars_20260930.csv.gz", comment="#", low_memory=False)
+    toi = pd.read_csv(ROOT / "data/raw/exofop_toi_20260930.csv", comment="#", low_memory=False)
+    w = ad.set_index("tic")
+    assert w.loc[92352621, "verdict"] == "later data support v2" and w.loc[354518617, "verdict"] == "later data support v2"
+    wa = float(ps.loc[ps["pl_name"] == "WASP-94 A b", "pl_orbper"].iloc[0])
+    assert ps.loc[ps["pl_name"] == "WASP-94 A b", "tic_id"].iloc[0] == "TIC 92352620"
+    assert abs(w.loc[92352621, "P_v2"] / wa - 1) < 1e-3
+    mac("flagWaspRes", f"{w.loc[92352621, 'P_v2']:.4f}")
+    mac("flagWaspArchive", f"{wa:.5f}")
+    t = toi[(toi["TIC ID"] == 354518617) & (toi["TOI"] == 2540.01)].iloc[0]
+    assert str(t["TFOPWG Disposition"]) == "CP"
+    mac("flagToiPeriod", f"{float(t['Period (days)']):.2f}")
+    mac("flagToiCat", f"{w.loc[354518617, 'P_catalog']:.2f}")
+    mac("flagToiRes", f"{w.loc[354518617, 'P_v2']:.2f}")
+    ds = J("paper_disclosures.json")
+    mac("bTwoTschDiffer", n(ds["tschudi_differs_from_tls"]))
+    mac("bTwoTschCompared", n(ds["tschudi_compared"]))
+    mac("bFourStellar", n(ds["b4_with_stellar_density"]))
 
     au = J("b5_audit_report.json")
     a = au["all"]
@@ -424,6 +541,7 @@ def tables():
 
     pr = b5["primary"]
     v, vb, v1 = pr["resolver_seeded_tls"]["v2"], pr["resolver_seeded_bls"]["v2"], pr["resolver_seeded_tls"]["v1"]
+    o5, fab = J("b5_report_F4off.json")["primary"], J("b5_tls_floor.json")["above_floor"]
     table("b5.tex", "B5: alias resolution on TESS eclipsing binaries (primary sample).", "tab:b5", "lcccc",
           ["Method", "Accuracy [95\\% CI]", "ECE", "Abstain", "McNemar vs.\\ raw seed"],
           [["Raw TLS peak", acc_cell(pr["raw"]["tls"]), "\\nodata", "\\nodata", "\\nodata"],
@@ -432,7 +550,15 @@ def tables():
             f"${pr['PRIMARY_v2_tls_vs_raw_tls']['only_second_correct']}/{pr['PRIMARY_v2_tls_vs_raw_tls']['only_first_correct']}$, $p{pval(pr['PRIMARY_v2_tls_vs_raw_tls']['p_value'])}$"],
            ["Resolver v2, BLS seed", acc_cell(vb), f3(vb["ece"]), pc(vb["abstain_rate"]) + "\\%",
             f"${pr['v2_bls_vs_raw_bls']['only_second_correct']}/{pr['v2_bls_vs_raw_bls']['only_first_correct']}$, $p{pval(pr['v2_bls_vs_raw_bls']['p_value'])}$"],
-           ["Resolver v1, TLS seed", acc_cell(v1), f3(v1["ece"]), pc(v1["abstain_rate"]) + "\\%", "\\nodata"]],
+           ["Resolver v1, TLS seed", acc_cell(v1), f3(v1["ece"]), pc(v1["abstain_rate"]) + "\\%", "\\nodata"],
+           ["\\emph{First run (default stellar parameters, no F4)}", "", "", "", ""],
+           ["Raw TLS peak", acc_cell(o5["raw"]["tls"]), "\\nodata", "\\nodata", "\\nodata"],
+           ["Resolver v2, TLS seed", acc_cell(o5["resolver_seeded_tls"]["v2"]), f3(o5["resolver_seeded_tls"]["v2"]["ece"]), pc(o5["resolver_seeded_tls"]["v2"]["abstain_rate"]) + "\\%",
+            f"${o5['PRIMARY_v2_tls_vs_raw_tls']['only_second_correct']}/{o5['PRIMARY_v2_tls_vs_raw_tls']['only_first_correct']}$, $p{pval(o5['PRIMARY_v2_tls_vs_raw_tls']['p_value'])}$"],
+           [f"\\emph{{Above the TLS period floor ({n(fab['raw_tls_rerun']['n'])} binaries)}}", "", "", "", ""],
+           ["Raw TLS peak", acc_cell(fab["raw_tls_rerun"]), "\\nodata", "\\nodata", "\\nodata"],
+           ["Resolver v2, TLS seed", acc_cell(fab["v2_rerun"]), "\\nodata", "\\nodata",
+            f"${fab['v2_vs_raw_tls']['only_second_correct']}/{fab['v2_vs_raw_tls']['only_first_correct']}$, $p{pval(fab['v2_vs_raw_tls']['p_value'])}$"]],
           f"Primary sample: {n(b5['primary_sample'])} eclipsing binaries with at least two early-window primary eclipses, excluding near-equal eclipses (B-amb). Accuracy is top-1 (no abstention); "
           "a period is correct if within 0.1\\% of the catalog period. McNemar columns give discordant pairs won by the resolver / "
           f"by the raw seed and the exact two-sided $p$. Against raw BLS the TLS-seeded resolver gives "
@@ -575,18 +701,23 @@ def figures():
 # ------------------------------------------------------------------ data products
 def data():
     (P / "data").mkdir(exist_ok=True)
-    d = pd.read_csv(R / "kaggle/b5_audit/b5audit/b5_audit.csv")
+    d = pd.read_csv(R / "kaggle/b5r_audit/b5audit/b5_audit.csv")
     keep = d[d["verdict"].isin(["later data support v2", "later data support the catalog"])].copy()
     keep["supported_period"] = np.where(keep["verdict"] == "later data support v2", keep["P_v2"], keep["P_catalog"])
     keep["status"] = np.where(keep["verdict"] == "later data support v2", "candidate revision (resolver period favored by later data)",
                               "catalog period favored by later data")
-    cols = ["tic", "tier", "P_catalog", "P_v2", "ratio", "delta_chi2", "n_ecl_catalog", "n_ecl_v2", "supported_period", "status"]
+    # CLAUDE.md rule 6: every decided star carries its ExoFOP and NASA Exoplanet Archive entries
+    xm = pd.read_csv(R / "b5_audit_crossmatch.csv", dtype=str, keep_default_na=False)[["tic", "toi", "tfopwg_disposition", "toi_period_d", "exoplanet_archive_planet"]]
+    xm["tic"] = xm["tic"].astype(int)
+    keep = keep.merge(xm, on="tic", how="left")
+    cols = ["tic", "tier", "P_catalog", "P_v2", "ratio", "delta_chi2", "n_ecl_catalog", "n_ecl_v2", "supported_period", "status", "toi", "tfopwg_disposition", "toi_period_d", "exoplanet_archive_planet"]
     keep[cols].sort_values(["status", "delta_chi2"], ascending=[True, False]).to_csv(P / "data" / "b5_candidate_period_revisions.csv", index=False,
                                                                                      float_format="%.8g")
     au = J("b5_audit_report.json")["all"]
     assert (keep["verdict"] == "later data support v2").sum() == au["later data support v2"]["count"]
     assert (keep["verdict"] == "later data support the catalog").sum() == au["later data support the catalog"]["count"]
     shutil.copy(R / "b2_per_target.csv", P / "data" / "b2_per_target.csv")
+    shutil.copy(R / "b5_per_target.csv", P / "data" / "b5_per_target.csv")
 
 
 def main():

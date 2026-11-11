@@ -90,7 +90,7 @@ def audit_b5(models):
     rep = J("b5_report.json")
     log = pd.read_csv(ROOT / "data" / "b5_sample_log.csv").set_index("tic")
     runs = {}
-    for r in records("results/kaggle/b5/*/b5/b5_*.jsonl.gz"):
+    for r in records("results/kaggle/b5r/*/b5/b5_*.jsonl.gz"):
         runs[(r["tic"], r["engine"])] = r
     inc = log[log["decision"] == "include"]
     same("B5 included", int(len(inc)), rep["included"])
@@ -98,8 +98,11 @@ def audit_b5(models):
     for tic, L in inc.iterrows():
         Pt = float(L["period"])
         t, b = runs[(int(tic), "tls")], runs[(int(tic), "bls_gpu")]
-        assert "error" not in t and "error" not in b
+        assert "error" not in b
         if t["h3_eclipses"] < 2:
+            continue
+        if "error" in t:  # TLS itself failed: scored as incorrect for TLS and for the TLS-seeded resolver
+            rows.append({"tic": int(tic), "tier": L["tier"], "P": Pt, "tls": False, "bls": abs(b["seed"]["P_seed"] / Pt - 1) < TOL, "v2": False, "conf": 0.0, "ceil": False})
             continue
         ch = choose(models, t["rows"])
         i, c = ch["v2"]
@@ -230,7 +233,7 @@ def audit_b4():
 
 def audit_audit():
     a = J("b5_audit_report.json")["all"]
-    d = pd.read_csv(ROOT / "results/kaggle/b5_audit/b5audit/b5_audit.csv")
+    d = pd.read_csv(ROOT / "results/kaggle/b5r_audit/b5audit/b5_audit.csv")
     same("Audit N", int(len(d)), a["n"])
     enough = (d["n_ecl_catalog"] >= 2) & (d["n_ecl_v2"] >= 2)
     same("Audit favor resolver", int(((d["delta_chi2"] > 10) & enough).sum()), a["later data support v2"]["count"])

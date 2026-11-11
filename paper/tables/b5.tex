@@ -3,11 +3,17 @@
 \tablewidth{0pt}
 \tablehead{\colhead{Method} & \colhead{Accuracy [95\% CI]} & \colhead{ECE} & \colhead{Abstain} & \colhead{McNemar vs.\ raw seed}}
 \startdata
-Raw TLS peak & 0.675 [0.649, 0.699] & \nodata & \nodata & \nodata \\
+Raw TLS peak & 0.535 [0.508, 0.561] & \nodata & \nodata & \nodata \\
 Raw BLS peak & 0.644 [0.618, 0.669] & \nodata & \nodata & \nodata \\
-Resolver v2, TLS seed (primary) & 0.814 [0.793, 0.834] & 0.091 & 28.6\% & $254/67$, $p=9\times10^{-27}$ \\
-Resolver v2, BLS seed & 0.809 [0.787, 0.829] & 0.086 & 29.1\% & $280/58$, $p=5\times10^{-36}$ \\
-Resolver v1, TLS seed & 0.814 [0.793, 0.834] & 0.083 & 5.1\% & \nodata
+Resolver v2, TLS seed (primary) & 0.786 [0.763, 0.807] & 0.097 & 21.3\% & $418/81$, $p=10\times10^{-56}$ \\
+Resolver v2, BLS seed & 0.792 [0.769, 0.813] & 0.084 & 22.1\% & $281/82$, $p=1\times10^{-26}$ \\
+Resolver v1, TLS seed & 0.786 [0.763, 0.807] & 0.131 & 4.5\% & \nodata \\
+\emph{First run (default stellar parameters, no F4)} &  &  &  &  \\
+Raw TLS peak & 0.675 [0.649, 0.699] & \nodata & \nodata & \nodata \\
+Resolver v2, TLS seed & 0.814 [0.793, 0.834] & 0.091 & 28.6\% & $254/67$, $p=9\times10^{-27}$ \\
+\emph{Above the TLS period floor (754 binaries)} &  &  &  &  \\
+Raw TLS peak & 0.682 [0.648, 0.714] & \nodata & \nodata & \nodata \\
+Resolver v2, TLS seed & 0.779 [0.748, 0.807] & \nodata & \nodata & $137/64$, $p=3\times10^{-7}$
 \enddata
-\tablecomments{Primary sample: 1{,}341 eclipsing binaries with at least two early-window primary eclipses, excluding near-equal eclipses (B-amb). Accuracy is top-1 (no abstention); a period is correct if within 0.1\% of the catalog period. McNemar columns give discordant pairs won by the resolver / by the raw seed and the exact two-sided $p$. Against raw BLS the TLS-seeded resolver gives $292/63$, $p=2\times10^{-36}$.}
+\tablecomments{Primary sample: 1{,}341 eclipsing binaries with at least two early-window primary eclipses, excluding near-equal eclipses (B-amb). Accuracy is top-1 (no abstention); a period is correct if within 0.1\% of the catalog period. McNemar columns give discordant pairs won by the resolver / by the raw seed and the exact two-sided $p$. Against raw BLS the TLS-seeded resolver gives $281/90$, $p=5\times10^{-24}$.}
 \end{deluxetable*}
