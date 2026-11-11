@@ -48,6 +48,14 @@ def per_target():
     out = []
     for tic, L in log.iterrows():
         t, b = runs[(int(tic), "tls")], runs[(int(tic), "bls_gpu")]
+        if "error" in t:  # TLS itself failed on this star: no TLS seed, so no resolver answer; scored as incorrect (as in b5_score.py)
+            Pc, P_b = float(L["period"]), b["seed"]["P_seed"]
+            out.append({"tic": int(tic), "tier": L["tier"], "sectors_early": L["sectors_early"], "n_sectors_early": len(str(L["sectors_early"]).split(";")),
+                        "eclipses_in_early_window": t["h3_eclipses"], "scored": t["h3_eclipses"] >= 2, "primary_sample": L["tier"] == "B" and t["h3_eclipses"] >= 2,
+                        "P_catalog": Pc, "P_tls": np.nan, "tls_sde": np.nan, "P_bls": P_b, "P_resolver": np.nan, "confidence_v2": 0.0,
+                        "abstain_v2": True, "snr_seed": np.nan, "depth_seed": np.nan,
+                        "ok_tls": False, "ok_bls": abs(P_b / Pc - 1) < TOL, "ok_resolver": False})
+            continue
         g = [(x["r"], x["P"], x["x"]) for x in t["rows"]]
         i, c = RM.decide(v2[0], g)
         seed = next(x["x"] for x in t["rows"] if x["r"] == "1")
