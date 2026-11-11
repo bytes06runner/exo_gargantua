@@ -1,0 +1,38 @@
+{
+ "first_run": {
+  "audit_commit": "7689b8c7249bc457b0aa1c1d2f363578a7c58b36",
+  "later data support v2": 74,
+  "later data support the catalog": 44,
+  "inconclusive": 190,
+  "insufficient": 11,
+  "n": 319
+ },
+ "rerun": {
+  "audit_commit": "94b3abe12c80d90fc3005e0e259f2b4a2e7c7ada",
+  "later data support v2": 78,
+  "later data support the catalog": 79,
+  "inconclusive": 187,
+  "insufficient": 16,
+  "n": 360
+ },
+ "code_change": "scripts/b5_audit.py reads T_seed from results/kaggle/b5r instead of results/kaggle/b5; fit model, thresholds and verdict rule unchanged; frozen resolver unchanged",
+ "in_both": 260,
+ "in_both_same_resolver_period": 231,
+ "same_period_same_verdict": 229,
+ "in_both_different_resolver_period": 29,
+ "only_first_run": {
+  "later data support v2": 3,
+  "later data support the catalog": 6,
+  "inconclusive": 50,
+  "insufficient": 0,
+  "n": 59
+ },
+ "only_rerun": {
+  "later data support v2": 6,
+  "later data support the catalog": 35,
+  "inconclusive": 55,
+  "insufficient": 4,
+  "n": 100
+ },
+ "only_rerun_catalog_favored_below_tls_floor": 14
+}

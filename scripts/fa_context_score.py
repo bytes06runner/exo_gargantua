@@ -64,6 +64,8 @@ def main():
             "resolver_confident_given_tls_sde_lt9": rate(sum(conf[k] for k in fa if k not in t9), n - len(t9)),
             "resolver_confident_and_tls_sde_ge9": rate(sum(conf[k] for k in t9), n),
             "a6_sde_ge9": rate(len(a9), n),
+            "tls_and_a6_sde_ge9": rate(len(set(t9) & set(a9)), n),
+            "tls_or_a6_sde_ge9": rate(len(set(t9) | set(a9)), n),
             "raw_sde_ge9": rate(len(r9), n),
             "resolver_v2_confident": rate(sum(conf.values()), n),
             "resolver_confident_given_a6_sde_ge9": rate(sum(conf[k] for k in a9), len(a9)),

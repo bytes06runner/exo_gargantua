@@ -316,6 +316,17 @@ def macros():
     mac("flagToiPeriod", f"{float(t['Period (days)']):.2f}")
     mac("flagToiCat", f"{w.loc[354518617, 'P_catalog']:.2f}")
     mac("flagToiRes", f"{w.loc[354518617, 'P_v2']:.2f}")
+    sa = J("b5_sample_accounting.json")
+    assert sa["primary_sample"] == b5["primary_sample"] and sa["tier_B_amb_reported_separately"] == b5["tier_b_amb"]["n"]
+    mac("bFivePassY", n(sa["passed_Y01_Y05"]))
+    mac("bFiveTierBn", n(sa["tier_B"]))
+    mac("bFiveHthreeFailB", n(sa["tier_B_failing_H3"]))
+    ac = J("b5_audit_compare.json")
+    mac("auditFirstN", n(ac["first_run"]["n"]))
+    mac("auditSamePeriod", n(ac["in_both_same_resolver_period"]))
+    mac("auditSameVerdict", n(ac["same_period_same_verdict"]))
+    mac("auditOnlyNewN", n(ac["only_rerun"]["n"]))
+    mac("auditOnlyNewCat", n(ac["only_rerun"]["later data support the catalog"]))
     ds = J("paper_disclosures.json")
     mac("bTwoTschDiffer", n(ds["tschudi_differs_from_tls"]))
     mac("bTwoTschCompared", n(ds["tschudi_compared"]))
@@ -456,6 +467,9 @@ def macros():
         mac(f"ctx{t}TlsLowCI", cip(c[v_]["resolver_confident_given_tls_sde_lt9"]["ci95"]))
         mac(f"ctx{t}TlsJoint", pc(c[v_]["resolver_confident_and_tls_sde_ge9"]["rate"]))
         mac(f"ctx{t}TlsLowN", n(c[v_]["resolver_confident_given_tls_sde_lt9"]["count"]))
+        mac(f"ctx{t}SdeAnd", pc(c[v_]["tls_and_a6_sde_ge9"]["rate"]))
+        mac(f"ctx{t}SdeAndCI", cip(c[v_]["tls_and_a6_sde_ge9"]["ci95"]))
+        mac(f"ctx{t}SdeOr", pc(c[v_]["tls_or_a6_sde_ge9"]["rate"]))
 
     ms = json.loads((P / "data" / "mast" / "summary.json").read_text())  # scripts/make_mast_doi_lists.py
     mac("mastFiles", n(ms["all_files"]))
