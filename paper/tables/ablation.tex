@@ -1,0 +1,16 @@
+\begin{deluxetable*}{lcccc}
+\tablecaption{Post hoc: contribution of each evidence term. \label{tab:abl}}
+\tablewidth{0pt}
+\tablehead{\colhead{} & \colhead{Principled, B1(i)} & \colhead{Principled, B5} & \colhead{Learned, B1(i)} & \colhead{Learned, B5}}
+\startdata
+All six terms & 0.775 & 0.800 & \nodata & \nodata \\
+without F1, predicted-epoch coverage & 0.316 ($-$0.459) & 0.241 ($-$0.559) & $-$0.015 & $+$0.000 \\
+without F2, odd/even depth & 0.691 ($-$0.085) & 0.475 ($-$0.324) & $-$0.004 & $-$0.007 \\
+without F3, secondary eclipse & 0.748 ($-$0.028) & 0.667 ($-$0.133) & $-$0.023 & $-$0.004 \\
+without F4, stellar density & 0.772 ($-$0.003) & 0.818 ($+$0.019) & $-$0.108 & $+$0.009 \\
+without F5, ephemeris coherence & 0.785 ($+$0.009) & 0.800 ($+$0.001) & $-$0.012 & $-$0.007 \\
+without F6, shape of alternating events & 0.776 ($+$0.001) & 0.800 ($+$0.000) & $-$0.007 & $+$0.002 \\
+principled posterior permuted & \nodata & \nodata & $-$0.525 & $-$0.298
+\enddata
+\tablecomments{Columns 2--3: accuracy of the principled combiner with one term left out (change in parentheses), on the B1(i) test injections and the B5 primary sample. Columns 4--5: change in accuracy of the frozen learned combiner when the term and its descriptors are permuted between targets (mean of five permutations). The learned combiner also sees the principled posterior, which contains all six terms, so its single-term values are lower limits. Nothing was refitted.}
+\end{deluxetable*}

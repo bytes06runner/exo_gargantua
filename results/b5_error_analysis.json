@@ -1,0 +1,94 @@
+{
+ "label": "POST HOC, descriptive (decision Err-1)",
+ "git_commit": "8fa906d01def36389145ba467556f1753cb85221",
+ "primary_n": 1341,
+ "wrong": 287,
+ "overall_error_rate": 0.2140193885160328,
+ "categories": {
+  "TLS search failed": {
+   "count": 3,
+   "fraction_of_errors": 0.010452961672473868
+  },
+  "truth not among candidates, below TLS period floor": {
+   "count": 13,
+   "fraction_of_errors": 0.04529616724738676
+  },
+  "truth not among candidates, other": {
+   "count": 106,
+   "fraction_of_errors": 0.3693379790940767
+  },
+  "period within 1% but outside 0.1%": {
+   "count": 0,
+   "fraction_of_errors": 0.0
+  },
+  "nearly equal eclipses (depth ratio > 0.8)": {
+   "count": 41,
+   "fraction_of_errors": 0.14285714285714285
+  },
+  "eccentric (secondary > 0.05 from phase 0.5)": {
+   "count": 18,
+   "fraction_of_errors": 0.0627177700348432
+  },
+  "at most three eclipses in the early window": {
+   "count": 10,
+   "fraction_of_errors": 0.03484320557491289
+  },
+  "seed S/N below 20": {
+   "count": 60,
+   "fraction_of_errors": 0.20905923344947736
+  },
+  "other": {
+   "count": 36,
+   "fraction_of_errors": 0.1254355400696864
+  }
+ },
+ "error_rate_by_flag": {
+  "nearly equal eclipses (depth ratio > 0.8)": {
+   "n_with_flag": 195,
+   "wrong": 65,
+   "error_rate": 0.3333333333333333,
+   "ci95": [
+    0.2709508809026078,
+    0.4021557527193304
+   ]
+  },
+  "eccentric (secondary > 0.05 from phase 0.5)": {
+   "n_with_flag": 224,
+   "wrong": 66,
+   "error_rate": 0.29464285714285715,
+   "ci95": [
+    0.23880821467568858,
+    0.3574024860918622
+   ]
+  },
+  "at most three eclipses in the early window": {
+   "n_with_flag": 170,
+   "wrong": 62,
+   "error_rate": 0.36470588235294116,
+   "ci95": [
+    0.2960785403200812,
+    0.4393127584254434
+   ]
+  },
+  "seed S/N below 20": {
+   "n_with_flag": 576,
+   "wrong": 190,
+   "error_rate": 0.3298611111111111,
+   "ci95": [
+    0.29270253017564196,
+    0.3692741199991644
+   ]
+  },
+  "below TLS period floor": {
+   "n_with_flag": 265,
+   "wrong": 40,
+   "error_rate": 0.1509433962264151,
+   "ci95": [
+    0.11284749611317088,
+    0.19901495374577952
+   ]
+  }
+ },
+ "catalog_depth_ratio_available": 863,
+ "catalog_secondary_phase_available": 937
+}

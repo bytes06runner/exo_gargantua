@@ -1,0 +1,218 @@
+{
+ "label": "POST HOC (decision FI-1)",
+ "git_commit": "8fa906d01def36389145ba467556f1753cb85221",
+ "seed": 20261112,
+ "repeats": 5,
+ "groups": {
+  "F1 coverage": [
+   "d_F1_coverage",
+   "n_cov",
+   "cov_frac",
+   "n_missing",
+   "snr_all"
+  ],
+  "F2 odd/even": [
+   "d_F2_oddeven",
+   "oe_sigma"
+  ],
+  "F3 secondary": [
+   "d_F3_secondary",
+   "sec_snr",
+   "sec_depth_ratio",
+   "sec_phase_off05",
+   "sec_dur_ratio",
+   "twin"
+  ],
+  "F4 density": [
+   "d_F4_density",
+   "log_rho_ratio"
+  ],
+  "F5 coherence": [
+   "d_F5_coherence",
+   "n_timed",
+   "oc_chi2_red"
+  ],
+  "F6 shape": [
+   "d_F6_shape",
+   "dur_ratio_oe",
+   "shape_chi2"
+  ],
+  "fitted depth and ingress": [
+   "depth",
+   "tau_over_T"
+  ],
+  "period": [
+   "log10_P"
+  ],
+  "principled posterior": [
+   "d_logpost"
+  ]
+ },
+ "note": "records with a run error are excluded, so the base accuracy can differ slightly from the reported one",
+ "B1_wrong_alias_seed": {
+  "n": 8620,
+  "accuracy": 0.8664733178654292,
+  "importance": {
+   "F1 coverage": {
+    "drop_mean": 0.015104408352668264,
+    "drop_min": 0.013341067285382868,
+    "drop_max": 0.018213457076566186
+   },
+   "F2 odd/even": {
+    "drop_mean": 0.004222737819025535,
+    "drop_min": 0.003016241299304001,
+    "drop_max": 0.005336426914153147
+   },
+   "F3 secondary": {
+    "drop_mean": 0.022853828306264524,
+    "drop_min": 0.021577726218097504,
+    "drop_max": 0.025522041763341052
+   },
+   "F4 density": {
+    "drop_mean": 0.10821345707656616,
+    "drop_min": 0.10556844547563804,
+    "drop_max": 0.1110208816705337
+   },
+   "F5 coherence": {
+    "drop_mean": 0.01160092807424593,
+    "drop_min": 0.010556844547563782,
+    "drop_max": 0.013573085846867783
+   },
+   "F6 shape": {
+    "drop_mean": 0.007030162412993058,
+    "drop_min": 0.004756380510440805,
+    "drop_max": 0.010092807424593953
+   },
+   "fitted depth and ingress": {
+    "drop_mean": 0.009767981438515094,
+    "drop_min": 0.008004640371229721,
+    "drop_max": 0.01148491879350344
+   },
+   "period": {
+    "drop_mean": 0.07371229698375872,
+    "drop_min": 0.07053364269141538,
+    "drop_max": 0.0770301624129931
+   },
+   "principled posterior": {
+    "drop_mean": 0.5251044083526683,
+    "drop_min": 0.5212296983758701,
+    "drop_max": 0.5280742459396752
+   }
+  }
+ },
+ "B5_primary_tls_seed": {
+  "n": 1338,
+  "accuracy": 0.7877428998505231,
+  "importance": {
+   "F1 coverage": {
+    "drop_mean": -0.0001494768310911887,
+    "drop_min": -0.0037369207772794955,
+    "drop_max": 0.0022421524663677195
+   },
+   "F2 odd/even": {
+    "drop_mean": 0.007025411061285491,
+    "drop_min": 0.0037369207772794955,
+    "drop_max": 0.008968609865470878
+   },
+   "F3 secondary": {
+    "drop_mean": 0.004035874439461873,
+    "drop_min": -0.0022421524663677195,
+    "drop_max": 0.008968609865470878
+   },
+   "F4 density": {
+    "drop_mean": -0.008968609865470878,
+    "drop_min": -0.012705530642750373,
+    "drop_max": -0.0052316890881913825
+   },
+   "F5 coherence": {
+    "drop_mean": 0.007025411061285491,
+    "drop_min": 0.004484304932735439,
+    "drop_max": 0.010463378176382654
+   },
+   "F6 shape": {
+    "drop_mean": -0.0020926756352765306,
+    "drop_min": -0.005979073243647215,
+    "drop_max": 0.001494768310911776
+   },
+   "fitted depth and ingress": {
+    "drop_mean": 0.0010463378176382321,
+    "drop_min": -0.0007473841554559435,
+    "drop_max": 0.002989536621823552
+   },
+   "period": {
+    "drop_mean": 0.009118086696562,
+    "drop_min": 0.002989536621823552,
+    "drop_max": 0.01420029895366215
+   },
+   "principled posterior": {
+    "drop_mean": 0.29835575485799704,
+    "drop_min": 0.2847533632286995,
+    "drop_max": 0.30493273542600896
+   }
+  }
+ },
+ "principled_leave_one_out": {
+  "B1_wrong_alias_seed": {
+   "n": 8620,
+   "accuracy_all_terms": 0.7754060324825987,
+   "agreement_with_stored_principled_choice": 0.9964037122969838,
+   "without": {
+    "d_F1_coverage": {
+     "accuracy": 0.31612529002320183,
+     "change": -0.4592807424593968
+    },
+    "d_F2_oddeven": {
+     "accuracy": 0.6906032482598607,
+     "change": -0.0848027842227379
+    },
+    "d_F3_secondary": {
+     "accuracy": 0.7476798143851509,
+     "change": -0.027726218097447797
+    },
+    "d_F4_density": {
+     "accuracy": 0.7721577726218097,
+     "change": -0.0032482598607889157
+    },
+    "d_F5_coherence": {
+     "accuracy": 0.7846867749419953,
+     "change": 0.009280742459396696
+    },
+    "d_F6_shape": {
+     "accuracy": 0.7763341067285383,
+     "change": 0.0009280742459396585
+    }
+   }
+  },
+  "B5_primary_tls_seed": {
+   "n": 1338,
+   "accuracy_all_terms": 0.7997010463378177,
+   "agreement_with_stored_principled_choice": 0.9947683109118086,
+   "without": {
+    "d_F1_coverage": {
+     "accuracy": 0.2406576980568012,
+     "change": -0.5590433482810164
+    },
+    "d_F2_oddeven": {
+     "accuracy": 0.47533632286995514,
+     "change": -0.32436472346786255
+    },
+    "d_F3_secondary": {
+     "accuracy": 0.6666666666666666,
+     "change": -0.13303437967115106
+    },
+    "d_F4_density": {
+     "accuracy": 0.8183856502242153,
+     "change": 0.01868460388639759
+    },
+    "d_F5_coherence": {
+     "accuracy": 0.8004484304932735,
+     "change": 0.0007473841554558325
+    },
+    "d_F6_shape": {
+     "accuracy": 0.7997010463378177,
+     "change": 0.0
+    }
+   }
+  }
+ }
+}

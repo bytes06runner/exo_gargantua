@@ -73,7 +73,7 @@ def pval(p):
         return f"={p:.3f}" if p < 0.995 else "=1.00"
     e = int(math.floor(math.log10(p)))
     m = p / 10 ** e
-    return f"={m:.0f}\\times10^{{{e}}}" if m < 9.95 else f"=1\\times10^{{{e + 1}}}"
+    return f"={m:.0f}\\times10^{{{e}}}" if m < 9.5 else f"=1\\times10^{{{e + 1}}}"
 
 
 def acc_cell(d):
@@ -327,6 +327,100 @@ def macros():
     mac("auditSameVerdict", n(ac["same_period_same_verdict"]))
     mac("auditOnlyNewN", n(ac["only_rerun"]["n"]))
     mac("auditOnlyNewCat", n(ac["only_rerun"]["later data support the catalog"]))
+    # literature values (data/literature_values.json; each read from the cited section or table)
+    lit = json.loads((ROOT / "data/literature_values.json").read_text())
+    la, le, ex = lit["Lafarga2026"], lit["Kunimoto2025leo"], lit["Valizadegan2025"]
+    assert la["at_2P"] + la["at_half_P"] + la["at_3P"] + la["at_third_P"] == la["at_harmonic"]
+    for k_, v_ in (("litLafMissed", la["tois_not_recovered"]), ("litLafHarm", la["at_harmonic"]), ("litLafDouble", la["at_2P"]), ("litLafHalf", la["at_half_P"]),
+                   ("litLafTriple", la["at_3P"]), ("litLafThird", la["at_third_P"]), ("litLafRemoved", la["removed_by_visual_alias_check"])):
+        mac(k_, n(v_))
+    mac("litLafSecRec", la["section_recovery"])
+    mac("litLafSecVet", la["section_vetting"])
+    mac("litLeoPass", f"{le['injected_planets_passed_pct']:.2f}")
+    mac("litLeoReject", f"{le['scrambled_false_alarms_rejected_pct']:.2f}")
+    mac("litLeoSec", le["section"])
+    mac("litExoPrec", f3(ex["precision"]))
+    mac("litExoRec", f3(ex["recall"]))
+    mac("litExoTab", ex["table"])
+    # TOI period revisions (post hoc, decision Rev-1)
+    rv = J("toi_period_revisions.json")
+    mac("revHist", n(rv["tois_in_historical_catalog"]))
+    mac("revBoth", n(rv["with_period_in_both"]))
+    mac("revAlias", n(rv["alias_revised"]["count"]))
+    mac("revAliasPc", pc(rv["alias_revised"]["fraction"]))
+    mac("revAliasCI", cip(rv["alias_revised"]["ci95"]))
+    mac("revDouble", n(rv["alias_revised_by_factor"].get("2", 0)))
+    mac("revHalf", n(rv["alias_revised_by_factor"].get("1/2", 0)))
+    mac("revOther", n(rv["other_change"]))
+    ad_ = rv["alias_revised_dispositions"]
+    mac("revAliasFp", n(ad_["FP_or_FA"]))
+    mac("revAliasCp", n(ad_["CP_or_KP"]))
+    mac("revAliasOpen", n(ad_["PC_APC_or_none"]))
+    mac("revAliasEb", n(ad_["in_eb_catalog"]))
+    ud = rv["unchanged_dispositions"]
+    mac("revAliasFpPc", pc(ad_["FP_or_FA"] / ad_["n"]))
+    mac("revSameFpPc", pc(ud["FP_or_FA"] / ud["n"]))
+    # raw alias rates on B5 (post hoc, decision Alias-1)
+    ar = J("b5_alias_rates.json")
+    for k_, t_ in (("raw_tls", "Tls"), ("raw_bls", "Bls"), ("resolver", "Res")):
+        mac(f"bFiveAlias{t_}Pc", pc(ar[k_]["at_an_alias"]["fraction"]))
+        mac(f"bFiveAlias{t_}HalfPc", pc(ar[k_]["at_half"]["fraction"]))
+        mac(f"bFiveAlias{t_}MultPc", pc(ar[k_]["at_a_multiple"]["fraction"]))
+        mac(f"bFiveAlias{t_}Share", pc(ar[k_]["share_of_errors_at_an_alias"]))
+    # planets with a detected secondary in B2 (post hoc, decision Sec-1)
+    oc = J("b2_secondary_check.json")
+    mac("occN", n(oc["detected_secondary"]["n"]))
+    mac("occNoCand", n(oc["detected_secondary_true_period_not_a_candidate"]))
+    mac("occTrueN", n(oc["detected_secondary_at_true_period"]["n"]))
+    mac("occTrueRes", n(round(oc["detected_secondary_at_true_period"]["resolver"]["accuracy"] * oc["detected_secondary_at_true_period"]["n"])))
+    mac("occTrueTls", n(round(oc["detected_secondary_at_true_period"]["raw_tls"]["accuracy"] * oc["detected_secondary_at_true_period"]["n"])))
+    mac("occFix", n(oc["detected_secondary"]["mcnemar_vs_tls"]["only_second_correct"]))
+    mac("occBreak", n(oc["detected_secondary"]["mcnemar_vs_tls"]["only_first_correct"]))
+    # tolerance sensitivity (post hoc, decision Tol-1)
+    tl = J("tolerance_sensitivity.json")
+    for t_, nm in (("0.0005", "Tight"), ("0.002", "Loose"), ("0.005", "Wide")):
+        mac(f"tolFive{nm}Acc", f3(tl["B5"][t_]["resolver"]["accuracy"]))
+        mac(f"tolFive{nm}Tls", f3(tl["B5"][t_]["raw_tls"]["accuracy"]))
+        mac(f"tolFive{nm}Bls", f3(tl["B5"][t_]["raw_bls"]["accuracy"]))
+        mac(f"tolTwo{nm}Acc", f3(tl["B2"][t_]["resolver"]["accuracy"]))
+        mac(f"tolTwo{nm}Tls", f3(tl["B2"][t_]["raw_tls"]["accuracy"]))
+        mac(f"tolTwo{nm}Bls", f3(tl["B2"][t_]["raw_bls"]["accuracy"]))
+        mac(f"tolTwo{nm}TlsP", pval(tl["B2"][t_]["vs_tls"]["p_value"]))
+        mac(f"tolTwo{nm}BlsP", pval(tl["B2"][t_]["vs_bls"]["p_value"]))
+        mac(f"tolTwo{nm}SpocP", pval(tl["B2"][t_]["vs_spoc1"]["p_value"]))
+    assert all(tl["B5"][t_]["criterion_met"] for t_ in tl["B5"]), "text says the B5 criterion holds at every tolerance"
+    assert not tl["B2"]["0.002"]["criterion_met"] and not tl["B2"]["0.005"]["criterion_met"] and tl["B2"]["0.0005"]["criterion_met"]
+    for smp in ("wrong_alias_seed", "tls_seed", "bls_seed"):  # text: "B1 accuracies move by less than two percentage points"
+        assert max(abs(tl["B1"][smp][t_]["resolver"]["accuracy"] - tl["B1"][smp]["0.001"]["resolver"]["accuracy"]) for t_ in tl["B1"][smp]) < 0.02
+    mac("tolFiveMaxP", pval(max(max(tl["B5"][t_]["vs_tls"]["p_value"], tl["B5"][t_]["vs_bls"]["p_value"]) for t_ in tl["B5"])))
+    # evidence-term ablation (post hoc, decisions FI-1, FI-1b)
+    fi = J("feature_importance.json")
+    lo = fi["principled_leave_one_out"]
+    for smp, t_ in (("B1_wrong_alias_seed", "One"), ("B5_primary_tls_seed", "Five")):
+        mac(f"abl{t_}All", f3(lo[smp]["accuracy_all_terms"]))
+        mac(f"abl{t_}Agree", pc(lo[smp]["agreement_with_stored_principled_choice"]))
+        for k_, nm in (("d_F1_coverage", "Fone"), ("d_F2_oddeven", "Ftwo"), ("d_F3_secondary", "Fthree"), ("d_F4_density", "Ffour"), ("d_F5_coherence", "Ffive"), ("d_F6_shape", "Fsix")):
+            mac(f"abl{t_}{nm}", f3(lo[smp]["without"][k_]["accuracy"]))
+        assert all(abs(lo[smp]["without"][k_]["change"]) < 0.01 for k_ in ("d_F5_coherence", "d_F6_shape"))  # text: "less than one percentage point"
+        mac(f"abl{t_}Post", f3(fi[smp]["importance"]["principled posterior"]["drop_mean"]))
+        mac(f"abl{t_}Learned", f3(fi[smp]["accuracy"]))
+    # B5 error analysis (post hoc, decision Err-1)
+    er = J("b5_error_analysis.json")
+    mac("bFiveErrN", n(er["wrong"]))
+    ec = er["categories"]
+    mac("bFiveErrNoCand", n(ec["truth not among candidates, below TLS period floor"]["count"] + ec["truth not among candidates, other"]["count"] + ec["TLS search failed"]["count"]))
+    mac("bFiveErrNoCandPc", pc((ec["truth not among candidates, below TLS period floor"]["count"] + ec["truth not among candidates, other"]["count"] + ec["TLS search failed"]["count"]) / er["wrong"]))
+    mac("bFiveErrTwin", n(ec["nearly equal eclipses (depth ratio > 0.8)"]["count"]))
+    mac("bFiveErrEcc", n(ec["eccentric (secondary > 0.05 from phase 0.5)"]["count"]))
+    mac("bFiveErrFew", n(ec["at most three eclipses in the early window"]["count"]))
+    mac("bFiveErrSnr", n(ec["seed S/N below 20"]["count"]))
+    mac("bFiveErrOther", n(ec["other"]["count"]))
+    ef = er["error_rate_by_flag"]
+    mac("bFiveErrRate", pc(er["overall_error_rate"]))
+    mac("bFiveErrRateTwin", pc(ef["nearly equal eclipses (depth ratio > 0.8)"]["error_rate"]))
+    mac("bFiveErrRateEcc", pc(ef["eccentric (secondary > 0.05 from phase 0.5)"]["error_rate"]))
+    mac("bFiveErrRateFew", pc(ef["at most three eclipses in the early window"]["error_rate"]))
+    mac("bFiveErrRateSnr", pc(ef["seed S/N below 20"]["error_rate"]))
     ds = J("paper_disclosures.json")
     mac("bTwoTschDiffer", n(ds["tschudi_differs_from_tls"]))
     mac("bTwoTschCompared", n(ds["tschudi_compared"]))
@@ -650,6 +744,54 @@ def tables():
 
 
 # ------------------------------------------------------------------ figures
+def tables_posthoc():
+    tl, fi, er = J("tolerance_sensitivity.json"), J("feature_importance.json"), J("b5_error_analysis.json")
+    tols = ["0.0005", "0.001", "0.002", "0.005"]
+    rows = [["\\emph{B1(i), wrong-alias seeds}", "", "", "", ""],
+            ["Resolver"] + [f3(tl["B1"]["wrong_alias_seed"][t]["resolver"]["accuracy"]) for t in tols],
+            ["\\emph{B1(ii), TLS seeds}", "", "", "", ""],
+            ["Raw TLS peak"] + [f3(tl["B1"]["tls_seed"][t]["seed"]["accuracy"]) for t in tols],
+            ["Resolver"] + [f3(tl["B1"]["tls_seed"][t]["resolver"]["accuracy"]) for t in tols],
+            ["\\emph{B5, eclipsing binaries}", "", "", "", ""],
+            ["Raw TLS peak"] + [f3(tl["B5"][t]["raw_tls"]["accuracy"]) for t in tols],
+            ["Raw BLS peak"] + [f3(tl["B5"][t]["raw_bls"]["accuracy"]) for t in tols],
+            ["Resolver"] + [f3(tl["B5"][t]["resolver"]["accuracy"]) for t in tols],
+            ["\\emph{B2, TOI holdout}", "", "", "", ""],
+            ["Raw TLS peak"] + [f3(tl["B2"][t]["raw_tls"]["accuracy"]) for t in tols],
+            ["Raw BLS peak"] + [f3(tl["B2"][t]["raw_bls"]["accuracy"]) for t in tols],
+            ["SPOC-1"] + [f3(tl["B2"][t]["spoc1"]["accuracy"]) for t in tols],
+            ["Resolver"] + [f3(tl["B2"][t]["resolver"]["accuracy"]) for t in tols]]
+    table("tolerance.tex", "Post hoc: accuracy as a function of the period-match tolerance.", "tab:tol", "lcccc",
+          ["Sample and method", "0.05\\%", "0.1\\% (primary)", "0.2\\%", "0.5\\%"], rows,
+          "The 0.1\\% column reproduces the pre-registered results. The frozen resolver's chosen alias is the same in every column; only the test of correctness changes.")
+    lo = fi["principled_leave_one_out"]
+    names = [("d_F1_coverage", "F1, predicted-epoch coverage", "F1 coverage"), ("d_F2_oddeven", "F2, odd/even depth", "F2 odd/even"), ("d_F3_secondary", "F3, secondary eclipse", "F3 secondary"),
+             ("d_F4_density", "F4, stellar density", "F4 density"), ("d_F5_coherence", "F5, ephemeris coherence", "F5 coherence"), ("d_F6_shape", "F6, shape of alternating events", "F6 shape")]
+    sg = lambda x: ("$+$" if x >= 0 else "$-$") + f"{abs(x):.3f}"
+    rows = [["All six terms", f3(lo["B1_wrong_alias_seed"]["accuracy_all_terms"]), f3(lo["B5_primary_tls_seed"]["accuracy_all_terms"]), "\\nodata", "\\nodata"]]
+    for k_, lab_, g_ in names:
+        rows.append([f"without {lab_}", f"{f3(lo['B1_wrong_alias_seed']['without'][k_]['accuracy'])} ({sg(lo['B1_wrong_alias_seed']['without'][k_]['change'])})",
+                     f"{f3(lo['B5_primary_tls_seed']['without'][k_]['accuracy'])} ({sg(lo['B5_primary_tls_seed']['without'][k_]['change'])})",
+                     sg(-fi["B1_wrong_alias_seed"]["importance"][g_]["drop_mean"]), sg(-fi["B5_primary_tls_seed"]["importance"][g_]["drop_mean"])])
+    rows.append(["principled posterior permuted", "\\nodata", "\\nodata", sg(-fi["B1_wrong_alias_seed"]["importance"]["principled posterior"]["drop_mean"]),
+                 sg(-fi["B5_primary_tls_seed"]["importance"]["principled posterior"]["drop_mean"])])
+    table("ablation.tex", "Post hoc: contribution of each evidence term.", "tab:abl", "lcccc",
+          ["", "Principled, B1(i)", "Principled, B5", "Learned, B1(i)", "Learned, B5"], rows,
+          "Columns 2--3: accuracy of the principled combiner with one term left out (change in parentheses), on the B1(i) test injections and the B5 primary sample. "
+          "Columns 4--5: change in accuracy of the frozen learned combiner when the term and its descriptors are permuted between targets (mean of five permutations). "
+          "The learned combiner also sees the principled posterior, which contains all six terms, so its single-term values are lower limits. Nothing was refitted.")
+    order = [("TLS search failed", "TLS search failed"), ("truth not among candidates, below TLS period floor", "True period not a candidate, below the TLS period floor"),
+             ("truth not among candidates, other", "True period not a candidate, other"), ("nearly equal eclipses (depth ratio > 0.8)", "Nearly equal eclipses (depth ratio $>0.8$)"),
+             ("eccentric (secondary > 0.05 from phase 0.5)", "Eccentric (secondary $>0.05$ from phase 0.5)"), ("at most three eclipses in the early window", "At most three eclipses in the early window"),
+             ("seed S/N below 20", "Seed S/N below 20"), ("other", "None of the above")]
+    rows = [[lab_, n(er["categories"][k_]["count"]), pc(er["categories"][k_]["fraction_of_errors"]) + "\\%"] for k_, lab_ in order]
+    assert er["categories"]["period within 1% but outside 0.1%"]["count"] == 0
+    table("errors.tex", f"Post hoc: the {n(er['wrong'])} B5 primary binaries for which the resolver period is wrong.", "tab:err", "lrr",
+          ["Category (first that applies)", "$N$", "Share"], rows,
+          "Categories were fixed before counting and are applied in the order listed. "
+          "Depth ratios and secondary phases are from the catalog of \\citet{Prsa2022}.")
+
+
 def figures():
     import matplotlib
     matplotlib.use("Agg")
@@ -724,7 +866,10 @@ def data():
     xm = pd.read_csv(R / "b5_audit_crossmatch.csv", dtype=str, keep_default_na=False)[["tic", "toi", "tfopwg_disposition", "toi_period_d", "exoplanet_archive_planet"]]
     xm["tic"] = xm["tic"].astype(int)
     keep = keep.merge(xm, on="tic", how="left")
-    cols = ["tic", "tier", "P_catalog", "P_v2", "ratio", "delta_chi2", "n_ecl_catalog", "n_ecl_v2", "supported_period", "status", "toi", "tfopwg_disposition", "toi_period_d", "exoplanet_archive_planet"]
+    pt = pd.read_csv(R / "b5_per_target.csv")[["tic", "sectors_early", "snr_seed"]]
+    lg = pd.read_csv(ROOT / "data/b5_sample_log.csv")[["tic", "sectors_later"]]
+    keep = keep.merge(pt, on="tic", how="left").merge(lg, on="tic", how="left")
+    cols = ["tic", "tier", "P_catalog", "P_v2", "ratio", "delta_chi2", "n_ecl_catalog", "n_ecl_v2", "supported_period", "status", "sectors_early", "sectors_later", "snr_seed", "toi", "tfopwg_disposition", "toi_period_d", "exoplanet_archive_planet"]
     keep[cols].sort_values(["status", "delta_chi2"], ascending=[True, False]).to_csv(P / "data" / "b5_candidate_period_revisions.csv", index=False,
                                                                                      float_format="%.8g")
     au = J("b5_audit_report.json")["all"]
@@ -737,6 +882,7 @@ def data():
 def main():
     macros()
     tables()
+    tables_posthoc()
     figures()
     data()
     print(f"{len(MACROS)} macros; tables, figures and data written")

@@ -1,0 +1,22 @@
+\begin{deluxetable*}{lcccc}
+\tablecaption{Post hoc: accuracy as a function of the period-match tolerance. \label{tab:tol}}
+\tablewidth{0pt}
+\tablehead{\colhead{Sample and method} & \colhead{0.05\%} & \colhead{0.1\% (primary)} & \colhead{0.2\%} & \colhead{0.5\%}}
+\startdata
+\emph{B1(i), wrong-alias seeds} &  &  &  &  \\
+Resolver & 0.852 & 0.866 & 0.873 & 0.875 \\
+\emph{B1(ii), TLS seeds} &  &  &  &  \\
+Raw TLS peak & 0.562 & 0.608 & 0.614 & 0.618 \\
+Resolver & 0.783 & 0.791 & 0.796 & 0.798 \\
+\emph{B5, eclipsing binaries} &  &  &  &  \\
+Raw TLS peak & 0.418 & 0.535 & 0.584 & 0.600 \\
+Raw BLS peak & 0.610 & 0.644 & 0.665 & 0.683 \\
+Resolver & 0.761 & 0.786 & 0.802 & 0.815 \\
+\emph{B2, TOI holdout} &  &  &  &  \\
+Raw TLS peak & 0.672 & 0.814 & 0.850 & 0.857 \\
+Raw BLS peak & 0.760 & 0.826 & 0.840 & 0.847 \\
+SPOC-1 & 0.650 & 0.675 & 0.683 & 0.688 \\
+Resolver & 0.804 & 0.832 & 0.842 & 0.848
+\enddata
+\tablecomments{The 0.1\% column reproduces the pre-registered results. The frozen resolver's chosen alias is the same in every column; only the test of correctness changes.}
+\end{deluxetable*}

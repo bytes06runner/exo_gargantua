@@ -41,7 +41,7 @@ def test_every_manuscript_macro_is_defined():
     m = macros()
     used = set()
     for f in [P / "ms.tex", *sorted((P / "tables").glob("*.tex"))]:
-        used |= set(re.findall(r"\\((?:bOne|bTwo|bFive|bFour|audit|fa|ctx|sel|abst|rc|auc|cmp|nogo|pool|cal|cv|temp|thr|vtwo|lc|mast|raw|flag)[A-Za-z]*)", f.read_text()))
+        used |= set(re.findall(r"\\((?:bOne|bTwo|bFive|bFour|audit|fa|ctx|sel|abst|rc|auc|cmp|nogo|pool|cal|cv|temp|thr|vtwo|lc|mast|raw|flag|lit|rev|occ|tol|abl)[A-Za-z]*)", f.read_text()))
     used -= {"facilities"}
     assert used, "no macros found"
     assert not (used - set(m)), sorted(used - set(m))
