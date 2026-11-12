@@ -2,10 +2,7 @@ name: paper
 # Builds paper/ms.pdf from the committed sources (generated macros, tables, figures) with AASTeX 7.0.1 from CTAN.
 # The PDF is uploaded as a workflow artifact only; nothing is released or submitted.
 on:
-  push:
-    branches: [v2-alias-resolver]
-    paths: ["paper/**", ".github/workflows/paper.yml"]
-  workflow_dispatch:
+  workflow_dispatch:  # manual only: the PDF is built when the author asks for it
 permissions:
   contents: read
 jobs:
