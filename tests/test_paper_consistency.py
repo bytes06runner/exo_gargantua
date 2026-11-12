@@ -45,3 +45,38 @@ def test_every_manuscript_macro_is_defined():
     used -= {"facilities"}
     assert used, "no macros found"
     assert not (used - set(m)), sorted(used - set(m))
+
+
+TESS_ACK = ("This paper made use of data collected by the TESS mission and are publicly available from the Mikulski Archive for Space "
+            "Telescopes (MAST) operated by the Space Telescope Science Institute (STScI). Funding for the TESS mission is provided by "
+            "NASA's Science Mission Directorate. We acknowledge the use of public TESS data from pipelines at the TESS Science Office and "
+            "at the TESS Science Processing Operations Center. Resources supporting this work were provided by the NASA High-End Computing "
+            "(HEC) Program through the NASA Advanced Supercomputing (NAS) Division at Ames Research Center for the production of the SPOC "
+            "data products.")
+FORBIDDEN = ("fourier", "ttv smearing", "black-box", "black box", "heavy institutional", "brute force", "democratiz", "perfectly", "definitively",
+             "pristine", "periodogram", "runge", "first principles", "state of the art", "state-of-the-art", "outperform", "convexity", "thermal")
+
+
+def test_reviewer_wording_and_required_text():
+    s = (P / "ms.tex").read_text()
+    low = s.lower()
+    assert not [w for w in FORBIDDEN if w in low], [w for w in FORBIDDEN if w in low]
+    assert " ".join(TESS_ACK.split()) in " ".join(s.split()), "the standard TESS acknowledgement must appear verbatim"
+    for needle in ("10.17909/t9-nmc8-f686", "\\dataset[", "10.5281/zenodo.", "AstroNet", "TESS Exoplanet Classifier", "transit-timing variations are out of scope",
+                   "centroid", "not a false-alarm filter"):
+        assert needle in s, needle
+
+
+def test_every_table_and_figure_is_called_out():
+    s = (P / "ms.tex").read_text() + "".join(f.read_text() for f in sorted((P / "tables").glob("*.tex"))) + (P / "amendments_table.tex").read_text()
+    labels = set(re.findall(r"\\label\{((?:tab|fig):[^}]+)\}", s))
+    refs = set(re.findall(r"\\ref\{([^}]+)\}", s))
+    assert labels and not (labels - refs), sorted(labels - refs)
+    inputs = set(re.findall(r"\\input\{tables/([a-z0-9_]+)\}", s))
+    assert inputs == {f.stem for f in (P / "tables").glob("*.tex")}, "every generated table is included, and nothing else"
+
+
+def test_released_tables_carry_sectors_and_snr():
+    for name in ("b2_per_target.csv", "b5_per_target.csv", "b5_candidate_period_revisions.csv"):
+        cols = set(pd.read_csv(P / "data" / name, nrows=1).columns)
+        assert {"sectors_early", "snr_seed"} <= cols, (name, sorted(cols))
