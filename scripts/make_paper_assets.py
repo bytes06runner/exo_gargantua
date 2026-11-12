@@ -421,6 +421,28 @@ def macros():
     mac("bFiveErrRateEcc", pc(ef["eccentric (secondary > 0.05 from phase 0.5)"]["error_rate"]))
     mac("bFiveErrRateFew", pc(ef["at most three eclipses in the early window"]["error_rate"]))
     mac("bFiveErrRateSnr", pc(ef["seed S/N below 20"]["error_rate"]))
+    # self-review additions: B2 sector-count strata (multiple comparisons), B5 ceiling, reliability of the top bin
+    st2 = J("b2_report.json")["by_stratum"]
+    mac("bTwoStrataN", n(len(st2)))
+    p1 = st2["1"]["paired"]["PRIMARY_v2_tls_vs_baseline_tls"]["p_value"]
+    mac("bTwoOneSecPBonf", pval(min(1.0, p1 * len(st2))))
+    assert p1 * len(st2) < 0.01, "text says the single-sector difference survives a Bonferroni correction at 0.01"
+    for k_, t_ in (("2-3", "TwoThree"), ("4-6", "FourSix"), ("7-12", "SevenTwelve")):
+        mac(f"bTwoStr{t_}Acc", f3(st2[k_]["resolver"]["tls"]["v2"]["accuracy"]))
+        mac(f"bTwoStr{t_}Tls", f3(st2[k_]["baselines"]["tls"]["accuracy"]))
+        mac(f"bTwoStr{t_}N", n(st2[k_]["n"]))
+        assert st2[k_]["paired"]["PRIMARY_v2_tls_vs_baseline_tls"]["p_value"] > 0.05  # text: "none of these differences is significant"
+        assert st2[k_]["resolver"]["tls"]["v2"]["accuracy"] < st2[k_]["baselines"]["tls"]["accuracy"]  # text: "nominally below TLS"
+    mac("bFiveMissTlsPc", pc(1 - pr["resolver_seeded_tls"]["ceiling"]["accuracy"]))
+    rl = J("fig_reliability.json")["curves"]
+    top = rl["B5, eclipsing binaries, v2"]["bins"][-1]
+    assert top["lo"] == 0.9
+    mac("bFiveTopBinN", n(top["n"]))
+    mac("bFiveTopBinConf", f2(top["mean_confidence"]))
+    mac("bFiveTopBinAcc", f2(top["accuracy"]))
+    top2 = rl["B2, TOIs, v2"]["bins"][-1]
+    mac("bTwoTopBinConf", f2(top2["mean_confidence"]))
+    mac("bTwoTopBinAcc", f2(top2["accuracy"]))
     ds = J("paper_disclosures.json")
     mac("bTwoTschDiffer", n(ds["tschudi_differs_from_tls"]))
     mac("bTwoTschCompared", n(ds["tschudi_compared"]))

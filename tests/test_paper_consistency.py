@@ -80,3 +80,9 @@ def test_released_tables_carry_sectors_and_snr():
     for name in ("b2_per_target.csv", "b5_per_target.csv", "b5_candidate_period_revisions.csv"):
         cols = set(pd.read_csv(P / "data" / name, nrows=1).columns)
         assert {"sectors_early", "snr_seed"} <= cols, (name, sorted(cols))
+
+
+def test_abstract_within_aas_limit():
+    s = (P / "ms.tex").read_text()
+    a = s[s.index("\\begin{abstract}") + len("\\begin{abstract}"):s.index("\\end{abstract}")]
+    assert len(a.split()) <= 250, len(a.split())
