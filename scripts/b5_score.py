@@ -35,13 +35,14 @@ def acc(x):
     return {"n": int(x.size), "accuracy": float(x.mean()) if x.size else None, "ci95": wilson(int(x.sum()), int(x.size))}
 
 
-def main():
+def main(runs=RUNS, log_path="data/b5_sample_log.csv", out="results/b5_report.json", audit_out="data/b5_audit_targets.csv"):
+    """Defaults score B5. scripts/b6_score.py calls this with the B6 paths (docs/b6_definition.md); the code path is the same."""
     t1 = scoring.require_frozen_resolver()
     t2 = scoring.require_frozen_resolver(tag_name=scoring.FROZEN_TAG_V2, paths=scoring.FROZEN_PATHS_V2)
     models = {v: RM.load(v) for v in ("v1", "v2")}
-    log = pd.read_csv(ROOT / "data" / "b5_sample_log.csv").set_index("tic")
-    runs = {}
-    for p in sorted(glob.glob(str(ROOT / RUNS / "*/b5/b5_*.jsonl.gz"))):
+    log = pd.read_csv(ROOT / log_path).set_index("tic")
+    run_dir, runs = runs, {}
+    for p in sorted(glob.glob(str(ROOT / run_dir / "*/b[56]/b5_*.jsonl.gz"))):
         for r in read_records(p):
             runs[(r["tic"], r["engine"])] = r
     rows = []
@@ -99,17 +100,17 @@ def main():
     met = all(a[k]["p_value"] < 0.01 and a[k]["only_second_correct"] > a[k]["only_first_correct"]
               for k in ("PRIMARY_v2_tls_vs_raw_tls", "PRIMARY_v2_tls_vs_raw_bls"))
     rep = {"resolver_frozen_v1": t1, "resolver_frozen_v2": t2,
-           "run_commits": sorted({json.loads(Path(f).read_text())["git_commit"] for f in glob.glob(str(ROOT / RUNS / "*/b5/done_*.json"))}),
+           "run_commits": sorted({json.loads(Path(f).read_text())["git_commit"] for f in glob.glob(str(ROOT / run_dir / "*/b[56]/done_*.json"))}),
            "included": int(len(d)), "h3_pass": int(d["h3_pass"].sum()), "run_errors": {k: int((d[f"err_{k}"] != "").sum()) for k in ("tls", "bls")},
            "primary_sample": int(len(prim)), "SUCCESS_CRITERION_MET": bool(met),
            "criterion": "v2 (TLS-seeded) beats raw TLS AND raw BLS, exact McNemar p < 0.01 each (docs/b5_definition.md §4)",
            "primary": a, "tier_b_amb": block(d[(d["tier"] == "B-amb") & d["h3_pass"]]),
            "by_n_early": {str(k): block(g) for k, g in prim.assign(ne=np.minimum(prim["n_early"], 4)).groupby("ne")},
            "by_period": {k: block(g) for k, g in prim.groupby("prange")}}
-    (ROOT / "results" / "b5_report.json").write_text(json.dumps(rep, indent=1, default=float))
+    (ROOT / out).write_text(json.dumps(rep, indent=1, default=float))
     scored = d[d["h3_pass"]]
     aud = scored[np.isfinite(scored["P_v2_tls"]) & (np.abs(scored["P_v2_tls"] / scored["P_true"] - 1) >= TOL)]
-    aud[["tic", "tier", "P_true", "P_v2_tls", "sectors_later"]].to_csv(ROOT / "data" / "b5_audit_targets.csv", index=False)
+    aud[["tic", "tier", "P_true", "P_v2_tls", "sectors_later"]].to_csv(ROOT / audit_out, index=False)
     print(json.dumps({"primary_sample": rep["primary_sample"], "criterion_met": met,
                       "raw_tls": a["raw"]["tls"]["accuracy"], "raw_bls": a["raw"]["bls"]["accuracy"],
                       "v2_tls": a["resolver_seeded_tls"]["v2"]["accuracy"], "mcnemar_tls": a["PRIMARY_v2_tls_vs_raw_tls"],
