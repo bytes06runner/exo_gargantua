@@ -17,16 +17,17 @@ from freeze_sample import tic_params  # noqa: E402
 
 
 def main():
-    log = pd.read_csv(ROOT / "data" / "b5_sample_log.csv")
+    tag = sys.argv[1] if len(sys.argv) > 1 else "b5"  # "b6" for the replication sample (docs/b6_definition.md §3)
+    log = pd.read_csv(ROOT / "data" / f"{tag}_sample_log.csv")
     tics = sorted(int(t) for t in log.loc[log["decision"] == "include", "tic"])
     df = tic_params(tics).drop_duplicates("tic").sort_values("tic")
     assert set(df["tic"]) <= set(tics)
-    df.to_csv(ROOT / "data" / "b5_stellar_params.csv", index=False)
+    df.to_csv(ROOT / "data" / f"{tag}_stellar_params.csv", index=False)
     info = {"git_commit": subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT).stdout.strip(),
             "query_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), "source": "MAST TIC v8.2 via astroquery Catalogs",
             "stars_requested": len(tics), "stars_returned": int(len(df)), "with_rho": int(np.isfinite(df["rho"]).sum()),
             "with_rad_and_mass": int((np.isfinite(df["rad"]) & np.isfinite(df["mass"])).sum())}
-    (ROOT / "results" / "b5_stellar_params_run.json").write_text(json.dumps(info, indent=1))
+    (ROOT / "results" / f"{tag}_stellar_params_run.json").write_text(json.dumps(info, indent=1))
     print(json.dumps(info, indent=1))
 
 

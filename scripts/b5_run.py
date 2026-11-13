@@ -116,6 +116,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--engine", choices=["tls", "bls_gpu", "bls_stored"], required=True)
     ap.add_argument("--stars", default="data/stellar_params.csv")
+    ap.add_argument("--log", default="data/b5_sample_log.csv", help="sample log (B5, or data/b6_sample_log.csv for the replication)")
     ap.add_argument("--shard", type=int, required=True)
     ap.add_argument("--nshards", type=int, required=True)
     ap.add_argument("--device", default="cuda:0")
@@ -125,7 +126,7 @@ def main():
     ap.add_argument("--commit", required=True)
     a = ap.parse_args()
     cache = str(B2.find_cache(a.cache))
-    log = pd.read_csv(ROOT / "data" / "b5_sample_log.csv")
+    log = pd.read_csv(ROOT / a.log)
     eb = pd.read_csv(ROOT / "data" / "raw" / "tess_ebs_prsa2022_v1.0_20260930.csv")
     inc = log[log["decision"] == "include"].merge(eb[["tess_id", "prim_width_pf", "prim_width_2g"]].rename(columns={"tess_id": "tic"}),
                                                    on="tic", how="left").sort_values("tic")
