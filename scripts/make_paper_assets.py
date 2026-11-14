@@ -443,6 +443,15 @@ def macros():
     top2 = rl["B2, TOIs, v2"]["bins"][-1]
     mac("bTwoTopBinConf", f2(top2["mean_confidence"]))
     mac("bTwoTopBinAcc", f2(top2["accuracy"]))
+    ts = J("b5_tschudi_report.json")["primary"]
+    mac("bFiveTschAcc", f3(ts["tschudi"]["accuracy"]))
+    mac("bFiveTschChanged", n(ts["period_changed_by_tschudi"]))
+    mac("bFiveTschToRight", n(ts["changed_to_correct"]))
+    mac("bFiveTschToWrong", n(ts["changed_to_wrong"]))
+    mac("bFiveTschVsTlsP", pval(ts["tschudi_vs_raw_tls"]["p_value"]))
+    mac("bFiveTschFix", n(ts["resolver_vs_tschudi"]["only_second_correct"]))
+    mac("bFiveTschBreak", n(ts["resolver_vs_tschudi"]["only_first_correct"]))
+    mac("bFiveTschP", pval(ts["resolver_vs_tschudi"]["p_value"]))
     ds = J("paper_disclosures.json")
     mac("bTwoTschDiffer", n(ds["tschudi_differs_from_tls"]))
     mac("bTwoTschCompared", n(ds["tschudi_compared"]))

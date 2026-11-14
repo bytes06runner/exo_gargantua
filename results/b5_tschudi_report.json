@@ -1,0 +1,61 @@
+{
+ "label": "POST HOC (decision B5-tsch)",
+ "git_commit": "d5e013c2ad5c35a6760d5daf225bb0e3e5b3db8b",
+ "run_commits": [
+  "8fa906d01def36389145ba467556f1753cb85221",
+  "beb76748ede56270b6f229c17012267eeea066ec"
+ ],
+ "tschudi_commit": [
+  "ff62f3643ed12f36f32244165fae7242a0a47307"
+ ],
+ "stars": 1500,
+ "max_frac_tls_period_difference_from_rerun": 4.8654026252314964e-08,
+ "primary": {
+  "n": 1341,
+  "no_period": 3,
+  "tschudi": {
+   "n": 1341,
+   "accuracy": 0.5361670395227442,
+   "ci95": [
+    0.509410203450596,
+    0.5627172500725551
+   ]
+  },
+  "raw_tls": {
+   "n": 1341,
+   "accuracy": 0.5346756152125279,
+   "ci95": [
+    0.5079173944585992,
+    0.5612357310842156
+   ]
+  },
+  "resolver": {
+   "n": 1341,
+   "accuracy": 0.7859806114839671,
+   "ci95": [
+    0.7632278509863107,
+    0.8070995392431407
+   ]
+  },
+  "period_changed_by_tschudi": 51,
+  "changed_to_correct": 9,
+  "changed_to_wrong": 7,
+  "changed_by_ratio": {
+   "2": 40,
+   "3": 7,
+   "4": 4
+  },
+  "tschudi_vs_raw_tls": {
+   "only_first_correct": 7,
+   "only_second_correct": 9,
+   "n": 1341,
+   "p_value": 0.803619384765625
+  },
+  "resolver_vs_tschudi": {
+   "only_first_correct": 82,
+   "only_second_correct": 417,
+   "n": 1341,
+   "p_value": 4.861360280895925e-55
+  }
+ }
+}
