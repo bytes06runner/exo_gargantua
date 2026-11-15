@@ -452,6 +452,50 @@ def macros():
     mac("bFiveTschFix", n(ts["resolver_vs_tschudi"]["only_second_correct"]))
     mac("bFiveTschBreak", n(ts["resolver_vs_tschudi"]["only_first_correct"]))
     mac("bFiveTschP", pval(ts["resolver_vs_tschudi"]["p_value"]))
+    # B6 replication (pre-registered, docs/b6_definition.md)
+    b6 = J("b6_confirmatory.json")
+    c6 = b6["confirmatory"]
+    assert b6["all_three_hypotheses_pass"], "the text states that all three B6 hypotheses pass"
+    mac("bSixIncluded", n(b6["included"]))
+    mac("bSixN", n(c6["n_primary"]))
+    mac("bSixTlsErr", n(b6["run_errors_tls"]))
+    for k_, t_ in (("raw_tls", "Tls"), ("raw_bls", "Bls"), ("resolver_tls_seed", "Acc"), ("resolver_bls_seed", "AccBlsSeed")):
+        mac(f"bSix{t_}", f3(c6[k_]["accuracy"]))
+        mac(f"bSix{t_}CI", ci(c6[k_]["ci95"]))
+    for k_, t_ in (("H1_tls_seeded_vs_raw_tls", "HoneTls"), ("H1_tls_seeded_vs_raw_bls", "HoneBls"), ("H3_bls_seeded_vs_raw_bls", "Hthree")):
+        mac(f"bSix{t_}Fix", n(c6[k_]["only_second_correct"]))
+        mac(f"bSix{t_}Break", n(c6[k_]["only_first_correct"]))
+        mac(f"bSix{t_}P", pval(c6[k_]["p_value"]))
+    h2 = c6["H2_inside_tls_grid"]
+    mac("bSixHtwoN", n(h2["n"]))
+    mac("bSixHtwoTls", f3(h2["raw_tls"]["accuracy"]))
+    mac("bSixHtwoAcc", f3(h2["resolver_tls_seed"]["accuracy"]))
+    mac("bSixHtwoFix", n(h2["only_second_correct"]))
+    mac("bSixHtwoBreak", n(h2["only_first_correct"]))
+    mac("bSixHtwoP", pval(h2["p_value"]))
+    mac("bSixCeil", f3(c6["ceiling_tls_seed"]["accuracy"]))
+    s6 = b6["secondary"]
+    mac("bSixEce", f3(s6["P1_ece"]["ece"]))
+    p2_ = s6["P2_sum_of_terms"]
+    mac("bSixSum", f3(p2_["accuracy_all_terms"]))
+    mac("bSixLearned", f3(p2_["learned_on_same_binaries"]))
+    mac("bSixNoFfour", f3(p2_["without"]["d_F4_density"]["accuracy"]))
+    mac("bSixNoFone", f3(p2_["without"]["d_F1_coverage"]["accuracy"]))
+    mac("bSixNoFtwo", f3(p2_["without"]["d_F2_oddeven"]["accuracy"]))
+    assert s6["P1_ece"]["prediction_holds"] and p2_["prediction_within_0.02_of_learned"] and p2_["prediction_F4_not_needed"] and p2_["prediction_F1_F2_each_worth_0.2"]
+    mac("bSixAbst", pc(s6["abstain_rate"]))
+    mac("bSixNa", f3(s6["accuracy_non_abstained"]["accuracy"]))
+    mac("bSixAmbN", n(s6["tier_b_amb"]["n"]))
+    mac("bSixAmbAcc", f3(s6["tier_b_amb"]["ok_resolver_tls"]["accuracy"]))
+    pl = b6["pooled_b5_b6"]
+    mac("poolN", n(pl["n_primary"]))
+    mac("poolAcc", f3(pl["resolver_tls_seed"]["accuracy"]))
+    mac("poolAccCI", ci(pl["resolver_tls_seed"]["ci95"]))
+    mac("poolTls", f3(pl["raw_tls"]["accuracy"]))
+    mac("poolBls", f3(pl["raw_bls"]["accuracy"]))
+    mac("poolGridN", n(pl["H2_inside_tls_grid"]["n"]))
+    mac("poolGridAcc", f3(pl["H2_inside_tls_grid"]["resolver_tls_seed"]["accuracy"]))
+    mac("poolGridTls", f3(pl["H2_inside_tls_grid"]["raw_tls"]["accuracy"]))
     ds = J("paper_disclosures.json")
     mac("bTwoTschDiffer", n(ds["tschudi_differs_from_tls"]))
     mac("bTwoTschCompared", n(ds["tschudi_compared"]))
@@ -673,6 +717,7 @@ def tables():
           ["Benchmark", "Source", "Scored", "Truth"],
           [["B1 injections (test split)", f"{n(gen['hosts_by_split']['test'])} of {n(gen['hosts'])} quiet stars", n(gen["injections_by_split"]["test"]), "injected period"],
            ["B5 eclipsing binaries", "Pr\\v{s}a et al.\\ (2022) catalog", n(b5["primary_sample"]), "catalog period"],
+           ["B6 replication", "same catalog, binaries left out of B5", n(J("b6_confirmatory.json")["confirmatory"]["n_primary"]), "catalog period"],
            ["B2 TOI temporal holdout", "TOI catalog snapshot", n(b2["primary_sample"]), "Exoplanet Archive / EB catalog"],
            ["False-alarm test", "B2 light curves, inverted or scrambled", n(J("false_alarm_report.json")["variants"]["scrambled"]["n"]) + " each", "no coherent signal"],
            ["B4 runtime", "TESS Sector 49", n(b4["complete_pipeline"]), "\\nodata"]],
@@ -823,6 +868,22 @@ def tables_posthoc():
           "Depth ratios and secondary phases are from the catalog of \\citet{Prsa2022}.")
 
 
+def table_b6():
+    b6 = J("b6_confirmatory.json")
+    c6 = b6["confirmatory"]
+    h2 = c6["H2_inside_tls_grid"]
+    mc = lambda m: f"${m['only_second_correct']}/{m['only_first_correct']}$, $p{pval(m['p_value'])}$"
+    ok = lambda m: "yes" if m["passes"] else "no"
+    rows = [["H1", f"Resolver (TLS seed) vs raw TLS, {n(c6['n_primary'])} binaries", acc_cell(c6["resolver_tls_seed"]), acc_cell(c6["raw_tls"]), mc(c6["H1_tls_seeded_vs_raw_tls"]), ok(c6["H1_tls_seeded_vs_raw_tls"])],
+            ["H1", "Resolver (TLS seed) vs raw BLS", acc_cell(c6["resolver_tls_seed"]), acc_cell(c6["raw_bls"]), mc(c6["H1_tls_seeded_vs_raw_bls"]), ok(c6["H1_tls_seeded_vs_raw_bls"])],
+            ["H2", f"Inside the TLS search grid, {n(h2['n'])} binaries", acc_cell(h2["resolver_tls_seed"]), acc_cell(h2["raw_tls"]), mc(h2), ok(h2)],
+            ["H3", "Resolver (BLS seed) vs raw BLS", acc_cell(c6["resolver_bls_seed"]), acc_cell(c6["raw_bls"]), mc(c6["H3_bls_seeded_vs_raw_bls"]), ok(c6["H3_bls_seeded_vs_raw_bls"])]]
+    table("b6.tex", "B6: pre-registered replication on binaries not used in B5.", "tab:b6", "llcccc",
+          ["", "Comparison", "Resolver [95\\% CI]", "Baseline [95\\% CI]", "McNemar", "Passes"], rows,
+          f"Each hypothesis passes if the resolver wins the exact paired McNemar test with $p<{b6['alpha_per_hypothesis']:.4f}$ (0.01 divided by three hypotheses). "
+          "Discordant pairs are given as won by the resolver / won by the baseline. All four tests were specified before any B6 light curve was downloaded.")
+
+
 def figures():
     import matplotlib
     matplotlib.use("Agg")
@@ -914,6 +975,7 @@ def main():
     macros()
     tables()
     tables_posthoc()
+    table_b6()
     figures()
     data()
     print(f"{len(MACROS)} macros; tables, figures and data written")
