@@ -65,12 +65,14 @@ def main():
     ap.add_argument("--cache", default=None)
     ap.add_argument("--out", required=True)
     ap.add_argument("--commit", required=True)
+    ap.add_argument("--targets", default="data/b5_audit_targets.csv", help="data/b6_audit_targets.csv for the B6 audit (docs/b6_definition.md P3)")
+    ap.add_argument("--runs", default="results/kaggle/b5r/*/b5/b5_tls_*.jsonl.gz", help="TLS run records that supply T_seed")
     a = ap.parse_args()
     cache = B2.find_cache(a.cache)
     man = pd.read_csv(cache / "manifest.csv")
     excluded = set(zip(man.loc[man["excluded"].notna(), "tic"], man.loc[man["excluded"].notna(), "sector"]))
-    tgt = pd.read_csv(ROOT / "data" / "b5_audit_targets.csv")
-    tseed = {r["tic"]: r["summary"]["T_seed"] for p in glob.glob(str(ROOT / "results/kaggle/b5r/*/b5/b5_tls_*.jsonl.gz"))
+    tgt = pd.read_csv(ROOT / a.targets)
+    tseed = {r["tic"]: r["summary"]["T_seed"] for p in glob.glob(str(ROOT / a.runs))
              for r in read_records(p) if "summary" in r}
     rows = []
     t_start = time.time()
