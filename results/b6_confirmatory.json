@@ -1,0 +1,415 @@
+{
+ "protocol": "docs/b6_definition.md",
+ "git_commit": "c1e284088dbe29a258d25ddca4a3681c846ef5f4",
+ "run_commits": [
+  "beb76748ede56270b6f229c17012267eeea066ec"
+ ],
+ "code_identical_to_b5_rerun": {
+  "beb76748ede56270b6f229c17012267eeea066ec": true
+ },
+ "alpha_per_hypothesis": 0.0033333333333333335,
+ "included": 1782,
+ "scored": 1754,
+ "run_errors_tls": 6,
+ "run_errors_bls": 0,
+ "confirmatory": {
+  "n_primary": 1597,
+  "raw_tls": {
+   "n": 1597,
+   "accuracy": 0.5447714464621165,
+   "ci95": [
+    0.520268602540712,
+    0.5690594109242054
+   ]
+  },
+  "raw_bls": {
+   "n": 1597,
+   "accuracy": 0.6261740763932373,
+   "ci95": [
+    0.6021684957871357,
+    0.6495740876139952
+   ]
+  },
+  "resolver_tls_seed": {
+   "n": 1597,
+   "accuracy": 0.7802128991859737,
+   "ci95": [
+    0.7592436404395848,
+    0.7998372829946887
+   ]
+  },
+  "resolver_bls_seed": {
+   "n": 1597,
+   "accuracy": 0.7852222917971196,
+   "ci95": [
+    0.7644087486719559,
+    0.804666917527623
+   ]
+  },
+  "ceiling_tls_seed": {
+   "n": 1597,
+   "accuracy": 0.9110832811521603,
+   "ci95": [
+    0.896119049396887,
+    0.9240745287809914
+   ]
+  },
+  "H1_tls_seeded_vs_raw_tls": {
+   "only_first_correct": 111,
+   "only_second_correct": 487,
+   "n": 1597,
+   "p_value": 4.2570408620433484e-57,
+   "passes": true
+  },
+  "H1_tls_seeded_vs_raw_bls": {
+   "only_first_correct": 124,
+   "only_second_correct": 370,
+   "n": 1597,
+   "p_value": 1.8474332979736707e-29,
+   "passes": true
+  },
+  "H1_passes": true,
+  "H2_inside_tls_grid": {
+   "n": 935,
+   "raw_tls": {
+    "n": 935,
+    "accuracy": 0.6620320855614973,
+    "ci95": [
+     0.6311040241182091,
+     0.6916341246813327
+    ]
+   },
+   "resolver_tls_seed": {
+    "n": 935,
+    "accuracy": 0.7732620320855615,
+    "ci95": [
+     0.745335942593578,
+     0.7989518265039993
+    ]
+   },
+   "only_first_correct": 97,
+   "only_second_correct": 201,
+   "p_value": 1.6701564542258425e-09,
+   "passes": true
+  },
+  "H3_bls_seeded_vs_raw_bls": {
+   "only_first_correct": 110,
+   "only_second_correct": 364,
+   "n": 1597,
+   "p_value": 8.504777280479844e-33,
+   "passes": true
+  },
+  "below_tls_floor": {
+   "n": 271,
+   "raw_tls": {
+    "n": 271,
+    "accuracy": 0.0,
+    "ci95": [
+     0.0,
+     0.013977505588673621
+    ]
+   },
+   "resolver_tls_seed": {
+    "n": 271,
+    "accuracy": 0.8044280442804428,
+    "ci95": [
+     0.7530868371373349,
+     0.8472589620429929
+    ]
+   }
+  }
+ },
+ "all_three_hypotheses_pass": true,
+ "secondary": {
+  "P1_ece": {
+   "ece": 0.10544256143254126,
+   "prediction": "above 0.05",
+   "prediction_holds": true
+  },
+  "P2_sum_of_terms": {
+   "n": 1594,
+   "accuracy_all_terms": 0.7936010037641155,
+   "agreement_with_stored_principled_choice": 0.9949811794228356,
+   "without": {
+    "d_F1_coverage": {
+     "accuracy": 0.23525721455457968,
+     "change": -0.5583437892095358
+    },
+    "d_F2_oddeven": {
+     "accuracy": 0.4259723964868256,
+     "change": -0.36762860727728985
+    },
+    "d_F3_secondary": {
+     "accuracy": 0.6474278544542033,
+     "change": -0.1461731493099122
+    },
+    "d_F4_density": {
+     "accuracy": 0.8312421580928482,
+     "change": 0.03764115432873272
+    },
+    "d_F5_coherence": {
+     "accuracy": 0.7973651191969887,
+     "change": 0.0037641154328732496
+    },
+    "d_F6_shape": {
+     "accuracy": 0.7923462986198243,
+     "change": -0.0012547051442911572
+    }
+   },
+   "learned_on_same_binaries": 0.7816813048933501,
+   "prediction_within_0.02_of_learned": true,
+   "prediction_F4_not_needed": true,
+   "prediction_F1_F2_each_worth_0.2": true
+  },
+  "abstain_rate": 0.20037570444583594,
+  "accuracy_non_abstained": {
+   "n": 1277,
+   "accuracy": 0.8582615505090054,
+   "ci95": [
+    0.8380555646563416,
+    0.8763184844063997
+   ]
+  },
+  "tier_b_amb": {
+   "n": 157,
+   "ok_tls": {
+    "n": 157,
+    "accuracy": 0.20382165605095542,
+    "ci95": [
+     0.14823821725554062,
+     0.27355316009957154
+    ]
+   },
+   "ok_bls": {
+    "n": 157,
+    "accuracy": 0.1592356687898089,
+    "ci95": [
+     0.11024428742650352,
+     0.2245049316809911
+    ]
+   },
+   "ok_resolver_tls": {
+    "n": 157,
+    "accuracy": 0.46496815286624205,
+    "ci95": [
+     0.3887173802287389,
+     0.5428923525767045
+    ]
+   }
+  }
+ },
+ "b5_same_analysis": {
+  "n_primary": 1341,
+  "raw_tls": {
+   "n": 1341,
+   "accuracy": 0.5346756152125279,
+   "ci95": [
+    0.5079173944585992,
+    0.5612357310842156
+   ]
+  },
+  "raw_bls": {
+   "n": 1341,
+   "accuracy": 0.6435495898583147,
+   "ci95": [
+    0.6175379530230695,
+    0.6687411150842822
+   ]
+  },
+  "resolver_tls_seed": {
+   "n": 1341,
+   "accuracy": 0.7859806114839671,
+   "ci95": [
+    0.7632278509863107,
+    0.8070995392431407
+   ]
+  },
+  "resolver_bls_seed": {
+   "n": 1341,
+   "accuracy": 0.7919463087248322,
+   "ci95": [
+    0.7694015064107009,
+    0.8128231957400951
+   ]
+  },
+  "ceiling_tls_seed": {
+   "n": 1341,
+   "accuracy": 0.9090231170768084,
+   "ci95": [
+    0.8924403921519936,
+    0.9232690564551883
+   ]
+  },
+  "H1_tls_seeded_vs_raw_tls": {
+   "only_first_correct": 81,
+   "only_second_correct": 418,
+   "n": 1341,
+   "p_value": 9.503102203386294e-56,
+   "passes": true
+  },
+  "H1_tls_seeded_vs_raw_bls": {
+   "only_first_correct": 90,
+   "only_second_correct": 281,
+   "n": 1341,
+   "p_value": 5.465086626767023e-24,
+   "passes": true
+  },
+  "H1_passes": true,
+  "H2_inside_tls_grid": {
+   "n": 754,
+   "raw_tls": {
+    "n": 754,
+    "accuracy": 0.6816976127320955,
+    "ci95": [
+     0.6475985713769102,
+     0.713954555292304
+    ]
+   },
+   "resolver_tls_seed": {
+    "n": 754,
+    "accuracy": 0.7785145888594165,
+    "ci95": [
+     0.7475044170335413,
+     0.8067011055981009
+    ]
+   },
+   "only_first_correct": 64,
+   "only_second_correct": 137,
+   "p_value": 2.8473944620822775e-07,
+   "passes": true
+  },
+  "H3_bls_seeded_vs_raw_bls": {
+   "only_first_correct": 82,
+   "only_second_correct": 281,
+   "n": 1341,
+   "p_value": 1.2626008433831313e-26,
+   "passes": true
+  },
+  "below_tls_floor": {
+   "n": 265,
+   "raw_tls": {
+    "n": 265,
+    "accuracy": 0.0,
+    "ci95": [
+     8.673617379884035e-19,
+     0.014289455203361383
+    ]
+   },
+   "resolver_tls_seed": {
+    "n": 265,
+    "accuracy": 0.8490566037735849,
+    "ci95": [
+     0.8009850462542205,
+     0.8871525038868291
+    ]
+   }
+  }
+ },
+ "pooled_b5_b6": {
+  "n_primary": 2938,
+  "raw_tls": {
+   "n": 2938,
+   "accuracy": 0.5401633764465623,
+   "ci95": [
+    0.5221009746037432,
+    0.5581208837043318
+   ]
+  },
+  "raw_bls": {
+   "n": 2938,
+   "accuracy": 0.6341048332198774,
+   "ci95": [
+    0.6165225784833135,
+    0.6513368467148344
+   ]
+  },
+  "resolver_tls_seed": {
+   "n": 2938,
+   "accuracy": 0.7828454731109599,
+   "ci95": [
+    0.7675721383743642,
+    0.7973801010663998
+   ]
+  },
+  "resolver_bls_seed": {
+   "n": 2938,
+   "accuracy": 0.7882913546630361,
+   "ci95": [
+    0.7731476176559392,
+    0.8026821618943943
+   ]
+  },
+  "ceiling_tls_seed": {
+   "n": 2938,
+   "accuracy": 0.910142954390742,
+   "ci95": [
+    0.8992592898824929,
+    0.9199554496194571
+   ]
+  },
+  "H1_tls_seeded_vs_raw_tls": {
+   "only_first_correct": 192,
+   "only_second_correct": 905,
+   "n": 2938,
+   "p_value": 4.178987505738309e-111,
+   "passes": true
+  },
+  "H1_tls_seeded_vs_raw_bls": {
+   "only_first_correct": 214,
+   "only_second_correct": 651,
+   "n": 2938,
+   "p_value": 5.605593593681561e-52,
+   "passes": true
+  },
+  "H1_passes": true,
+  "H2_inside_tls_grid": {
+   "n": 1689,
+   "raw_tls": {
+    "n": 1689,
+    "accuracy": 0.6708111308466548,
+    "ci95": [
+     0.648034453418,
+     0.6928125579030826
+    ]
+   },
+   "resolver_tls_seed": {
+    "n": 1689,
+    "accuracy": 0.7756068679692125,
+    "ci95": [
+     0.7550981271693904,
+     0.794864728185771
+    ]
+   },
+   "only_first_correct": 161,
+   "only_second_correct": 338,
+   "p_value": 1.6784571588223535e-15,
+   "passes": true
+  },
+  "H3_bls_seeded_vs_raw_bls": {
+   "only_first_correct": 192,
+   "only_second_correct": 645,
+   "n": 2938,
+   "p_value": 5.86920008873927e-58,
+   "passes": true
+  },
+  "below_tls_floor": {
+   "n": 536,
+   "raw_tls": {
+    "n": 536,
+    "accuracy": 0.0,
+    "ci95": [
+     0.0,
+     0.007116161481441964
+    ]
+   },
+   "resolver_tls_seed": {
+    "n": 536,
+    "accuracy": 0.8264925373134329,
+    "ci95": [
+     0.7921398913393629,
+     0.8561984360514867
+    ]
+   }
+  }
+ }
+}
