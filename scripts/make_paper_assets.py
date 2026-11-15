@@ -487,6 +487,12 @@ def macros():
     mac("bSixNa", f3(s6["accuracy_non_abstained"]["accuracy"]))
     mac("bSixAmbN", n(s6["tier_b_amb"]["n"]))
     mac("bSixAmbAcc", f3(s6["tier_b_amb"]["ok_resolver_tls"]["accuracy"]))
+    a6 = J("b6_audit_report.json")
+    assert a6["P3_holds"] and a6["errors"] == 0
+    mac("bSixAuditN", n(a6["all"]["n"]))
+    mac("bSixAuditRes", n(a6["all"]["later data support v2"]["count"]))
+    mac("bSixAuditCat", n(a6["all"]["later data support the catalog"]["count"]))
+    mac("bSixAuditInc", n(a6["all"]["inconclusive"]["count"]))
     pl = b6["pooled_b5_b6"]
     mac("poolN", n(pl["n_primary"]))
     mac("poolAcc", f3(pl["resolver_tls_seed"]["accuracy"]))

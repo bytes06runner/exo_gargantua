@@ -1,0 +1,115 @@
+{
+ "protocol": "docs/b6_definition.md P3",
+ "git_commit": "fbeb66c00b0803090e9b62a75739fa9d379933ec",
+ "run_commit": "3fc73ab0b524b4707cd2c9d08422f218baa4bafc",
+ "errors": 0,
+ "all": {
+  "n": 429,
+  "later data support v2": {
+   "count": 112,
+   "fraction": 0.26107226107226106,
+   "ci95": [
+    0.22176018872941478,
+    0.3046254451837765
+   ]
+  },
+  "later data support the catalog": {
+   "count": 101,
+   "fraction": 0.23543123543123542,
+   "ci95": [
+    0.19774065692946866,
+    0.27781806940367487
+   ]
+  },
+  "inconclusive": {
+   "count": 206,
+   "fraction": 0.4801864801864802,
+   "ci95": [
+    0.4332945901495381,
+    0.5274300721749705
+   ]
+  },
+  "insufficient": {
+   "count": 10,
+   "fraction": 0.023310023310023312,
+   "ci95": [
+    0.012709727687772624,
+    0.04237185411952131
+   ]
+  }
+ },
+ "by_tier": {
+  "B": {
+   "n": 348,
+   "later data support v2": {
+    "count": 106,
+    "fraction": 0.3045977011494253,
+    "ci95": [
+     0.2585929039881546,
+     0.3548695177379858
+    ]
+   },
+   "later data support the catalog": {
+    "count": 91,
+    "fraction": 0.2614942528735632,
+    "ci95": [
+     0.21810581043747243,
+     0.3100909690223753
+    ]
+   },
+   "inconclusive": {
+    "count": 141,
+    "fraction": 0.4051724137931034,
+    "ci95": [
+     0.3548996374320458,
+     0.4575159495821105
+    ]
+   },
+   "insufficient": {
+    "count": 10,
+    "fraction": 0.028735632183908046,
+    "ci95": [
+     0.015681925018148784,
+     0.05208038620371923
+    ]
+   }
+  },
+  "B-amb": {
+   "n": 81,
+   "later data support v2": {
+    "count": 6,
+    "fraction": 0.07407407407407407,
+    "ci95": [
+     0.03438916189352608,
+     0.15233056050680582
+    ]
+   },
+   "later data support the catalog": {
+    "count": 10,
+    "fraction": 0.12345679012345678,
+    "ci95": [
+     0.06846042262503366,
+     0.21255266529410033
+    ]
+   },
+   "inconclusive": {
+    "count": 65,
+    "fraction": 0.8024691358024691,
+    "ci95": [
+     0.7029540686276727,
+     0.8745927951749901
+    ]
+   },
+   "insufficient": {
+    "count": 0,
+    "fraction": 0.0,
+    "ci95": [
+     -3.469446951953614e-18,
+     0.04527967412212876
+    ]
+   }
+  }
+ },
+ "P3_prediction": "favor-resolver and favor-catalog counts within a factor 1.5",
+ "P3_holds": true
+}
