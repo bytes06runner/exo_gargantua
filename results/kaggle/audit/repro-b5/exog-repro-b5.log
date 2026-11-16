@@ -1,0 +1,38 @@
+[{"stream_name":"stdout","time":168.846392889,"data":"snapshot commit: 3b46123b5646722d77121ff93119547b561d3079\n"}
+,{"stream_name":"stderr","time":576.122699734,"data":"ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n"}
+,{"stream_name":"stderr","time":576.122845837,"data":"bigframes 2.51.0 requires google-cloud-bigquery-storage\u003c3.0.0,\u003e=2.30.0, which is not installed.\n"}
+,{"stream_name":"stderr","time":576.122853577,"data":"bayesian-optimization 3.4.0 requires numpy\u003e=2.1.3; python_full_version == \"3.13.*\", but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":576.122860059,"data":"ydata-profiling 4.18.4 requires matplotlib\u003c=3.10,\u003e=3.5, but you have matplotlib 3.11.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":576.12286636,"data":"ydata-profiling 4.18.4 requires scipy\u003c1.17,\u003e=1.8, but you have scipy 1.17.1 which is incompatible.\n"}
+,{"stream_name":"stderr","time":576.122872486,"data":"mne 1.13.2 requires numpy\u003c3,\u003e=2.1, but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":576.122878476,"data":"dopamine-rl 4.1.2 requires gym\u003c=0.25.2, but you have gym 0.26.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":576.12288434,"data":"moviepy 1.0.3 requires decorator\u003c5.0,\u003e=4.0.2, but you have decorator 5.3.1 which is incompatible.\n"}
+,{"stream_name":"stderr","time":576.12289044,"data":"ml-dtypes 0.6.0 requires numpy\u003e=2.1.0; python_version \u003e= \"3.13\", but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":576.122896955,"data":"jax 0.11.1 requires numpy\u003e=2.1, but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":576.122903102,"data":"ydf 0.15.0 requires protobuf\u003c7.0.0,\u003e=5.29.1, but you have protobuf 7.36.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":576.122909387,"data":"dm-tree 0.1.10 requires numpy\u003e=2.1.0; python_version \u003e= \"3.13\", but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":576.122915774,"data":"gradio 6.30.0 requires pillow\u003c13.0,\u003e=8.0, but you have pillow 13.0.0 which is incompatible.\n"}
+,{"stream_name":"stderr","time":576.122922351,"data":"tifffile 2026.10.15 requires numpy\u003e=2.1, but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":592.297559631,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":592.298039335,"data":"  File \"/tmp/exog/scripts/repro_check.py\", line 128, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":592.298066303,"data":"    main()\n"}
+,{"stream_name":"stderr","time":592.298073055,"data":"    ~~~~^^\n"}
+,{"stream_name":"stderr","time":592.298078921,"data":"  File \"/tmp/exog/scripts/repro_check.py\", line 104, in main\n"}
+,{"stream_name":"stderr","time":592.298083908,"data":"    pick = rng.choice(ids, N, replace=False)\n"}
+,{"stream_name":"stderr","time":592.298089771,"data":"  File \"numpy/random/_generator.pyx\", line 866, in numpy.random._generator.Generator.choice\n"}
+,{"stream_name":"stderr","time":592.298096313,"data":"ValueError: a cannot be empty unless no samples are taken\n"}
+,{"stream_name":"stderr","time":592.542755117,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":592.543658082,"data":"  File \"/kaggle/src/script.py\", line 20, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":592.543690025,"data":"    subprocess.run([sys.executable, \"-u\", f\"{SRC}/scripts/repro_check.py\", '--sample', 'b5', '--out', '/kaggle/working/repro', \"--commit\", snapshot], cwd=SRC, check=True)\n"}
+,{"stream_name":"stderr","time":592.543720497,"data":"    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":592.54373436,"data":"  File \"/usr/lib/python3.13/subprocess.py\", line 578, in run\n"}
+,{"stream_name":"stderr","time":592.54373946,"data":"    raise CalledProcessError(retcode, process.args,\n"}
+,{"stream_name":"stderr","time":592.543742732,"data":"                             output=stdout, stderr=stderr)\n"}
+,{"stream_name":"stderr","time":592.543751211,"data":"subprocess.CalledProcessError: Command '['/usr/bin/python3', '-u', '/tmp/exog/scripts/repro_check.py', '--sample', 'b5', '--out', '/kaggle/working/repro', '--commit', '3b46123b5646722d77121ff93119547b561d3079']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":595.54854595,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":595.548601873,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":595.937765428,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":595.937798068,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":597.207321436,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":598.660822994,"data":"[NbConvertApp] Writing 277871 bytes to __results__.html\n"}
+]

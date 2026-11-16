@@ -1,5 +1,5 @@
 """Decision B5-r1.2: compare the catalog-truth audit of the first B5 run (results/kaggle/b5_audit, run at commit
-7689b8c) with the audit of the rerun (results/kaggle/b5r_audit, commit 94b3abe). The audit code is unchanged apart
+af177a2) with the audit of the rerun (results/kaggle/b5r_audit, commit e74bfb3). The audit code is unchanged apart
 from the run it reads T_seed from; the target lists differ because the rerun's resolver answers differ.
 Output: results/b5_audit_compare.json."""
 

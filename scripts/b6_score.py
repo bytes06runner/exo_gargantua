@@ -29,7 +29,7 @@ import b5_score  # noqa: E402
 import resolver_models as RM  # noqa: E402
 
 TOL, ALPHA, N_HYP = 1e-3, 0.01, 3
-B5_RERUN_COMMIT = "ac6df0327016aee07fc3379b7b7a6a00ae09113e"
+B5_RERUN_COMMIT = "ce9f5f4d0869cfa6256074cfad2e306250929a8c"
 
 
 def acc(x):

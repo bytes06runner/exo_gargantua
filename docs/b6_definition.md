@@ -5,14 +5,14 @@ left three things that a confirmatory test should settle: B5 was run twice (deci
 inside its search grid was post hoc (decision B5-floor), and the comparison of the BLS-seeded resolver with raw BLS was
 secondary. B6 repeats B5 on binaries nobody has looked at, with those comparisons fixed in advance.
 
-The resolver is the frozen v2 (`resolver-frozen-v2`, 88c4838). **Nothing about the resolver, its thresholds or the
+The resolver is the frozen v2 (`resolver-frozen-v2`, a3cbbd1). **Nothing about the resolver, its thresholds or the
 searches changes, whatever B6 shows.** If a hypothesis below fails, the paper reports a failed replication.
 
 ## 1. Sample
 
 Every EB of the Prša et al. (2022) catalog that passed the B5 rules Y01–Y05 and was excluded from B5 **only** by the
 random cap S01 (`data/b5_sample_log.csv`, reason "S01: not in the pre-seeded subset"; written at the B5
-pre-registration, commit 78fd33f, with `numpy.random.default_rng(20261021)`). That is the random complement of B5 in
+pre-registration, commit 4435520, with `numpy.random.default_rng(20261021)`). That is the random complement of B5 in
 the same population: **1,782 EBs** (1,623 Tier B, 159 Tier B-amb), no cap, no new rule, no star in common with B5.
 `scripts/b6_select.py` writes `data/b6_sample_log.csv`, `data/b6_pinned_products.csv` (4,054 early-window and 10,112
 later files, pinned by name from the frozen MAST listing of 2026-09-30) and `results/b6_selection.json`.

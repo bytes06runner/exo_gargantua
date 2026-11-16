@@ -1,0 +1,31 @@
+[{"stream_name":"stdout","time":43.395687999,"data":"snapshot commit: 12e900cf8809ee63272ee259496d0290371699c3\n"}
+,{"stream_name":"stderr","time":448.937993179,"data":"ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n"}
+,{"stream_name":"stderr","time":448.938119434,"data":"bigframes 2.51.0 requires google-cloud-bigquery-storage\u003c3.0.0,\u003e=2.30.0, which is not installed.\n"}
+,{"stream_name":"stderr","time":448.938125555,"data":"bayesian-optimization 3.4.0 requires numpy\u003e=2.1.3; python_full_version == \"3.13.*\", but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":448.938130362,"data":"ydata-profiling 4.18.4 requires matplotlib\u003c=3.10,\u003e=3.5, but you have matplotlib 3.11.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":448.938134634,"data":"ydata-profiling 4.18.4 requires scipy\u003c1.17,\u003e=1.8, but you have scipy 1.17.1 which is incompatible.\n"}
+,{"stream_name":"stderr","time":448.938139161,"data":"mne 1.13.2 requires numpy\u003c3,\u003e=2.1, but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":448.938143188,"data":"dopamine-rl 4.1.2 requires gym\u003c=0.25.2, but you have gym 0.26.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":448.938147091,"data":"moviepy 1.0.3 requires decorator\u003c5.0,\u003e=4.0.2, but you have decorator 5.3.1 which is incompatible.\n"}
+,{"stream_name":"stderr","time":448.938151172,"data":"ml-dtypes 0.6.0 requires numpy\u003e=2.1.0; python_version \u003e= \"3.13\", but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":448.938155362,"data":"jax 0.11.1 requires numpy\u003e=2.1, but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":448.938159224,"data":"ydf 0.15.0 requires protobuf\u003c7.0.0,\u003e=5.29.1, but you have protobuf 7.36.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":448.938163151,"data":"dm-tree 0.1.10 requires numpy\u003e=2.1.0; python_version \u003e= \"3.13\", but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":448.938167364,"data":"gradio 6.30.0 requires pillow\u003c13.0,\u003e=8.0, but you have pillow 13.0.0 which is incompatible.\n"}
+,{"stream_name":"stderr","time":448.93817128,"data":"tifffile 2026.10.15 requires numpy\u003e=2.1, but you have numpy 2.0.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":449.871527243,"data":"/usr/bin/python3: can't open file '/tmp/exog/scripts/b5_spoc_fetch.py': [Errno 2] No such file or directory\n"}
+,{"stream_name":"stderr","time":449.889241513,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":449.890117489,"data":"  File \"/kaggle/src/script.py\", line 20, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":449.890142802,"data":"    subprocess.run([sys.executable, \"-u\", f\"{SRC}/scripts/b5_spoc_fetch.py\", '--out', '/kaggle/working/b5spoc', \"--commit\", snapshot], cwd=SRC, check=True)\n"}
+,{"stream_name":"stderr","time":449.890150431,"data":"    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":449.890157067,"data":"  File \"/usr/lib/python3.13/subprocess.py\", line 578, in run\n"}
+,{"stream_name":"stderr","time":449.890163856,"data":"    raise CalledProcessError(retcode, process.args,\n"}
+,{"stream_name":"stderr","time":449.890170231,"data":"                             output=stdout, stderr=stderr)\n"}
+,{"stream_name":"stderr","time":449.890176134,"data":"subprocess.CalledProcessError: Command '['/usr/bin/python3', '-u', '/tmp/exog/scripts/b5_spoc_fetch.py', '--out', '/kaggle/working/b5spoc', '--commit', '12e900cf8809ee63272ee259496d0290371699c3']' returned non-zero exit status 2.\n"}
+,{"stream_name":"stderr","time":452.721929646,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":452.721969174,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":453.048914087,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":453.048950117,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":454.311677797,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":455.617125022,"data":"[NbConvertApp] Writing 277795 bytes to __results__.html\n"}
+]

@@ -10,8 +10,8 @@ Sources:
 Decisions: F1, V2-a … V2-score in `docs/decisions.md`. 95 % intervals are Wilson; McNemar tests are exact and paired.
 
 Freeze tags:
-- `resolver-frozen-v1`: 25264fa.
-- `resolver-frozen-v2`: 88c4838. Recalibration only; the chosen alias is always v1's.
+- `resolver-frozen-v1`: d936e5c.
+- `resolver-frozen-v2`: a3cbbd1. Recalibration only; the chosen alias is always v1's.
 
 B2 was unsealed after both tags existed, with the primary comparison pre-registered (V2-e).
 

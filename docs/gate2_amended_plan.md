@@ -4,7 +4,7 @@ Numbers are copied from `results/cost_estimate_v2.json` (script `scripts/estimat
 `results/kaggle/gate2b/v1_*/gate2b/gate2b_results.json` and `kaggle quota`. Amendments A1-A3 and
 decision G1 are in `docs/decisions.md`.
 
-## 1. Checks run on a Kaggle T4 session (`exog-gate2b-checks`, commit 9200933)
+## 1. Checks run on a Kaggle T4 session (`exog-gate2b-checks`, commit f098a66)
 
 | Check | Result |
 |---|---|

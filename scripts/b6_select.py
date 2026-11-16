@@ -1,5 +1,5 @@
 """B6 selection (docs/b6_definition.md): the replication sample is every EB that passed the B5 rules Y01-Y05 and was left out
-of B5 only by the random cap S01 (data/b5_sample_log.csv, written at the B5 pre-registration, commit 78fd33f). No new rule and
+of B5 only by the random cap S01 (data/b5_sample_log.csv, written at the B5 pre-registration, commit 4435520). No new rule and
 no cap. Writes data/b6_sample_log.csv (same columns as the B5 log), data/b6_pinned_products.csv (early and later files from the
 frozen MAST listing), data/b6_pins_early.csv and results/b6_selection.json. Reads no light curve and no run result."""
 

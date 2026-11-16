@@ -5,12 +5,12 @@ been computed or looked at.
 
 ## 1. Pre-registration
 
-`docs/sample_definition.md` was committed at `0961d05` **before** any catalog snapshot or light
+`docs/sample_definition.md` was committed at `7c2fd79` **before** any catalog snapshot or light
 curve was downloaded. Later changes to the pipeline were bug fixes (below), not rule changes.
 
 ## 2. Frozen sample (`data/FROZEN.json`, manifest `results/kaggle/freeze_sample/v2_20260930T1025/freeze/freeze_manifest.json`)
 
-Run of record: Kaggle kernel `exog-freeze-sample-v2`, code commit `835f583`, 190 s on 4 CPU cores.
+Run of record: Kaggle kernel `exog-freeze-sample-v2`, code commit `7323556`, 190 s on 4 CPU cores.
 
 | Item | Count |
 |---|---|
@@ -57,7 +57,7 @@ MAST `tcestats` files, and QLP-hist / SPOC-hist from the Guerrero et al. (2021) 
 
 ## 4. Kaggle smoke run (`results/kaggle/smoke_run/v1_20260930T1241/smoke/smoke_results.json`)
 
-Kernel `exog-smoke-run`, code commit `2d27dda`, 20 targets drawn with seed 20260930 from the B2
+Kernel `exog-smoke-run`, code commit `1467164`, 20 targets drawn with seed 20260930 from the B2
 candidates. Hardware: 4 CPU cores, 33.7 GB RAM, **no GPU**; Python 3.12.13.
 
 | Measure | Value |

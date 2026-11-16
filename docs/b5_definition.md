@@ -68,7 +68,7 @@ Correct iff |P / P_true − 1| < 0.001.
 - **Seeds:** GPU BLS peak and TLS peak on the early-sector light curve, exactly as in B2 (`search.prepare`, the
   pre-registered BLS grid, TLS 1.32 with TIC stellar parameters). **TLS on all included EBs**; no subset
   is needed at this size.
-- **Resolver:** frozen **v2** exactly (`resolver-frozen-v2`, 88c4838), no changes. It runs from the TLS seed
+- **Resolver:** frozen **v2** exactly (`resolver-frozen-v2`, a3cbbd1), no changes. It runs from the TLS seed
   and from the BLS seed. v1 is reported as secondary.
 - **Primary "ours":** v2 seeded with the TLS peak, top-1 alias (as in B2, decision V2-e).
 
