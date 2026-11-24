@@ -66,8 +66,8 @@ def test_reviewer_wording_and_required_text():
     low = s.lower()
     assert not [w for w in FORBIDDEN if w in low], [w for w in FORBIDDEN if w in low]
     assert " ".join(TESS_ACK.split()) in " ".join(s.split()), "the standard TESS acknowledgement must appear verbatim"
-    for needle in ("10.17909/t9-nmc8-f686", "\\dataset[", "10.5281/zenodo.", "AstroNet", "TESS Exoplanet Classifier", "transit-timing variations are out of scope",
-                   "centroid", "not a false-alarm filter"):
+    for needle in ("10.17909/t9-nmc8-f686", "\\dataset[", "10.5281/zenodo.", "AstroNet", "TESS Exoplanet Classifier", "transit timing variations are out of scope",
+                   "centroid", "not a false alarm filter"):
         assert needle in s, needle
 
 

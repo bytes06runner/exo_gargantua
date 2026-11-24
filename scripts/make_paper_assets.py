@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -703,6 +704,17 @@ def macros():
 
 
 # ------------------------------------------------------------------ tables
+PLAIN = [("Principled", "Simple"), ("principled", "simple"), ("one term left out", "one test left out"), ("the term and its descriptors", "the test and its inputs"), ("contribution of each evidence term", "contribution of each test"), ('Pre-registered', 'Preregistered'), ('pre-registered', 'preregistered'), ('False-alarm', 'False alarm'), ('false-alarm', 'false alarm'), ('Catalog-truth', 'Catalog'), ('catalog-truth', 'catalog'), ('Eclipsing-binary', 'Eclipsing binary'), ('eclipsing-binary', 'eclipsing binary'), ('free-phase', 'free phase'), ('later-sector', 'later sector'), ('injection-recovery', 'injection recovery'), ('search-seed', 'search seed'), ('multi-sector', 'multiple sector'), ('two-sided', 'two sided'), ('GPU-session', 'GPU session'), ('TLS-seeded', 'TLS seeded'), ('early-window', 'early window'), ('near-equal', 'nearly equal'), ('confident-resolution', 'confident'), ('period-match', 'period match'), ('wrong-alias', 'wrong period'), ('predicted-epoch', 'predicted event'), ('single-term', 'single test'), ('Evidence-term', 'Evidence test'), ('Pre-search', 'Presearch'), ('Rule-based', 'Rule based'), ('Run-time', 'Run time'), ('cross-matched', 'cross matched'), ('cross-validation', 'cross validation'), ('first-run', 'first run'), ('host-split', 'host split')]
+
+
+def _ranges(text):
+    """Replace numeric ranges written with an en dash by 'to' in captions and notes, but keep them inside table bodies."""
+    head, rest = text.split("\\startdata", 1)
+    body, tail = rest.split("\\enddata", 1)
+    fix = lambda x: re.sub(r"(?<=[0-9])--(?=[0-9])", " to ", x)
+    return fix(head) + "\\startdata" + body + "\\enddata" + fix(tail)
+
+
 def table(path, caption, label, colspec, head, rows, notes=""):
     t = [f"\\begin{{deluxetable*}}{{{colspec}}}", "\\tablecaption{" + caption + f" \\label{{{label}}}}}", "\\tablewidth{0pt}",
          "\\tablehead{" + " & ".join(f"\\colhead{{{h}}}" for h in head) + "}", "\\startdata"]
@@ -712,7 +724,11 @@ def table(path, caption, label, colspec, head, rows, notes=""):
     if notes:
         t += [f"\\tablecomments{{{notes}}}"]
     t += ["\\end{deluxetable*}"]
-    (P / "tables" / path).write_text("\n".join(t) + "\n")
+    text = "\n".join(t) + "\n"
+    for old, new in PLAIN:  # plain wording in tables (owner instruction: few hyphens, no dashes in text)
+        text = text.replace(old, new)
+    text = re.sub(r"(?<=[0-9])--(?=[0-9])", " to ", text) if "\\startdata" not in text else _ranges(text)
+    (P / "tables" / path).write_text(text)
 
 
 def tables():

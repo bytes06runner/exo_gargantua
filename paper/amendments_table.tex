@@ -6,42 +6,42 @@
 \tablehead{\colhead{ID} & \colhead{Date} & \colhead{Timing} & \colhead{Change}}
 \startdata
 A1 & 2026-09-30 & before data & Seed BLS searches run four targets in parallel; configuration unchanged and parallel output tested identical to serial. \\
-A2 & 2026-09-30 & before data & B1 split into wrong-alias seeds on all injections, B1(i), and full BLS and TLS searches on a subsample drawn in advance, B1(ii), reported separately, because full searches of every injection were too costly; GPU BLS allowed only if it reproduces astropy peak periods within one grid step. \\
+A2 & 2026-09-30 & before data & B1 split into wrong period seeds on all injections, B1(i), and full BLS and TLS searches on a subsample drawn in advance, B1(ii), reported separately, because full searches of every injection were too costly; GPU BLS allowed only if it reproduces astropy peak periods within one grid step. \\
 A3 & 2026-09-30 & before data & TOIs dispositioned as confirmed or known planets take truth only from the NASA Exoplanet Archive, never from the EB catalog; TOIs 143.01, 1165.01, 1422.01, 1779.01, 2119.01 and 4495.01 moved from EB truth to catalog reference and left B2. \\
 A4 & 2026-09-30 & before data & B2 seeds computed but no comparison with truth allowed until the resolver is frozen; enforced in code. \\
-A5 & 2026-10-01 & before data & Pre-search screen of injection hosts applied to the data window the injections use rather than to all sectors, because the literal rule could not be completed within session limits. \\
-V1 & 2026-10-01 & before data & Screen SDE defined on the raw BLS spectrum; GPU and astropy implementations validated on a pre-drawn set of pool stars. \\
-A6 & 2026-10-01 & before data & Screen SDE recomputed with TLS's own statistics code on the exact BLS $\chi^2$ spectrum read at TLS's trial periods, replacing V1 for the decision; V1 still computed and reported; threshold, search and no-replacement rule unchanged. \\
+A5 & 2026-10-01 & before data & Presearch screen of injection hosts applied to the data window the injections use rather than to all sectors, because the literal rule could not be completed within session limits. \\
+V1 & 2026-10-01 & before data & Screen SDE defined on the raw BLS spectrum; GPU and astropy implementations validated on a drawn in advance set of pool stars. \\
+A6 & 2026-10-01 & before data & Screen SDE recomputed with TLS's own statistics code on the exact BLS $\chi^2$ spectrum read at TLS's trial periods, replacing V1 for the decision; V1 still computed and reported; threshold, search and no replacement rule unchanged. \\
 F1 & 2026-10-04 & before data & Resolver trained and thresholds chosen on the B1 training split only, then frozen by a git tag; scoring code refuses to run without it. \\
-R1 & 2026-10-04 & before data & Refinement fix found on synthetic data: tie-break toward the seed-derived period and period held fixed when fewer than two events are covered. \\
+R1 & 2026-10-04 & before data & Refinement fix found on synthetic data: tie break toward the seed period and period held fixed when fewer than two events are covered. \\
 A7 & 2026-10-04 & before data & B1 hosts are the screened pool as it fell, ten injections each; hosts split by star into fit, calibration and test; B1(ii) drawn from test injections only. \\
 V2-a & 2026-10-06 & after B1 test & Second resolver version changes only its calibration map and abstain thresholds; features, candidates and classifier unchanged. \\
-V2-b & 2026-10-06 & after B1 test & Calibration data for the second version: new injections on training-split hosts only, searched with BLS and TLS. \\
+V2-b & 2026-10-06 & after B1 test & Calibration data for the second version: new injections on training split hosts only, searched with BLS and TLS. \\
 V2-c & 2026-10-06 & after B1 test & Second version reported on B1(ii) as post hoc; both versions scored on B2, the second as primary. \\
 V2-d & 2026-10-06 & after B1 test & Cases where no alias candidate contains the true period are not addressed; reported as a limitation. \\
-V2-e & 2026-10-06 & before B2 & B2 primary comparison fixed: TLS-seeded second version, top-1 alias, against every baseline with exact McNemar tests. \\
-V2-f & 2026-10-20 & before B2 & Temperature recalibration replaced by isotonic regression of the top alias probability, chosen by host-split cross-validation on calibration data. \\
+V2-e & 2026-10-06 & before B2 & B2 primary comparison fixed: TLS seeded second version, top-1 alias, against every baseline with exact McNemar tests. \\
+V2-f & 2026-10-20 & before B2 & Temperature recalibration replaced by isotonic regression of the top alias probability, chosen by host split cross validation on calibration data. \\
 V2-f.1 & 2026-10-20 & before B2 & Other alias probabilities capped below the calibrated top probability so the map never changes the chosen alias. \\
 V2-final & 2026-10-20 & before B2 & No further changes to the resolver after the second freeze, whatever B2 shows. \\
 V2-score & 2026-10-20 & before B2 & Scoring takes the chosen alias from the first version's classifier and only the probability from the second, as V2-f.1 specifies. \\
-FA1 & 2026-10-20 & before data & False-alarm test design: inverted and scrambled early-window light curves of the B2 targets, BLS seed, confidence at each version's threshold. \\
-B5 & 2026-10-20 & before data & Eclipsing-binary benchmark specified after B1 and B2 results were known, with its own sample, truth and success criterion. \\
-B5-audit & 2026-10-20 & before data & Secondary catalog-truth audit of B5 disagreements on later sectors, specified before any B5 light curve was downloaded. \\
-B4 & 2026-10-20 & before data & Run-time protocol on Sector 49; TLS not run, its time quoted from earlier runs. \\
+FA1 & 2026-10-20 & before data & False alarm test design: inverted and scrambled early window light curves of the B2 targets, BLS seed, confidence at each version's threshold. \\
+B5 & 2026-10-20 & before data & Eclipsing binary benchmark specified after B1 and B2 results were known, with its own sample, truth and success criterion. \\
+B5-audit & 2026-10-20 & before data & Secondary catalog audit of B5 disagreements on later sectors, specified before any B5 light curve was downloaded. \\
+B4 & 2026-10-20 & before data & Run time protocol on Sector 49; TLS not run, its time quoted from earlier runs. \\
 B3-nogo & 2026-10-20 & post hoc & Planned audit of the TOI catalog dropped after the post hoc check of Section~\ref{sec:b2}. \\
-FA-ctx & 2026-10-26 & post hoc & Detection statistics of TLS and of the seed BLS search recorded on the false-alarm light curves. \\
-B5-r1 & 2026-11-08 & before rerun & Protocol deviation found by our own audit: the first B5 run lacked TIC stellar parameters for almost all stars, so TLS ran with its default stellar values instead of the pre-registered TIC values. The TLS and resolver configuration is unchanged; TLS and the resolver were rerun with the pre-registered inputs, the rerun was declared primary before any of its results existed, and the first run is kept as a sensitivity analysis. \\
-B5-r1.2 & 2026-11-11 & after rerun & Catalog-truth audit repeated, unchanged, on the rerun's disagreements; the first-run audit is superseded and not reported except for the comparison in Section~\ref{sec:audit}. \\
+FA-ctx & 2026-10-26 & post hoc & Detection statistics of TLS and of the seed BLS search recorded on the false alarm light curves. \\
+B5-r1 & 2026-11-08 & before rerun & Protocol deviation found by our own audit: the first B5 run lacked TIC stellar parameters for almost all stars, so TLS ran with its default stellar values instead of the preregistered TIC values. The TLS and resolver configuration is unchanged; TLS and the resolver were rerun with the preregistered inputs, the rerun was declared primary before any of its results existed, and the first run is kept as a sensitivity analysis. \\
+B5-r1.2 & 2026-11-11 & after rerun & Catalog audit repeated, unchanged, on the rerun's disagreements; the first run audit is superseded and not reported except for the comparison in Section~\ref{sec:audit}. \\
 B5-spoc & 2026-11-08 & post hoc & SPOC TCE periods added as a B5 baseline, with matching rules written before any were compared with B5 truth. \\
 Repro-1 & 2026-11-08 & post hoc & Frozen resolver and TLS rerun on a random subset to confirm that stored results can be regenerated. \\
-Indep-1 & 2026-11-08 & post hoc & B5 compared with independent periods; audited stars cross-matched with ExoFOP and the Exoplanet Archive; TOIs at half an EB period counted. \\
+Indep-1 & 2026-11-08 & post hoc & B5 compared with independent periods; audited stars cross matched with ExoFOP and the Exoplanet Archive; TOIs at half an EB period counted. \\
 B5-floor & 2026-11-11 & post hoc & Analysis of the TLS period floor and of the density term on binaries, after the rerun showed a lower raw TLS accuracy. \\
 Rev-1 & 2026-11-12 & post hoc & Count of TOI periods revised by an alias factor between the Prime Mission catalog and the current TOI table; raw alias rates of the searches on B5 (Alias-1). \\
-FI-1 & 2026-11-12 & post hoc & Evidence-term ablation and permutation importance with the frozen model; design recorded before running, leave-one-out part added after the permutation result. \\
+FI-1 & 2026-11-12 & post hoc & Evidence test ablation and permutation importance with the frozen model; design recorded before running, leave one out part added after the permutation result. \\
 Err-1 & 2026-11-12 & post hoc & B5 errors assigned to categories fixed before counting. \\
 Tol-1 & 2026-11-12 & post hoc & Main results rescored at match tolerances of 0.05\%, 0.2\% and 0.5\%. \\
 Sec-1 & 2026-11-12 & post hoc & Check of B2 planets with a detected secondary event; split by whether the true period is a candidate added after the first result. \\
-B5-tsch & 2026-11-12 & post hoc & Rule-based harmonic correction of Tschudi et al.\ run on B5 as an additional baseline, with scoring rules recorded before the run. \\
+B5-tsch & 2026-11-12 & post hoc & Rule based harmonic correction of Tschudi et al.\ run on B5 as an additional baseline, with scoring rules recorded before the run. \\
 B6 & 2026-11-13 & before data & Replication of B5 on the binaries left out by its random cap, with three confirmatory hypotheses and Bonferroni correction; protocol, sample, stellar parameters and scoring code committed before any search result existed.
 \enddata
 \end{deluxetable*}
