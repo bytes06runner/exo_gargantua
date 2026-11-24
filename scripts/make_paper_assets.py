@@ -5,7 +5,7 @@ Writes
   paper/generated_macros.tex           \\newcommand macros (one per reported number)
   paper/tables/*.tex                   deluxetables
   paper/figures/*.pdf                  figures; each asserts that what it plots equals the results file
-  paper/data/b5_candidate_period_revisions.csv  catalog-truth audit cases decided by later data (machine-readable)
+  paper/data/eb_candidate_period_revisions.csv  catalog-truth audit cases (B5 and B6) decided by later data (machine-readable)
   paper/data/b5_per_target.csv  every B5 binary, with each method's period (machine-readable)
   paper/data/b2_per_target.csv         B2 per-TOI table (sectors, SNR, periods, correctness)
 """
@@ -953,28 +953,49 @@ def figures():
 
 
 # ------------------------------------------------------------------ data products
+def crossmatch(tics):
+    """CLAUDE.md rule 6: ExoFOP TOI and NASA Exoplanet Archive entries for each star (frozen snapshots)."""
+    toi = pd.read_csv(ROOT / "data/raw/exofop_toi_20260930.csv", comment="#", low_memory=False)
+    ps = pd.read_csv(ROOT / "data/raw/pscomppars_20260930.csv.gz", comment="#", low_memory=False)
+    ps["tic"] = pd.to_numeric(ps["tic_id"].astype(str).str.replace("TIC ", ""), errors="coerce")
+    tg, pg = toi.groupby("TIC ID"), ps.groupby("tic")
+    out = pd.DataFrame({"tic": list(tics)})
+    out["toi"] = out["tic"].map(lambda t: ";".join(f"{x:.2f}" for x in tg.get_group(t)["TOI"]) if t in tg.groups else "")
+    out["tfopwg_disposition"] = out["tic"].map(lambda t: ";".join(str(x) for x in tg.get_group(t)["TFOPWG Disposition"]) if t in tg.groups else "")
+    out["toi_period_d"] = out["tic"].map(lambda t: ";".join(f"{x:.6f}" for x in tg.get_group(t)["Period (days)"]) if t in tg.groups else "")
+    out["exoplanet_archive_planet"] = out["tic"].map(lambda t: ";".join(str(x) for x in pg.get_group(t)["pl_name"]) if t in pg.groups else "")
+    return out
+
+
 def data():
     (P / "data").mkdir(exist_ok=True)
-    d = pd.read_csv(R / "kaggle/b5r_audit/b5audit/b5_audit.csv")
-    keep = d[d["verdict"].isin(["later data support v2", "later data support the catalog"])].copy()
+    parts = []
+    for sample, audit, per_target, log in (("B5", "kaggle/b5r_audit/b5audit/b5_audit.csv", "b5_per_target.csv", "data/b5_sample_log.csv"),
+                                           ("B6", "kaggle/b6_audit/b6audit/b5_audit.csv", "b6_per_target.csv", "data/b6_sample_log.csv")):
+        d = pd.read_csv(R / audit)
+        keep = d[d["verdict"].isin(["later data support v2", "later data support the catalog"])].copy()
+        keep["sample"] = sample
+        pt = pd.read_csv(R / per_target)[["tic", "sectors_early", "snr_seed"]]
+        lg = pd.read_csv(ROOT / log)[["tic", "sectors_later"]]
+        parts.append(keep.merge(pt, on="tic", how="left").merge(lg, on="tic", how="left"))
+    keep = pd.concat(parts, ignore_index=True)
     keep["supported_period"] = np.where(keep["verdict"] == "later data support v2", keep["P_v2"], keep["P_catalog"])
     keep["status"] = np.where(keep["verdict"] == "later data support v2", "candidate revision (resolver period favored by later data)",
                               "catalog period favored by later data")
-    # CLAUDE.md rule 6: every decided star carries its ExoFOP and NASA Exoplanet Archive entries
-    xm = pd.read_csv(R / "b5_audit_crossmatch.csv", dtype=str, keep_default_na=False)[["tic", "toi", "tfopwg_disposition", "toi_period_d", "exoplanet_archive_planet"]]
-    xm["tic"] = xm["tic"].astype(int)
-    keep = keep.merge(xm, on="tic", how="left")
-    pt = pd.read_csv(R / "b5_per_target.csv")[["tic", "sectors_early", "snr_seed"]]
-    lg = pd.read_csv(ROOT / "data/b5_sample_log.csv")[["tic", "sectors_later"]]
-    keep = keep.merge(pt, on="tic", how="left").merge(lg, on="tic", how="left")
-    cols = ["tic", "tier", "P_catalog", "P_v2", "ratio", "delta_chi2", "n_ecl_catalog", "n_ecl_v2", "supported_period", "status", "sectors_early", "sectors_later", "snr_seed", "toi", "tfopwg_disposition", "toi_period_d", "exoplanet_archive_planet"]
-    keep[cols].sort_values(["status", "delta_chi2"], ascending=[True, False]).to_csv(P / "data" / "b5_candidate_period_revisions.csv", index=False,
-                                                                                     float_format="%.8g")
-    au = J("b5_audit_report.json")["all"]
-    assert (keep["verdict"] == "later data support v2").sum() == au["later data support v2"]["count"]
-    assert (keep["verdict"] == "later data support the catalog").sum() == au["later data support the catalog"]["count"]
-    shutil.copy(R / "b2_per_target.csv", P / "data" / "b2_per_target.csv")
-    shutil.copy(R / "b5_per_target.csv", P / "data" / "b5_per_target.csv")
+    keep = keep.merge(crossmatch(keep["tic"].unique()), on="tic", how="left")
+    cols = ["sample", "tic", "tier", "P_catalog", "P_v2", "ratio", "delta_chi2", "n_ecl_catalog", "n_ecl_v2", "supported_period", "status", "sectors_early",
+            "sectors_later", "snr_seed", "toi", "tfopwg_disposition", "toi_period_d", "exoplanet_archive_planet"]
+    keep[cols].sort_values(["sample", "status", "delta_chi2"], ascending=[True, True, False]).to_csv(P / "data" / "eb_candidate_period_revisions.csv", index=False,
+                                                                                                    float_format="%.8g")
+    old = P / "data" / "b5_candidate_period_revisions.csv"
+    if old.exists():
+        old.unlink()
+    for sample, rep in (("B5", J("b5_audit_report.json")["all"]), ("B6", J("b6_audit_report.json")["all"])):
+        k = keep[keep["sample"] == sample]
+        assert (k["verdict"] == "later data support v2").sum() == rep["later data support v2"]["count"]
+        assert (k["verdict"] == "later data support the catalog").sum() == rep["later data support the catalog"]["count"]
+    for f in ("b2_per_target.csv", "b5_per_target.csv", "b6_per_target.csv"):
+        shutil.copy(R / f, P / "data" / f)
 
 
 def main():

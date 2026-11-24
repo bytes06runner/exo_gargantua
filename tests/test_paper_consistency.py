@@ -31,9 +31,13 @@ def test_b2_accuracies_recomputable_from_per_target_table():
 
 
 def test_audit_counts_recomputable_from_released_table():
-    m, d = macros(), pd.read_csv(P / "data" / "b5_candidate_period_revisions.csv")
+    m, a = macros(), pd.read_csv(P / "data" / "eb_candidate_period_revisions.csv")
+    d, e = a[a["sample"] == "B5"], a[a["sample"] == "B6"]
     assert d["status"].str.startswith("candidate revision").sum() == num(m["auditVtwo"])
     assert d["status"].str.startswith("catalog period").sum() == num(m["auditCat"])
+    assert e["status"].str.startswith("candidate revision").sum() == num(m["bSixAuditRes"])
+    assert e["status"].str.startswith("catalog period").sum() == num(m["bSixAuditCat"])
+    d = a
     assert ((d["delta_chi2"] > 10) == d["status"].str.startswith("candidate revision")).all()
 
 
@@ -77,7 +81,7 @@ def test_every_table_and_figure_is_called_out():
 
 
 def test_released_tables_carry_sectors_and_snr():
-    for name in ("b2_per_target.csv", "b5_per_target.csv", "b5_candidate_period_revisions.csv"):
+    for name in ("b2_per_target.csv", "b5_per_target.csv", "b6_per_target.csv", "eb_candidate_period_revisions.csv"):
         cols = set(pd.read_csv(P / "data" / name, nrows=1).columns)
         assert {"sectors_early", "snr_seed"} <= cols, (name, sorted(cols))
 

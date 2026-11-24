@@ -73,7 +73,7 @@ def main():
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    rel = pd.read_csv(ROOT / "paper" / "data" / "b5_candidate_period_revisions.csv").set_index("tic").loc[TIC]
+    rel = pd.read_csv(ROOT / "paper" / "data" / "eb_candidate_period_revisions.csv").query("sample == 'B5'").set_index("tic").loc[TIC]
     tgt = pd.read_csv(ROOT / "data" / "b5_audit_targets.csv").set_index("tic").loc[TIC]
     rec = [r for p in glob.glob(str(ROOT / "results/kaggle/b5r/*/b5/b5_tls_*.jsonl.gz")) for r in read_records(p) if r.get("tic") == TIC]
     assert len(rec) == 1
