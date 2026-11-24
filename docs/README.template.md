@@ -18,7 +18,7 @@ before their data were analyzed.
 |---|---|
 | **Author** | Srijeet Prasad Banerjee ([ORCID 0009-0009-5889-9550](https://orcid.org/0009-0009-5889-9550)), Guru Nanak Institute of Technology, Kolkata |
 | **Paper** | *Resolving Period Aliases in TESS Light Curves: Preregistered Tests on Eclipsing Binaries, Injected Signals, and TESS Objects of Interest* (in preparation for The Astronomical Journal). Source: [`paper/ms.tex`](paper/ms.tex) |
-| **Data** | {{mastFiles}} SPOC 2 minute light curves of {{mastStars}} stars, TESS Sectors {{mastSecMin}} to {{mastSecMax}} ([doi:10.17909/t9-nmc8-f686](https://doi.org/10.17909/t9-nmc8-f686)) |
+| **Data** | {{mastFiles}} SPOC 2 minute light curves of {{mastStars}} stars, TESS Sectors {{mastSecMin}} to {{mastSecMax}} ([doi:10.17909/t9-nmc8-f686](https://doi.org/10.17909/t9-nmc8-f686)); the {{mastSubFiles}} behind the released tables: [doi:10.17909/c6t7-9d11](https://doi.org/10.17909/c6t7-9d11) |
 | **Branches** | `main` (current), `v2-alias-resolver` (development). The rejected first version is kept read only in [`legacy/`](legacy/) |
 
 ---
