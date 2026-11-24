@@ -12,6 +12,7 @@ before their data were analyzed.
 ![Python](https://img.shields.io/badge/python-3.11-blue)
 ![Status](https://img.shields.io/badge/paper-in%20preparation%20for%20AJ-orange)
 ![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24490731.svg)](https://doi.org/10.5281/zenodo.24490731)
 
 | | |
 |---|---|
@@ -412,7 +413,7 @@ legacy/                the rejected first version, read only
 ## 14. Citation, license and acknowledgments
 
 If you use this code, please cite it using [`CITATION.cff`](CITATION.cff) (GitHub's "Cite this repository" button).
-A Zenodo DOI will be added with the first release.
+The archived code of version 2.0.0 is [doi:10.5281/zenodo.24490731](https://doi.org/10.5281/zenodo.24490731); [doi:10.5281/zenodo.24490729](https://doi.org/10.5281/zenodo.24490729) always points to the latest version.
 
 Released under the [MIT License](LICENSE).
 
