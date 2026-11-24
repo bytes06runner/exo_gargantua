@@ -2,7 +2,7 @@
 # Targets are filled in phase by phase; unimplemented steps fail loudly.
 PY ?= python
 
-.PHONY: bib verify-bib test ads-search legacy-audit analysis paper
+.PHONY: bib verify-bib test ads-search legacy-audit analysis paper readme
 
 bib:            ## rebuild paper/refs.bib from paper/bib_sources.csv (network)
 	$(PY) scripts/build_bib.py
@@ -48,3 +48,6 @@ paper: analysis ## regenerate macros, tables, figures and released tables from r
 	$(PY) scripts/make_paper_assets.py
 	$(PY) -m pytest -q tests/test_paper_consistency.py
 	cd paper && pdflatex -interaction=nonstopmode ms && bibtex ms && pdflatex -interaction=nonstopmode ms && pdflatex -interaction=nonstopmode ms
+
+readme:         ## rebuild README.md from docs/README.template.md and the generated paper macros
+	$(PY) scripts/make_readme.py
