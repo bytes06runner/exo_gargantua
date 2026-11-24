@@ -1,12 +1,12 @@
-\begin{deluxetable*}{llcccc}
+\begin{deluxetable*}{lrllcccc}
 \tablecaption{B6: preregistered replication on binaries not used in B5. \label{tab:b6}}
 \tablewidth{0pt}
-\tablehead{\colhead{} & \colhead{Comparison} & \colhead{Resolver [95\% CI]} & \colhead{Baseline [95\% CI]} & \colhead{McNemar} & \colhead{Passes}}
+\tablehead{\colhead{} & \colhead{$N$} & \colhead{Seed} & \colhead{Against} & \colhead{Resolver} & \colhead{Baseline} & \colhead{McNemar} & \colhead{Pass}}
 \startdata
-H1 & Resolver (TLS seed) vs raw TLS, 1{,}597 binaries & 0.780 [0.759, 0.800] & 0.545 [0.520, 0.569] & $487/111$, $p=4\times10^{-57}$ & yes \\
-H1 & Resolver (TLS seed) vs raw BLS & 0.780 [0.759, 0.800] & 0.626 [0.602, 0.650] & $370/124$, $p=2\times10^{-29}$ & yes \\
-H2 & Inside the TLS search grid, 935 binaries & 0.773 [0.745, 0.799] & 0.662 [0.631, 0.692] & $201/97$, $p=2\times10^{-9}$ & yes \\
-H3 & Resolver (BLS seed) vs raw BLS & 0.785 [0.764, 0.805] & 0.626 [0.602, 0.650] & $364/110$, $p=9\times10^{-33}$ & yes
+H1 & 1{,}597 & TLS & raw TLS & 0.780 [0.759, 0.800] & 0.545 [0.520, 0.569] & $487/111$, $p=4\times10^{-57}$ & yes \\
+H1 & 1{,}597 & TLS & raw BLS & 0.780 [0.759, 0.800] & 0.626 [0.602, 0.650] & $370/124$, $p=2\times10^{-29}$ & yes \\
+H2 & 935 & TLS & raw TLS$^a$ & 0.773 [0.745, 0.799] & 0.662 [0.631, 0.692] & $201/97$, $p=2\times10^{-9}$ & yes \\
+H3 & 1{,}597 & BLS & raw BLS & 0.785 [0.764, 0.805] & 0.626 [0.602, 0.650] & $364/110$, $p=9\times10^{-33}$ & yes
 \enddata
-\tablecomments{Each hypothesis passes if the resolver wins the exact paired McNemar test with $p<0.0033$ (0.01 divided by three hypotheses). Discordant pairs are given as won by the resolver / won by the baseline. All four tests were specified before any B6 light curve was downloaded.}
+\tablecomments{Accuracy with 95\% Wilson intervals. Each hypothesis passes if the resolver wins the exact paired McNemar test with $p<0.0033$ (0.01 divided by three hypotheses). Discordant pairs are given as won by the resolver / won by the baseline. $^a$Binaries whose catalog period lies inside the TLS period grid. All four tests were specified before any B6 light curve was downloaded.}
 \end{deluxetable*}

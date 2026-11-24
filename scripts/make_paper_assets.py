@@ -896,14 +896,15 @@ def table_b6():
     h2 = c6["H2_inside_tls_grid"]
     mc = lambda m: f"${m['only_second_correct']}/{m['only_first_correct']}$, $p{pval(m['p_value'])}$"
     ok = lambda m: "yes" if m["passes"] else "no"
-    rows = [["H1", f"Resolver (TLS seed) vs raw TLS, {n(c6['n_primary'])} binaries", acc_cell(c6["resolver_tls_seed"]), acc_cell(c6["raw_tls"]), mc(c6["H1_tls_seeded_vs_raw_tls"]), ok(c6["H1_tls_seeded_vs_raw_tls"])],
-            ["H1", "Resolver (TLS seed) vs raw BLS", acc_cell(c6["resolver_tls_seed"]), acc_cell(c6["raw_bls"]), mc(c6["H1_tls_seeded_vs_raw_bls"]), ok(c6["H1_tls_seeded_vs_raw_bls"])],
-            ["H2", f"Inside the TLS search grid, {n(h2['n'])} binaries", acc_cell(h2["resolver_tls_seed"]), acc_cell(h2["raw_tls"]), mc(h2), ok(h2)],
-            ["H3", "Resolver (BLS seed) vs raw BLS", acc_cell(c6["resolver_bls_seed"]), acc_cell(c6["raw_bls"]), mc(c6["H3_bls_seeded_vs_raw_bls"]), ok(c6["H3_bls_seeded_vs_raw_bls"])]]
-    table("b6.tex", "B6: pre-registered replication on binaries not used in B5.", "tab:b6", "llcccc",
-          ["", "Comparison", "Resolver [95\\% CI]", "Baseline [95\\% CI]", "McNemar", "Passes"], rows,
-          f"Each hypothesis passes if the resolver wins the exact paired McNemar test with $p<{b6['alpha_per_hypothesis']:.4f}$ (0.01 divided by three hypotheses). "
-          "Discordant pairs are given as won by the resolver / won by the baseline. All four tests were specified before any B6 light curve was downloaded.")
+    rows = [["H1", n(c6["n_primary"]), "TLS", "raw TLS", acc_cell(c6["resolver_tls_seed"]), acc_cell(c6["raw_tls"]), mc(c6["H1_tls_seeded_vs_raw_tls"]), ok(c6["H1_tls_seeded_vs_raw_tls"])],
+            ["H1", n(c6["n_primary"]), "TLS", "raw BLS", acc_cell(c6["resolver_tls_seed"]), acc_cell(c6["raw_bls"]), mc(c6["H1_tls_seeded_vs_raw_bls"]), ok(c6["H1_tls_seeded_vs_raw_bls"])],
+            ["H2", n(h2["n"]), "TLS", "raw TLS$^a$", acc_cell(h2["resolver_tls_seed"]), acc_cell(h2["raw_tls"]), mc(h2), ok(h2)],
+            ["H3", n(c6["n_primary"]), "BLS", "raw BLS", acc_cell(c6["resolver_bls_seed"]), acc_cell(c6["raw_bls"]), mc(c6["H3_bls_seeded_vs_raw_bls"]), ok(c6["H3_bls_seeded_vs_raw_bls"])]]
+    table("b6.tex", "B6: preregistered replication on binaries not used in B5.", "tab:b6", "lrllcccc",
+          ["", "$N$", "Seed", "Against", "Resolver", "Baseline", "McNemar", "Pass"], rows,
+          f"Accuracy with 95\\% Wilson intervals. Each hypothesis passes if the resolver wins the exact paired McNemar test with $p<{b6['alpha_per_hypothesis']:.4f}$ (0.01 divided by three hypotheses). "
+          "Discordant pairs are given as won by the resolver / won by the baseline. $^a$Binaries whose catalog period lies inside the TLS period grid. "
+          "All four tests were specified before any B6 light curve was downloaded.")
 
 
 def figures():
